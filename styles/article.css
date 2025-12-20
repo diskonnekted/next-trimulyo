@@ -1,0 +1,273 @@
+/* Article Content Styling */
+.article-content {
+    @apply text-gray-700 leading-relaxed;
+}
+
+/* Headings */
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.article-content h5,
+.article-content h6 {
+    @apply font-semibold text-gray-900 mt-8 mb-4;
+}
+
+.article-content h1 {
+    @apply text-3xl;
+}
+
+.article-content h2 {
+    @apply text-2xl;
+}
+
+.article-content h3 {
+    @apply text-xl;
+}
+
+.article-content h4 {
+    @apply text-lg;
+}
+
+.article-content h5,
+.article-content h6 {
+    @apply text-base;
+}
+
+/* First heading should not have top margin */
+.article-content h1:first-child,
+.article-content h2:first-child,
+.article-content h3:first-child,
+.article-content h4:first-child,
+.article-content h5:first-child,
+.article-content h6:first-child {
+    @apply mt-0;
+}
+
+/* Paragraphs */
+.article-content p {
+    @apply mb-4 leading-relaxed;
+}
+
+.article-content p:last-child {
+    @apply mb-0;
+}
+
+/* Links */
+.article-content a {
+    @apply text-primary hover:text-primary/80 underline transition-colors;
+}
+
+/* Lists */
+.article-content ul,
+.article-content ol {
+    @apply mb-4 pl-6;
+}
+
+.article-content li {
+    @apply mb-2;
+}
+
+.article-content li:last-child {
+    @apply mb-0;
+}
+
+.article-content ul li {
+    @apply list-disc;
+}
+
+.article-content ol li {
+    @apply list-decimal;
+}
+
+/* Blockquotes */
+.article-content blockquote {
+    @apply border-l-4 border-primary/30 pl-4 py-2 my-6 bg-gray-50 italic text-gray-600;
+}
+
+.article-content blockquote p {
+    @apply mb-0;
+}
+
+/* Code */
+.article-content code {
+    @apply bg-gray-100 px-1 py-0.5 rounded text-sm font-mono text-gray-800;
+}
+
+.article-content pre {
+    @apply bg-gray-100 rounded-lg p-4 overflow-x-auto mb-4;
+}
+
+.article-content pre code {
+    @apply bg-transparent px-0 py-0;
+}
+
+/* Tables */
+.article-content table {
+    @apply w-full border-collapse border border-gray-300 mb-4;
+}
+
+.article-content th,
+.article-content td {
+    @apply border border-gray-300 px-4 py-2 text-left;
+}
+
+.article-content th {
+    @apply bg-gray-50 font-semibold text-gray-900;
+}
+
+.article-content tr:nth-child(even) {
+    @apply bg-gray-50/50;
+}
+
+/* Images */
+.article-content img {
+    @apply w-full h-auto rounded-lg shadow-sm my-6;
+}
+
+.article-content figure {
+    @apply my-6;
+}
+
+.article-content figcaption {
+    @apply text-center text-sm text-gray-500 italic mt-2;
+}
+
+/* Horizontal Rule */
+.article-content hr {
+    @apply border-0 border-t border-gray-300 my-8;
+}
+
+/* WordPress specific classes */
+.article-content .alignleft {
+    @apply float-left mr-4 mb-4 max-w-xs;
+}
+
+.article-content .alignright {
+    @apply float-right ml-4 mb-4 max-w-xs;
+}
+
+.article-content .aligncenter {
+    @apply block mx-auto my-6;
+}
+
+.article-content .wp-caption {
+    @apply max-w-full;
+}
+
+.article-content .wp-caption-text {
+    @apply text-center text-sm text-gray-500 italic mt-2;
+}
+
+/* Gallery styling */
+.article-content .gallery {
+    @apply flex flex-wrap gap-4 my-6;
+}
+
+.article-content .gallery-item {
+    @apply flex-1 min-w-0;
+}
+
+.article-content .gallery-icon {
+    @apply block;
+}
+
+.article-content .gallery-icon img {
+    @apply w-full h-auto rounded;
+}
+
+/* WordPress embedded content */
+.article-content .wp-embed-aspect-16-9 {
+    @apply relative pb-[56.25%] h-0;
+}
+
+.article-content .wp-embed-aspect-16-9 iframe,
+.article-content .wp-embed-aspect-16-9 embed,
+.article-content .wp-embed-aspect-16-9 object {
+    @apply absolute top-0 left-0 w-full h-full;
+}
+
+/* Text alignment */
+.article-content .text-left {
+    @apply text-left;
+}
+
+.article-content .text-center {
+    @apply text-center;
+}
+
+.article-content .text-right {
+    @apply text-right;
+}
+
+/* Text utilities */
+.article-content .has-large-font-size {
+    @apply text-2xl;
+}
+
+.article-content .has-medium-font-size {
+    @apply text-lg;
+}
+
+.article-content .has-small-font-size {
+    @apply text-sm;
+}
+
+/* Dropcap */
+.article-content p:first-of-type::first-letter {
+    @apply float-left text-6xl font-bold leading-none mr-2 mt-1 text-primary;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .article-content h1 {
+        @apply text-2xl;
+    }
+
+    .article-content h2 {
+        @apply text-xl;
+    }
+
+    .article-content h3 {
+        @apply text-lg;
+    }
+
+    .article-content .alignleft,
+    .article-content .alignright {
+        @apply float-none mx-auto mb-4;
+    }
+
+    .article-content .gallery {
+        @apply flex-col;
+    }
+
+    .article-content table {
+        @apply text-sm;
+    }
+
+    .article-content th,
+    .article-content td {
+        @apply px-2 py-1;
+    }
+}
+
+/* Print styles */
+@media print {
+    .article-content {
+        @apply text-black;
+    }
+
+    .article-content a {
+        @apply text-black no-underline;
+    }
+
+    .article-content a::after {
+        content: " (" attr(href) ")";
+        @apply text-xs text-gray-500;
+    }
+
+    .article-content pre,
+    .article-content .gallery {
+        @apply hidden;
+    }
+}

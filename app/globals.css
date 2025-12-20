@@ -1,0 +1,231 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "../styles/article.css";
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --animate-wiggle: wiggle 1s ease-in-out infinite;
+    --animate-progress: progress 2s ease-in-out infinite;
+    @keyframes wiggle {
+        0%,
+        100% {
+            transform: rotate(-3deg);
+        }
+        50% {
+            transform: rotate(3deg);
+        }
+    }
+}
+
+:root {
+    /* Pondokrejo Village Theme - Light Mode Only */
+    --radius: 0.625rem;
+
+    /* Base colors - Pondokrejo Village Official */
+    --background: #f2f6ff; /* Dasar halaman bersih - light blue background */
+    --foreground: #000000; /* Teks utama */
+    --card: #ffffff; /* Latar kartu/komponen - white background */
+    --card-foreground: #000000;
+    --popover: #ffffff;
+    --popover-foreground: #000000;
+
+    /* Primary colors - Header biru */
+    --primary: #39a2cf; /* Header BG */
+    --primary-foreground: #ffffff;
+
+    /* Secondary colors - Hero biru */
+    --secondary: #3eafdf; /* Hero BG */
+    --secondary-foreground: #ffffff;
+
+    /* Accent colors - Footer biru */
+    --accent: #0a4661; /* Footer BG */
+    --accent-foreground: #ffffff;
+
+    /* Muted colors - Light variations for subtle elements */
+    --muted: #f3f4f6;
+    --muted-foreground: #6b7280;
+
+    /* Status colors */
+    --destructive: #f87171; /* Kesalahan */
+    --destructive-foreground: #ffffff;
+
+    /* UI elements - Adjusted for new color scheme */
+    --border: #b8d4e3; /* Light blue-gray */
+    --input: #e6f2f8; /* Very light blue */
+    --ring: #39a2cf;
+
+    /* Chart colors - Updated color scheme */
+    --chart-1: #39a2cf; /* Primary - Header blue */
+    --chart-2: #3eafdf; /* Secondary - Hero blue */
+    --chart-3: #0a4661; /* Accent - Footer blue */
+    --chart-4: #fbbf24; /* Warning yellow */
+    --chart-5: #7bc4e0; /* Light blue variant */
+
+    /* Sidebar colors - Updated */
+    --sidebar: #ffffff;
+    --sidebar-foreground: #000000;
+    --sidebar-primary: #39a2cf;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #e6f2f8;
+    --sidebar-accent-foreground: #39a2cf;
+    --sidebar-border: #b8d4e3;
+    --sidebar-ring: #39a2cf;
+
+    /* Village specific colors */
+    --village-success: #22c55e;
+    --village-warning: #fbbf24;
+    --village-danger: #f87171;
+    --village-info: #39a2cf;
+
+    /* Text colors for dark/light contrast - Adjusted for new blues */
+    --text-normal: #ffffff; /* Normal text on dark backgrounds */
+    --text-hover: #b8e0f0; /* Lighter blue for hover */
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/* Line clamping utility */
+@layer utilities {
+    .line-clamp-1 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+    }
+
+    .line-clamp-2 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+
+    .line-clamp-3 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+    }
+
+    .line-clamp-4 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4;
+    }
+}
+
+/* PWA Offline Styles */
+body.offline {
+    position: relative;
+}
+
+body.offline::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #f59e0b, #ef4444);
+    z-index: 9999;
+    animation: offlinePulse 2s ease-in-out infinite;
+}
+
+body.offline::after {
+    content: "📶 Mode Offline";
+    position: fixed;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fbbf24;
+    color: #78350f;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 9999;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+@keyframes offlinePulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* IDM Data Loading Animations */
+@keyframes dash {
+    0% {
+        stroke-dashoffset: 100;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes wiggle {
+    0%,
+    100% {
+        transform: rotate(-3deg);
+    }
+    50% {
+        transform: rotate(3deg);
+    }
+}
+
+@keyframes progress {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}

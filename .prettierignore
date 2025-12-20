@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+*.log
+*.tsbuildinfo
+.DS_Store
+Thumbs.db
+
+# Production
+.next/
+out/
+build/
+
+# Generated files
+next-env.d.ts
+*.min.js
+*.bundle.js
+
+# Config files that shouldn't be formatted
+tailwind.config.*
+postcss.config.*
+next.config.*
+
+# Git
+.git/
+.gitignore
+
+# Package managers
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Redundant
+backup/
+docs/
+test/
+
+# GeoJSON
+*.geojson

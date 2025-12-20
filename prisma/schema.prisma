@@ -1,0 +1,595 @@
+// Schema Prisma untuk Portal Web Kalurahan Pondokrejo
+// Enhanced dengan semua fitur modern: SDGs, Live Statistics, Interactive Map, Community Engagement
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ===========================================
+// ENUMS (Indonesian Naming Conventions)
+// ===========================================
+
+enum PeranPengguna {
+  ADMIN
+  STAFF
+  WARGA
+  PENGUNJUNG
+}
+
+enum Status {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum Prioritas {
+  RENDAH
+  NORMAL
+  TINGGI
+  PENTING
+}
+
+enum JenisLayanan {
+  KK
+  KTP
+  KELAHIRAN
+  KEMATIAN
+  SURAT_DOMISILI
+  SURAT_USAHA
+  SURAT_PENGANTAR
+}
+
+enum StatusPermohonan {
+  MENUNGGU
+  DIPROSES
+  SELESAI
+  DITOLAK
+}
+
+enum StatusProyek {
+  PERENCANAAN
+  BERJALAN
+  SELESAI
+  DITUNDA
+}
+
+enum KategoriKegiatan {
+  PEMUDA
+  KEAGAMAAN
+  BUDAYA
+  OLAHRAGA
+  LINGKUNGAN
+  LAINNYA
+}
+
+enum StatusPengaduan {
+  MENUNGGU
+  DIPROSES
+  SELESAI
+  DITOLAK
+}
+
+enum JenisLokasi {
+  PEMERINTAHAN
+  KESEHATAN
+  PENDIDIKAN
+  FASILITAS_UMUM
+  IBADAH
+  EKONOMI
+  BUDAYA
+  OLAHRAGA
+}
+
+enum JenisNotifikasi {
+  EMERGENCY
+  PENGUMUMAN
+  CUACA
+  EVENT
+  INFORMASI
+}
+
+enum StatusRelawan {
+  TERDAFTAR
+  AKTIF
+  NONAKTIF
+}
+
+enum StatusCrowdfunding {
+  PENDAFTARAN
+  BERJALAN
+  SELESAI
+  DIBATALKAN
+}
+
+// ===========================================
+// CORE MODELS
+// ===========================================
+
+// User Management dengan Enhanced Fields
+model Pengguna {
+  id          Int           @id @default(autoincrement())
+  email       String        @unique @db.VarChar(255)
+  namaLengkap String        @map("nama_lengkap") @db.VarChar(255)
+  kataSandi   String        @map("kata_sandi") @db.VarChar(255)
+  nik         String?       @unique @db.VarChar(20)
+  telepon     String?       @db.VarChar(20)
+  alamat      String?       @db.Text
+  peran       PeranPengguna @default(WARGA)
+  avatar      String?       @db.VarChar(500)
+  aktif       Boolean       @default(true)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  pengaduan          Pengaduan[]
+  relawan            Relawan[]
+  pollingSuara       PollingSuara[]
+  crowdfundKontribusi CrowdfundKontribusi[]
+  notifikasiUser     NotifikasiUser[]
+
+  @@map("pengguna")
+}
+
+// Content Management - Berita
+model Berita {
+  id          Int      @id @default(autoincrement())
+  judul       String   @db.VarChar(255)
+  slug        String   @unique @db.VarChar(255)
+  ringkasan   String?  @db.Text
+  konten      String   @db.Text
+  gambar      String?  @db.VarChar(500)
+  kategori    String   @default("umum") @db.VarChar(100)
+  tag         String?  @db.Text
+  penulis     String   @db.VarChar(255)
+  status      Status   @default(DRAFT)
+  dipublikasi DateTime? @map("dipublikasi")
+  viewCount   Int      @default(0) @map("view_count")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("berita")
+}
+
+// Content Management - Pengumuman
+model Pengumuman {
+  id          Int      @id @default(autoincrement())
+  judul       String   @db.VarChar(255)
+  konten      String   @db.Text
+  gambar      String?  @db.VarChar(500)
+  prioritas   Prioritas @default(NORMAL)
+  status      Status   @default(DRAFT)
+  dipublikasi DateTime? @map("dipublikasi")
+  expiresAt   DateTime? @map("expires_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("pengumuman")
+}
+
+// Layanan Mandiri - Permohonan Layanan
+model LayananPermohonan {
+  id              Int              @id @default(autoincrement())
+  namaPemohon     String           @map("nama_pemohon") @db.VarChar(255)
+  nikPemohon      String           @map("nik_pemohon") @db.VarChar(20)
+  emailPemohon    String           @map("email_pemohon") @db.VarChar(255)
+  teleponPemohon  String           @map("telepon_pemohon") @db.VarChar(20)
+  alamatLengkap   String           @map("alamat_lengkap") @db.Text
+  jenisLayanan    JenisLayanan     @map("jenis_layanan")
+  keterangan      String?          @db.Text
+  dokumen         String?          @db.VarChar(500)
+  statusPermohonan StatusPermohonan @map("status_permohonan") @default(MENUNGGU)
+  idPelacakan     String           @unique @map("id_pelacakan") @db.VarChar(50)
+  tanggalPengajuan DateTime         @default(now()) @map("tanggal_pengajuan")
+  tanggalUpdate   DateTime         @updatedAt @map("tanggal_update")
+
+  @@map("layanan_permohonan")
+}
+
+// Transparansi Keuangan - APBDes
+model APBDes {
+  id             Int         @id @default(autoincrement())
+  tahunAnggaran  String      @map("tahun_anggaran") @db.VarChar(10)
+  totalAnggaran  Decimal     @map("total_anggaran") @db.Decimal(15, 2)
+  totalRealisasi Decimal?    @map("total_realisasi") @db.Decimal(15, 2)
+  status         StatusAPBDes @default(AKTIF)
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  rincian APBDesRincian[]
+
+  @@unique([tahunAnggaran])
+  @@map("apbdes")
+}
+
+model APBDesRincian {
+  id          Int      @id @default(autoincrement())
+  apbdesId    Int      @map("apbdes_id")
+  kategori    String   @db.VarChar(100)
+  subKategori String?  @map("sub_kategori") @db.VarChar(100)
+  anggaran    Decimal  @db.Decimal(15, 2)
+  realisasi   Decimal? @db.Decimal(15, 2)
+  persentase  Float?   @db.Float
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  apbdes APBDes @relation(fields: [apbdesId], references: [id])
+
+  @@unique([apbdesId, kategori, subKategori])
+  @@map("apbdes_rincian")
+}
+
+enum StatusAPBDes {
+  DRAFT
+  AKTIF
+  SELESAI
+}
+
+// Pembangunan Kalurahan - Proyek
+model Proyek {
+  id          Int         @id @default(autoincrement())
+  nama        String      @db.VarChar(255)
+  deskripsi   String      @db.Text
+  lokasi      String      @db.VarChar(255)
+  anggaran    Decimal     @db.Decimal(15, 2)
+  progress    Float       @default(0) @db.Float
+  status      StatusProyek @default(PERENCANAAN)
+  mulai       DateTime    @db.Date
+  selesai     DateTime?   @db.Date
+  koordinat   String?     @db.VarChar(100) // GPS coordinates
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  galeri ProyekGaleri[]
+
+  @@map("proyek")
+}
+
+model ProyekGaleri {
+  id         Int      @id @default(autoincrement())
+  proyekId   Int      @map("proyek_id")
+  gambar     String   @db.VarChar(500)
+  keterangan String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  proyek Proyek @relation(fields: [proyekId], references: [id])
+
+  @@map("proyek_galeri")
+}
+
+// Kegiatan Masyarakat
+model Kegiatan {
+  id        Int              @id @default(autoincrement())
+  nama      String           @db.VarChar(255)
+  deskripsi String           @db.Text
+  kategori  KategoriKegiatan
+  tanggal   DateTime         @db.Date
+  waktu     DateTime?        @db.Time
+  lokasi    String           @db.VarChar(255)
+  koordinat String?          @db.VarChar(100) // GPS coordinates
+  status    StatusKegiatan   @default(AKTIF)
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  @@map("kegiatan")
+}
+
+enum StatusKegiatan {
+  AKTIF
+  SELESAI
+  DIBATALKAN
+}
+
+// ===========================================
+// ENHANCED MODELS - NEW FEATURES
+// ===========================================
+
+// SDGs Progress Tracking
+model SDGsProgress {
+  id          Int      @id @default(autoincrement())
+  goal        Int      // 1-17
+  judul       String   @db.VarChar(255)
+  deskripsi   String   @db.Text
+  progress    Float    @default(0) @db.Float // Percentage 0-100
+  targetTahun Int      @map("target_tahun")
+  satuan      String   @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  program Program[]
+
+  @@unique([goal])
+  @@map("sdgs_progress")
+}
+
+// Program Development
+model Program {
+  id            Int      @id @default(autoincrement())
+  sdgsGoalId    Int      @map("sdgs_goal_id")
+  namaProgram   String   @map("nama_program") @db.VarChar(255)
+  deskripsi     String   @db.Text
+  anggaran      Decimal  @db.Decimal(15, 2)
+  progress      Float    @default(0) @db.Float
+  tanggalMulai  DateTime @map("tanggal_mulai") @db.Date
+  tanggalSelesai DateTime? @map("tanggal_selesai") @db.Date
+  penanggungJawab String  @map("penanggung_jawab") @db.VarChar(255)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  sdgsGoal SDGsProgress @relation(fields: [sdgsGoalId], references: [id])
+
+  @@map("program")
+}
+
+// Interactive Map Locations
+model LokasiInteraktif {
+  id          Int         @id @default(autoincrement())
+  nama        String      @db.VarChar(255)
+  deskripsi   String?     @db.Text
+  jenis       JenisLokasi
+  alamat      String      @db.Text
+  koordinat   String      @db.VarChar(100) // "latitude,longitude"
+  telepon     String?     @db.VarChar(20)
+  jamOperasi  String?     @db.VarChar(255)
+  website     String?     @db.VarChar(255)
+  gambar      String?     @db.VarChar(500)
+  aktif       Boolean     @default(true)
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@map("lokasi_interaktif")
+}
+
+// Community Polling System
+model CommunityPoll {
+  id          Int      @id @default(autoincrement())
+  pertanyaan  String   @db.VarChar(500)
+  deskripsi   String?  @db.Text
+  kategori    String   @db.VarChar(100)
+  tanggalMulai DateTime @map("tanggal_mulai") @db.Date
+  tanggalSelesai DateTime? @map("tanggal_selesai") @db.Date
+  aktif       Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  pilihan PollingPilihan[]
+  suara   PollingSuara[]
+
+  @@map("community_poll")
+}
+
+model PollingPilihan {
+  id      Int      @id @default(autoincrement())
+  pollId  Int      @map("poll_id")
+  pilihan String   @db.VarChar(255)
+  urutan  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  poll CommunityPoll @relation(fields: [pollId], references: [id])
+  suara PollingSuara[]
+
+  @@unique([pollId, urutan])
+  @@map("polling_pilihan")
+}
+
+model PollingSuara {
+  id        Int      @id @default(autoincrement())
+  pollId    Int      @map("poll_id")
+  pilihanId Int      @map("pilihan_id")
+  penggunaId Int?    @map("pengguna_id")
+  ipAlamat  String   @map("ip_alamat") @db.VarChar(45)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  poll    CommunityPoll @relation(fields: [pollId], references: [id])
+  pilihan PollingPilihan @relation(fields: [pilihanId], references: [id])
+  pengguna Pengguna?     @relation(fields: [penggunaId], references: [id])
+
+  @@unique([pollId, ipAlamat]) // One vote per IP per poll
+  @@map("polling_suara")
+}
+
+// Live Statistics
+model LiveStatistics {
+  id          Int      @id @default(autoincrement())
+  kategori    String   @db.VarChar(100)
+  judul       String   @db.VarChar(255)
+  nilai       BigInt
+  satuan      String   @db.VarChar(50)
+  persenChange Float?  @map("persen_change") @db.Float
+  lastUpdate  DateTime @default(now()) @map("last_update")
+
+  @@unique([kategori, judul])
+  @@map("live_statistics")
+}
+
+// Emergency Alerts
+model EmergencyAlert {
+  id          Int              @id @default(autoincrement())
+  judul       String           @db.VarChar(255)
+  pesan       String           @db.Text
+  tingkat     String           @db.VarChar(50) // LOW, MEDIUM, HIGH, CRITICAL
+  kategori    String           @db.VarChar(100)
+  lokasi      String?          @db.VarChar(255)
+  koordinat   String?          @db.VarChar(100)
+  expiresAt   DateTime?        @map("expires_at")
+  aktif       Boolean          @default(true)
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  @@map("emergency_alert")
+}
+
+// Weather Data
+model WeatherData {
+  id          Int      @id @default(autoincrement())
+  suhu        Float
+  kelembaban  Float
+  tekanan     Float?
+  kecepatanAngin Float?  @map("kecepatan_angin")
+  arahAngin   String?  @map("arah_angin") @db.VarChar(50)
+  kondisi     String   @db.VarChar(100)
+  deskripsi   String?  @db.Text
+  lastUpdate  DateTime @default(now()) @map("last_update")
+
+  @@map("weather_data")
+}
+
+// Notifications
+model Notifikasi {
+  id          Int              @id @default(autoincrement())
+  judul       String           @db.VarChar(255)
+  pesan       String           @db.Text
+  jenis       JenisNotifikasi
+  icon        String?          @db.VarChar(100)
+  link        String?          @db.VarChar(500)
+  global      Boolean          @default(false) // True untuk semua pengguna
+  expiresAt   DateTime?        @map("expires_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  notifikasiUser NotifikasiUser[]
+
+  @@map("notifikasi")
+}
+
+model NotifikasiUser {
+  id            Int         @id @default(autoincrement())
+  notifikasiId  Int         @map("notifikasi_id")
+  penggunaId    Int         @map("pengguna_id")
+  dibaca        Boolean     @default(false)
+  dibacaPada    DateTime?   @map("dibaca_pada")
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  // Relations
+  notifikasi Notifikasi @relation(fields: [notifikasiId], references: [id])
+  pengguna   Pengguna   @relation(fields: [penggunaId], references: [id])
+
+  @@unique([notifikasiId, penggunaId])
+  @@map("notifikasi_user")
+}
+
+// Volunteer Management
+model Relawan {
+  id            Int          @id @default(autoincrement())
+  penggunaId    Int          @map("pengguna_id")
+  namaLengkap   String       @map("nama_lengkap") @db.VarChar(255)
+  nik           String       @db.VarChar(20)
+  email         String       @db.VarChar(255)
+  telepon       String       @db.VarChar(20)
+  alamat        String       @db.Text
+  keahlian      String?      @db.Text
+  pengalaman    String?      @db.Text
+  ketersediaan String?      @db.Text
+  status        StatusRelawan @default(TERDAFTAR)
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  pengguna Pengguna @relation(fields: [penggunaId], references: [id])
+
+  @@map("relawan")
+}
+
+// Crowdfunding Platform
+model Crowdfunding {
+  id          Int               @id @default(autoincrement())
+  judul       String            @db.VarChar(255)
+  deskripsi   String            @db.Text
+  gambar      String?           @db.VarChar(500)
+  target      Decimal           @db.Decimal(15, 2)
+  terkumpul   Decimal           @default(0) @db.Decimal(15, 2)
+  deadline    DateTime          @db.Date
+  kategori    String            @db.VarChar(100)
+  status      StatusCrowdfunding @default(PENDAFTARAN)
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  // Relations
+  kontribusi CrowdfundKontribusi[]
+
+  @@map("crowdfunding")
+}
+
+model CrowdfundKontribusi {
+  id           Int      @id @default(autoincrement())
+  crowdfundingId Int     @map("crowdfunding_id")
+  penggunaId     Int?    @map("pengguna_id")
+  namaDonatur   String  @map("nama_donatur") @db.VarChar(255)
+  emailDonatur  String  @map("email_donatur") @db.VarChar(255)
+  jumlah        Decimal @db.Decimal(15, 2)
+  pesan         String? @db.Text
+  anonim        Boolean @default(false)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // Relations
+  crowdfunding Crowdfunding @relation(fields: [crowdfundingId], references: [id])
+  pengguna     Pengguna?    @relation(fields: [penggunaId], references: [id])
+
+  @@map("crowdfund_kontribusi")
+}
+
+// ===========================================
+// LEGACY MODELS (Enhanced)
+// ===========================================
+
+// Pengaduan System (Enhanced)
+model Pengaduan {
+  id          Int              @id @default(autoincrement())
+  userId      Int?             @map("user_id")
+  nama        String           @db.VarChar(255)
+  email       String           @db.VarChar(255)
+  telepon     String           @db.VarChar(20)
+  kategori    String           @db.VarChar(100)
+  subjek      String           @db.VarChar(255)
+  pesan       String           @db.Text
+  lokasi      String?          @db.VarChar(255)
+  koordinat   String?          @db.VarChar(100)
+  gambar      String?          @db.VarChar(500)
+  status      StatusPengaduan  @default(MENUNGGU)
+  tiketId     String           @unique @db.VarChar(50)
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  // Relations
+  user Pengguna? @relation(fields: [userId], references: [id])
+
+  @@map("pengaduan")
+}
+
+// Media Management
+model Media {
+  id          Int      @id @default(autoincrement())
+  nama        String   @db.VarChar(255)
+  path        String   @db.VarChar(500)
+  ukuran      Int      // bytes
+  tipe        String   @db.VarChar(100)
+  alt         String?  @db.VarChar(255)
+  kategori    String?  @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("media")
+}
+
+// Configuration
+model Konfigurasi {
+  id        Int    @id @default(autoincrement())
+  kunci     String @unique @db.VarChar(100)
+  nilai     String @db.Text
+  kategori  String? @db.VarChar(100)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("konfigurasi")
+}
