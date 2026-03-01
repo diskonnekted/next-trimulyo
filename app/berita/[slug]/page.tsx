@@ -132,6 +132,7 @@ function NewsDetailContent() {
                                     }],
                                     tags: [],
                                     author: {
+                                        id: 0,
                                         name: wpPost.attributes.author.nama,
                                         avatar: "/images/default-avatar.png"
                                     },

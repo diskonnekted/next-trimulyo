@@ -543,13 +543,13 @@ function NewsContent({
                         <>
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                 {/* WordPress News Placeholder Link (Manual Integration) */}
-                                {!searchTerm && currentPage === 1 && selectedCategory === "all" && (
+                                {/* Hidden as per request */}
+                                {/* {!searchTerm && currentPage === 1 && selectedCategory === "all" && (
                                     <Card 
                                         className="hover:shadow-lg transition-all cursor-pointer border-blue-200 bg-blue-50 group flex flex-col h-full"
                                         onClick={() => router.push('/berita/external/tarawih-keliling-di-al-falaq-kalangan-pemkal-trimulyo-pererat-ukhuwah-dengan-warga')}
                                     >
                                         <div className="aspect-video relative overflow-hidden rounded-t-lg bg-gray-200">
-                                            {/* Placeholder image */}
                                             <div className="absolute inset-0 flex items-center justify-center bg-blue-100 text-blue-500">
                                                 <ExternalLink className="w-12 h-12 opacity-50" />
                                             </div>
@@ -573,7 +573,7 @@ function NewsContent({
                                             </div>
                                         </CardContent>
                                     </Card>
-                                )}
+                                )} */}
 
                                 {posts.map((post) => (
                                     <NewsCard

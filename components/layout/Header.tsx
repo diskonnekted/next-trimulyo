@@ -370,6 +370,19 @@ export function Header() {
 
                             if (isPemerintahanItem) {
                                 // Render as dropdown for pemerintahan sub-items
+                                if (!mounted) {
+                                    return (
+                                        <Button
+                                            key={item.href}
+                                            variant="ghost"
+                                            className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-[#2a77a7]! hover:text-white! rounded-md transition-colors cursor-pointer h-auto"
+                                        >
+                                            <IconComponent className="h-4 w-4 mr-2" />
+                                            <span>{item.label}</span>
+                                            <ChevronDown className="h-4 w-4 ml-1" />
+                                        </Button>
+                                    );
+                                }
                                 return (
                                     <DropdownMenu key={item.href}>
                                         <DropdownMenuTrigger asChild>
@@ -400,6 +413,19 @@ export function Header() {
 
                             if (isInformasiItem) {
                                 // Render as dropdown for informasi sub-items
+                                if (!mounted) {
+                                    return (
+                                        <Button
+                                            key={item.href}
+                                            variant="ghost"
+                                            className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-[#2a77a7]! hover:text-white! rounded-md transition-colors cursor-pointer h-auto"
+                                        >
+                                            <IconComponent className="h-4 w-4 mr-2" />
+                                            <span>{item.label}</span>
+                                            <ChevronDown className="h-4 w-4 ml-1" />
+                                        </Button>
+                                    );
+                                }
                                 return (
                                     <DropdownMenu key={item.href}>
                                         <DropdownMenuTrigger asChild>
@@ -430,6 +456,19 @@ export function Header() {
 
                             if (isStatistikItem) {
                                 // Render as dropdown for statistik sub-items
+                                if (!mounted) {
+                                    return (
+                                        <Button
+                                            key={item.href}
+                                            variant="ghost"
+                                            className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-[#2a77a7]! hover:text-white! rounded-md transition-colors cursor-pointer h-auto"
+                                        >
+                                            <IconComponent className="h-4 w-4 mr-2" />
+                                            <span>{item.label}</span>
+                                            <ChevronDown className="h-4 w-4 ml-1" />
+                                        </Button>
+                                    );
+                                }
                                 return (
                                     <DropdownMenu key={item.href}>
                                         <DropdownMenuTrigger asChild>
