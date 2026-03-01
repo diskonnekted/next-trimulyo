@@ -219,7 +219,7 @@ export class ApiService {
  * OpenSID API service
  */
 export const opensidApi = new ApiService({
-    baseUrl: process.env.OPENSID_API_URL || "http://trimulyo.sleman-desa.id",
+    baseUrl: process.env.OPENSID_API_URL || "https://trimulyo.sleman-desa.id",
     timeout: 30000,
     cache: {
         revalidate: 3600, // 1 hour
