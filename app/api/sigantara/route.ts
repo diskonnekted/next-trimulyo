@@ -2,8 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
     try {
-        const { searchParams } = new URL(request.url);
-        const idKalurahan = searchParams.get("id_kalurahan") || "DL2XryeXPQXwIFf58iRfWSCZfzq2";
+        // Use default ID if searchParams access causes prerender bailout
+        // We handle this by checking if we're in a build context if needed,
+        // but for now let's make the ID optional/default more robustly
+        let idKalurahan = "DL2XryeXPQXwIFf58iRfWSCZfzq2";
+        
+        try {
+            const { searchParams } = new URL(request.url);
+            const paramId = searchParams.get("id_kalurahan");
+            if (paramId) idKalurahan = paramId;
+        } catch (e) {
+            // If URL parsing fails (e.g. during some build phases), use default
+            console.warn("Could not parse request URL in Sigantara API, using default ID");
+        }
 
         const response = await fetch(`https://sigantara.vercel.app/api/view?id_kalurahan=${idKalurahan}`, {
             next: {

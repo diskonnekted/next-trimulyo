@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, ExternalLink, Calendar, User, Eye, Share2, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 
-export default function ExternalNewsPage() {
+function ExternalNewsContent() {
     const params = useParams();
     const router = useRouter();
     const slug = params.slug as string;
@@ -97,6 +97,21 @@ export default function ExternalNewsPage() {
                                 </div>
                             </div>
                         )}
+                        {/* Iframe content would go here */}
+                    </Card>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default function ExternalNewsPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+            <ExternalNewsContent />
+        </Suspense>
+    );
+}
 
                         <div className={`relative w-full transition-opacity duration-500 ${isLoading ? 'opacity-0 h-0' : 'opacity-100'}`}>
                             <iframe 
