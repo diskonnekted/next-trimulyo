@@ -110,6 +110,12 @@ const nextConfig: NextConfig = {
                 port: '',
                 pathname: '/storage-desa',
             },
+            {
+                protocol: 'https',
+                hostname: 'trimulyo.smartvillage.center',
+                port: '',
+                pathname: '/storage/**',
+            },
         ],
 
         dangerouslyAllowSVG: false,
