@@ -54,6 +54,10 @@ export function useExternalNews(limit: number = 10) {
             setError(null);
 
             const response = await fetch("/api/external-news");
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
+            
             const data: NewsResponse = await response.json();
 
             if (data.success) {
@@ -63,10 +67,15 @@ export function useExternalNews(limit: number = 10) {
                     .slice(0, limit);
                 setNews(limitedNews);
             } else {
-                setError(data.error ?? "Failed to fetch news");
+                console.warn("News API returned success: false", data);
+                // Don't set error immediately if data is empty, just set empty news
+                // setError(data.error ?? "Failed to fetch news");
+                setNews([]); 
             }
-        } catch {
+        } catch (err) {
+            console.error("Error fetching news:", err);
             setError("Failed to connect to news server");
+            setNews([]);
         } finally {
             setLoading(false);
         }

@@ -138,7 +138,9 @@ export function HomePageClient({ serverData }: { serverData: ServerData }) {
 
     // Transform data berita
     const transformNewsData = (newsData: typeof externalNews) => {
-        if (!newsData || newsData.length === 0 || newsError) {
+        if (!newsData || newsData.length === 0) {
+            // If no data, return null to hide the section or show empty state
+            // But we should check if it's loading or error state in the UI
             return null;
         }
 
@@ -152,21 +154,21 @@ export function HomePageClient({ serverData }: { serverData: ServerData }) {
                 slug: firstNews.slug,
                 judul: firstNews.title,
                 ringkasan: firstNews.excerpt,
-                gambar: firstNews.featuredImage,
-                kategori: firstNews.category,
-                author: firstNews.author.name,
-                views: firstNews.viewCount,
+                gambar: firstNews.featuredImage || "/images/placeholder-news.jpg", // Add fallback image
+                kategori: firstNews.category || "Berita",
+                author: firstNews.author?.name || "Admin",
+                views: firstNews.viewCount || 0,
                 publishedAt: firstNews.publishedAt,
-                readingTime: firstNews.readTime,
+                readingTime: firstNews.readTime || 1,
             },
             beritaLainnya: otherNews.map((news) => ({
                 id: news.id,
                 slug: news.slug,
                 judul: news.title,
                 publishedAt: news.publishedAt,
-                kategori: news.category,
+                kategori: news.category || "Berita",
                 ringkasan: news.excerpt,
-                gambar: news.featuredImage,
+                gambar: news.featuredImage || "/images/placeholder-news.jpg", // Add fallback image
             })),
         };
     };
@@ -465,7 +467,22 @@ export function HomePageClient({ serverData }: { serverData: ServerData }) {
 
                     {/* Kolom 2 - Berita */}
                     <div className="content-center space-y-4 lg:col-span-2 flex flex-col">
-                        {/* Berita Terbaru - Only show if we have news data */}
+                        {/* Berita Terbaru - Show loading or error state if needed */}
+                        {!newsData && !newsError && (
+                             <Card className="h-full flex items-center justify-center min-h-[400px]">
+                                <p className="text-muted-foreground">Memuat berita...</p>
+                             </Card>
+                        )}
+                        
+                        {!newsData && newsError && (
+                             <Card className="h-full flex items-center justify-center min-h-[400px]">
+                                <div className="text-center p-6">
+                                    <p className="text-red-500 font-medium mb-2">Gagal memuat berita</p>
+                                    <p className="text-sm text-muted-foreground">Silakan coba lagi nanti.</p>
+                                </div>
+                             </Card>
+                        )}
+
                         {newsData && newsData.beritaUtama && (
                             <Card className="overflow-hidden py-0 gap-0 pt-0">
                                 <div className="aspect-video relative bg-muted">
