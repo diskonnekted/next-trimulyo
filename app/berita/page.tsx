@@ -184,47 +184,6 @@ function NewsContent({
     const loading = newsLoading;
     const error = newsError;
 
-    // ... existing handlers ...
-                setPosts([]);
-                setTotalPosts(0);
-                setTotalPages(1);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        loadPosts();
-    }, [currentPage, selectedCategory, selectedArchive, searchTerm, selectedSort, categories, postsPerPage]);
-
-    // Handle search
-    function handleSearch() {
-        setSearchTerm(searchInput);
-        setCurrentPage(1);
-    }
-
-    // Handle filter change
-    function handleFilterChange(type: "category" | "archive" | "sort", value: string) {
-        switch (type) {
-            case "category":
-                setSelectedCategory(value);
-                break;
-            case "archive":
-                setSelectedArchive(value);
-                break;
-            case "sort":
-                setSelectedSort(value);
-                break;
-        }
-        setCurrentPage(1);
-        if (type !== "sort") {
-            setSearchTerm(""); // Clear search saat filter berubah, but not for sort changes
-        }
-    }
-
-    // Get current filter info
-    function getCurrentFilterInfo() {
-        const filters = [];
-
     // Helper function to get current filter info
     function getCurrentFilterInfo(): string[] {
         const filters: string[] = [];
