@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { 
@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getCommunityDetail, type CommunityDetail } from "@/lib/api-komunitas";
 
-export default function KomunitasDetailPage() {
+function KomunitasDetailContent() {
     const params = useParams();
     const router = useRouter();
     const id = params.id as string;
@@ -335,5 +335,15 @@ export default function KomunitasDetailPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function KomunitasDetailPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50">
+            <Loader2 className="h-8 w-8 animate-spin text-[#39a2cf]" />
+        </div>}>
+            <KomunitasDetailContent />
+        </Suspense>
     );
 }
