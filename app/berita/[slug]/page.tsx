@@ -75,11 +75,11 @@ function formatDateShort(dateString: string) {
     return date.toLocaleDateString("id-ID", options);
 }
 
-function getReadingTime(content: string) {
+function getReadingTime(content: string): number {
     const wordsPerMinute = 200; // Average reading speed
     const words = content.replace(/<[^>]*>/g, "").split(/\s+/).length;
     const minutes = Math.ceil(words / wordsPerMinute);
-    return `${minutes} menit`;
+    return minutes;
 }
 
 // Detail page component
@@ -116,7 +116,7 @@ function NewsDetailContent() {
                             
                             if (wpPost) {
                                 // Transform to Post interface
-                                const readingTime = typeof window !== 'undefined' ? getReadingTime(wpPost.attributes.isi) : "1 menit";
+                                const readingTime = typeof window !== 'undefined' ? getReadingTime(wpPost.attributes.isi) : 1;
 
                                 postData = {
                                     id: wpPost.id,
