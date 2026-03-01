@@ -318,35 +318,57 @@ function NewsDetailContent() {
                 <div className="flex-1 w-full">
                     {/* Article Header */}
                     <Card className="mb-8 overflow-hidden pt-0">
-                        {/* Featured Image */}
-                        <div className="relative h-64 md:h-96">
-                            <Image
-                                src={post.featuredImage}
-                                alt={post.featuredImageAlt}
-                                fill
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 100vw"
-                                className="object-cover"
-                                priority={true}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        {/* Featured Image - Only show if valid image exists */}
+                        {post.featuredImage && !post.featuredImage.includes("placeholder-news") && (
+                            <div className="relative h-64 md:h-96 w-full">
+                                <Image
+                                    src={post.featuredImage}
+                                    alt={post.featuredImageAlt || post.title}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 100vw"
+                                    className="object-cover"
+                                    priority={true}
+                                    onError={(e) => {
+                                        // Hide image on error or replace with placeholder if preferred
+                                        const target = e.target as HTMLImageElement;
+                                        target.style.display = 'none';
+                                    }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                            {/* Overlay categories */}
-                            {post.categories.length > 0 && (
-                                <div className="absolute bottom-4 left-4 right-4">
-                                    <div className="flex flex-wrap gap-2">
-                                        {post.categories.slice(0, 3).map((category) => (
-                                            <Badge
-                                                key={category.id}
-                                                variant="secondary"
-                                                className="bg-white/90 backdrop-blur-sm"
-                                            >
-                                                <Folder className="h-3 w-3 mr-1" />
-                                                {category.name}
-                                            </Badge>
-                                        ))}
+                                {/* Overlay categories */}
+                                {post.categories.length > 0 && (
+                                    <div className="absolute bottom-4 left-4 right-4">
+                                        <div className="flex flex-wrap gap-2">
+                                            {post.categories.slice(0, 3).map((category) => (
+                                                <Badge
+                                                    key={category.id}
+                                                    variant="secondary"
+                                                    className="bg-white/90 backdrop-blur-sm"
+                                                >
+                                                    <Folder className="h-3 w-3 mr-1" />
+                                                    {category.name}
+                                                </Badge>
+                                            ))}
+                                        </div>
                                     </div>
+                                )}
+                            </div>
+                        )}
+                        
+                        {/* If no image or placeholder, show title header without image background */}
+                        {(!post.featuredImage || post.featuredImage.includes("placeholder-news")) && (
+                             <div className="bg-primary/5 p-6 border-b">
+                                <div className="flex flex-wrap gap-2 mb-4">
+                                    {post.categories.slice(0, 3).map((category) => (
+                                        <Badge key={category.id} variant="secondary">
+                                            <Folder className="h-3 w-3 mr-1" />
+                                            {category.name}
+                                        </Badge>
+                                    ))}
                                 </div>
-                            )}
+                             </div>
+                        )}
                         </div>
 
                         <CardHeader className="pb-4">
