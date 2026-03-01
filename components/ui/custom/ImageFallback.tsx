@@ -20,11 +20,13 @@ export default function ImageFallback({
     // Validate and normalize the source URL
     const normalizeSrc = (url: string | null | undefined) => {
         if (!url || typeof url !== "string") return null;
-        // If it's a relative path, return null to show fallback
-        if (url.startsWith("/") && !url.startsWith("//")) return null;
-        // If it doesn't start with http, return null
-        if (!url.startsWith("http://") && !url.startsWith("https://")) return null;
-        return url;
+        // Allow relative paths (local images)
+        if (url.startsWith("/")) return url;
+        // Allow protocol-relative paths
+        if (url.startsWith("//")) return `https:${url}`;
+        // Allow absolute paths
+        if (url.startsWith("http://") || url.startsWith("https://")) return url;
+        return null;
     };
 
     const [imgSrc, setImgSrc] = useState(normalizeSrc(src));
