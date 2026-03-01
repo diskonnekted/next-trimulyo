@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { fetchAllIoTData } from "@/lib/thingspeak";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
     try {
         // In a build/prerender context, we might want to return mock/empty data
