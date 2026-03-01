@@ -64,8 +64,27 @@ export function useExternalNews(limit: number = 10) {
             setLoading(true);
             setError(null);
 
-            // 1. Try fetching directly from WordPress API (Client-side)
+            // 1. Try fetching via OpenSID Proxy (Primary Source)
+            // User requested to use OpenSID as the main source for consistency between localhost and production
             try {
+                // console.log("Attempting to fetch from OpenSID Proxy...");
+                const openSidResponse = await fetch("/api/opensid-proxy");
+                if (openSidResponse.ok) {
+                    const openSidData = await openSidResponse.json();
+                    // OpenSID data structure: { data: Array<OpenSIDArticle>, ... }
+                    if (openSidData && Array.isArray(openSidData.data) && openSidData.data.length > 0) {
+                        const transformedOpenSidNews = transformOpenSidPosts(openSidData.data);
+                        setNews(transformedOpenSidNews.slice(0, limit));
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.error("OpenSID Proxy fetch failed", e);
+            }
+
+            // 2. Fallback: Try fetching directly from WordPress API (Client-side)
+            try {
+                console.warn("OpenSID fetch failed/empty, falling back to WordPress...");
                 const response = await fetch(`https://trimulyosid.slemankab.go.id/wp-json/wp/v2/posts?per_page=${limit}&_embed`);
                 
                 if (response.ok) {
@@ -80,7 +99,7 @@ export function useExternalNews(limit: number = 10) {
                 console.warn("Direct WP fetch failed, trying proxies...", e);
             }
 
-            // 2. Try fetching via our WP Proxy (Server-side)
+            // 3. Fallback: Try fetching via our WP Proxy (Server-side)
             try {
                 const proxyResponse = await fetch("/api/external-news");
                 if (proxyResponse.ok) {
@@ -91,24 +110,7 @@ export function useExternalNews(limit: number = 10) {
                     }
                 }
             } catch (e) {
-                console.warn("WP Proxy fetch failed, trying OpenSID...", e);
-            }
-
-            // 3. Fallback: Try fetching via OpenSID Proxy
-            try {
-                console.log("Attempting to fetch from OpenSID Proxy...");
-                const openSidResponse = await fetch("/api/opensid-proxy");
-                if (openSidResponse.ok) {
-                    const openSidData = await openSidResponse.json();
-                    // OpenSID data structure: { data: Array<OpenSIDArticle>, ... }
-                    if (openSidData && Array.isArray(openSidData.data) && openSidData.data.length > 0) {
-                        const transformedOpenSidNews = transformOpenSidPosts(openSidData.data);
-                        setNews(transformedOpenSidNews.slice(0, limit));
-                        return;
-                    }
-                }
-            } catch (e) {
-                console.error("OpenSID Proxy fetch failed", e);
+                console.warn("WP Proxy fetch failed", e);
             }
 
             // If all failed
