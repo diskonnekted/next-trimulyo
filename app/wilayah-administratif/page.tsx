@@ -117,6 +117,11 @@ interface SigantaraResponse {
     views: SigantaraView[];
 }
 
+interface ApiResponse {
+    data: WilayahAdministratif[];
+    [key: string]: unknown;
+}
+
 export default function WilayahAdministratifPage() {
     const [wilayahData, setWilayahData] = useState<WilayahAdministratif[]>([]);
     const [sigantaraData, setSigantaraData] = useState<SigantaraResponse | null>(null);
