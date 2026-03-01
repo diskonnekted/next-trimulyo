@@ -418,16 +418,62 @@ export default function WilayahAdministratifPage() {
                             const attrs = dusun.attributes;
                             const genderRatio = getGenderRatio(attrs.penduduk_pria_count, attrs.penduduk_wanita_count);
 
+                            // Helper function to get image path
+                            const getDusunImage = (dusunName: string) => {
+                                const normalizedName = dusunName.toLowerCase().replace(/\s+/g, " ").trim();
+                                const imageMap: { [key: string]: string } = {
+                                    "balong": "/images/balong-mantaran.jpg",
+                                    "mantaran": "/images/balong-mantaran.jpg",
+                                    "blunyah": "/images/blunyah.jpg",
+                                    "jogokerten": "/images/jogokerten.jpg",
+                                    "kadisobo i": "/images/kadisobo1.jpg",
+                                    "kadisobo ii": "/images/kadisobo2.jpg",
+                                    "kadisobo 1": "/images/kadisobo1.jpg",
+                                    "kadisobo 2": "/images/kadisobo2.jpg",
+                                    "kalirase": "/images/kalirase.JPG",
+                                    "karang": "/images/karang kepanjen.jpeg",
+                                    "kepanjen": "/images/karang kepanjen.jpeg",
+                                    "kepitu": "/images/kepitu.jpg",
+                                    "klegen": "/images/klegen polowidi.jpg",
+                                    "polowidi": "/images/klegen polowidi.jpg",
+                                    "klelen": "/images/klelen tegalsari.jpg",
+                                    "tegalsari": "/images/klelen tegalsari.jpg",
+                                    "ngemplak": "/images/ngemplak kalangan.jpg",
+                                    "kalangan": "/images/ngemplak kalangan.jpg",
+                                    "pambregan": "/images/pambregan.jpg",
+                                    "pendeman": "/images/pendeman.webp",
+                                    "sidomulyo": "/images/sidomulyo.jpg",
+                                };
+
+                                // Check for exact match or partial match
+                                for (const [key, path] of Object.entries(imageMap)) {
+                                    if (normalizedName.includes(key)) {
+                                        return path;
+                                    }
+                                }
+                                return null;
+                            };
+
+                            const dusunImage = getDusunImage(attrs.dusun);
+
                             return (
                                 <Card
                                     key={dusun.id}
                                     className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer pt-0"
                                     onClick={() => setSelectedDusun(dusun)}
                                 >
-                                    <div className="relative h-48 bg-linear-to-br from-blue-100 to-blue-200">
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <MapPin className="h-16 w-16 text-blue-300" />
-                                        </div>
+                                    <div className="relative h-48 bg-linear-to-br from-blue-100 to-blue-200 overflow-hidden">
+                                        {dusunImage ? (
+                                            <img 
+                                                src={dusunImage} 
+                                                alt={`Dusun ${attrs.dusun}`}
+                                                className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
+                                            />
+                                        ) : (
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <MapPin className="h-16 w-16 text-blue-300" />
+                                            </div>
+                                        )}
                                         <div className="absolute top-3 right-3">
                                             <Badge className="bg-blue-600 hover:bg-blue-700">
                                                 {attrs.sebutan_dusun}
