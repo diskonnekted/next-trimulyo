@@ -252,6 +252,26 @@ function NewsContent({
         setCurrentPage(1);
     };
 
+    // Handle filter change
+    function handleFilterChange(type: "category" | "archive" | "sort", value: string) {
+        switch (type) {
+            case "category":
+                setSelectedCategory(value);
+                break;
+            case "archive":
+                setSelectedArchive(value);
+                break;
+            case "sort":
+                setSelectedSort(value);
+                break;
+        }
+        setCurrentPage(1);
+        if (type !== "sort") {
+            // Optional: reset search when category/archive changes if desired
+            // setSearchTerm(""); 
+        }
+    }
+
     // Helper function for pagination numbers
     function getPageNumbers(currentPage: number, totalPages: number): (number | "...")[] {
         // Simple pagination logic if totalPages is small
