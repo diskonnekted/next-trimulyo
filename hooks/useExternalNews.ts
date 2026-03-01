@@ -180,13 +180,23 @@ function transformOpenSidPosts(posts: any[]): NewsItem[] {
         const wordCount = cleanContent(content).split(/\s+/).length;
         const readTime = Math.ceil(wordCount / 200);
         
+        // Handle image URLs properly
+        let featuredImage = attrs.gambar;
+        if (featuredImage && featuredImage.startsWith("/")) {
+            // Prepend base URL for relative paths
+            featuredImage = `https://trimulyo.sleman-desa.id${featuredImage}`;
+        } else if (featuredImage && featuredImage.startsWith("http://")) {
+            // Upgrade to HTTPS
+            featuredImage = featuredImage.replace("http://", "https://");
+        }
+        
         return {
             id: post.id?.toString() || Math.random().toString(),
             title: attrs.judul || "Tanpa Judul",
             slug: attrs.slug || attrs.url_slug || `post-${post.id}`,
             excerpt: cleanContent(content).substring(0, 150) + "...",
             content: content,
-            featuredImage: attrs.gambar || null,
+            featuredImage: featuredImage || null,
             author: {
                 name: attrs.author?.nama || "Admin",
                 avatar: "/images/default-avatar.png",
