@@ -65,16 +65,16 @@
     --popover: #ffffff;
     --popover-foreground: #000000;
 
-    /* Primary colors - Header biru */
-    --primary: #39a2cf; /* Header BG */
+    /* Primary colors - Red Theme */
+    --primary: #dd2d4a; /* Navigation Menu BG */
     --primary-foreground: #ffffff;
 
-    /* Secondary colors - Hero biru */
-    --secondary: #3eafdf; /* Hero BG */
+    /* Secondary colors - Hero Red */
+    --secondary: #f26a8d; /* Hero BG */
     --secondary-foreground: #ffffff;
 
-    /* Accent colors - Footer biru */
-    --accent: #0a4661; /* Footer BG */
+    /* Accent colors - Dark Red */
+    --accent: #880d1e; /* Top Bar BG & Footer BG */
     --accent-foreground: #ffffff;
 
     /* Muted colors - Light variations for subtle elements */
@@ -82,20 +82,20 @@
     --muted-foreground: #6b7280;
 
     /* Status colors */
-    --destructive: #f87171; /* Kesalahan */
+    --destructive: #c1121f; /* Error - using Brick Red */
     --destructive-foreground: #ffffff;
 
     /* UI elements - Adjusted for new color scheme */
-    --border: #b8d4e3; /* Light blue-gray */
-    --input: #e6f2f8; /* Very light blue */
-    --ring: #39a2cf;
+    --border: #e2e8f0; /* Light gray */
+    --input: #f1f5f9; /* Very light gray */
+    --ring: #003049;
 
     /* Chart colors - Updated color scheme */
-    --chart-1: #39a2cf; /* Primary - Header blue */
-    --chart-2: #3eafdf; /* Secondary - Hero blue */
-    --chart-3: #0a4661; /* Accent - Footer blue */
-    --chart-4: #fbbf24; /* Warning yellow */
-    --chart-5: #7bc4e0; /* Light blue variant */
+    --chart-1: #003049; /* Primary */
+    --chart-2: #c1121f; /* Secondary */
+    --chart-3: #669bbc; /* Accent */
+    --chart-4: #fdf0d5; /* Papaya Whip */
+    --chart-5: #780000; /* Molten Lava */
 
     /* Sidebar colors - Updated */
     --sidebar: #ffffff;

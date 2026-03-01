@@ -179,10 +179,10 @@ export function Header() {
     }, []);
 
     return (
-        <header className="bg-[#39a2cf] text-white fixed top-0 left-0 right-0 z-50 transition-transform duration-300">
-            {/* Top Header Bar */}
+        <header className="bg-primary text-white fixed top-0 left-0 right-0 z-50 transition-transform duration-300">
+            {/* Top Header Bar - Accent Color (#880d1e) */}
             <div
-                className={`border-b border-[#10244f]/30 bg-[#1279a7] transition-opacity duration-300 ${
+                className={`border-b border-white/10 bg-accent transition-opacity duration-300 ${
                     isScrolled ? "opacity-0 h-0" : "opacity-100 h-16"
                 } overflow-hidden`}
             >
@@ -214,12 +214,12 @@ export function Header() {
                                     placeholder={t("navigation.cari")}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-10 pr-10 py-2 bg-white/10 border-[#7487af]/20 text-white placeholder:text-white/60 focus:bg-white/20 focus:border-[#0a4661]/40"
+                                    className="w-full pl-10 pr-10 py-2 bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:bg-white/20 focus:border-white/40"
                                 />
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/60" />
                                 <Button
                                     type="submit"
-                                    className="absolute right-0 top-0 bottom-0 px-3 rounded-l-none h-auto bg-[#0a4661] hover:bg-[#115c93] text-white"
+                                    className="absolute right-0 top-0 bottom-0 px-3 rounded-l-none h-auto bg-accent hover:bg-accent-600 text-white"
                                 >
                                     <Search className="h-4 w-4" />
                                 </Button>
@@ -232,7 +232,7 @@ export function Header() {
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="lg:hidden text-white hover:bg-[#2a77a7]! hover:text-white! cursor-pointer"
+                                className="lg:hidden text-white hover:bg-white/20! hover:text-white! cursor-pointer"
                                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                             >
                                 <Search className="h-5 w-5" />
@@ -243,10 +243,10 @@ export function Header() {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="relative text-white hover:text-white! hover:bg-[#2a77a7]! cursor-pointer"
+                                    className="relative text-white hover:text-white! hover:bg-white/20! cursor-pointer"
                                 >
                                     <Bell className="h-5 w-5" />
-                                    <Badge className="absolute -top-1 -right-1 w-5 h-5 bg-[#f87171] text-white text-xs rounded-full p-0 flex items-center justify-center">
+                                    <Badge className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-white text-xs rounded-full p-0 flex items-center justify-center">
                                         3
                                     </Badge>
                                 </Button>
@@ -256,29 +256,29 @@ export function Header() {
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="relative text-white hover:text-white! hover:bg-[#2a77a7]! cursor-pointer"
+                                            className="relative text-white hover:text-white! hover:bg-white/20! cursor-pointer"
                                         >
                                             <Bell className="h-5 w-5" />
-                                            <Badge className="absolute -top-1 -right-1 w-5 h-5 bg-[#f87171] text-white text-xs rounded-full p-0 flex items-center justify-center">
+                                            <Badge className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-white text-xs rounded-full p-0 flex items-center justify-center">
                                                 3
                                             </Badge>
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-80">
-                                        <DropdownMenuItem className="flex items-center justify-between data-highlighted:bg-[#2a77a7] data-highlighted:text-white">
+                                        <DropdownMenuItem className="flex items-center justify-between data-highlighted:bg-accent data-highlighted:text-white">
                                             <span>Pengumuman Baru</span>
                                             <Badge variant="destructive">Baru</Badge>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem className="flex items-center justify-between data-highlighted:bg-[#2a77a7] data-highlighted:text-white">
+                                        <DropdownMenuItem className="flex items-center justify-between data-highlighted:bg-accent data-highlighted:text-white">
                                             <span>Update APBDes</span>
                                             <Badge variant="secondary">Info</Badge>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem className="flex items-center justify-between data-highlighted:bg-[#2a77a7] data-highlighted:text-white">
+                                        <DropdownMenuItem className="flex items-center justify-between data-highlighted:bg-accent data-highlighted:text-white">
                                             <span>Jadwal Kegiatan</span>
                                             <Badge variant="outline">Reminder</Badge>
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
-                                        <DropdownMenuItem className="data-highlighted:bg-[#2a77a7] data-highlighted:text-white">
+                                        <DropdownMenuItem className="data-highlighted:bg-accent data-highlighted:text-white">
                                             <Link href="/notifikasi" className="w-full cursor-pointer">
                                                 Lihat Semua Notifikasi
                                             </Link>
@@ -304,7 +304,7 @@ export function Header() {
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="text-white hover:text-white! hover:bg-[#2a77a7]! cursor-pointer px-0! ml-4! sm:ml-0!"
+                                            className="text-white hover:text-white! hover:bg-white/20! cursor-pointer px-0! ml-4! sm:ml-0!"
                                         >
                                             <User className="h-4 w-4 mr-2" />
                                             <span className="hidden sm:inline">Account</span>
@@ -312,18 +312,18 @@ export function Header() {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuItem className="data-highlighted:bg-[#2a77a7] data-highlighted:text-white">
+                                        <DropdownMenuItem className="data-highlighted:bg-accent data-highlighted:text-white">
                                             <Link href="/profile" className="w-full cursor-pointer">
                                                 Profil Saya
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
-                                        <DropdownMenuItem className="data-highlighted:bg-[#2a77a7] data-highlighted:text-white">
+                                        <DropdownMenuItem className="data-highlighted:bg-accent data-highlighted:text-white">
                                             <Link href="/admin" className="w-full cursor-pointer">
                                                 Admin Panel
                                             </Link>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem className="text-red-600 data-highlighted:bg-[#2a77a7] data-highlighted:text-white">
+                                        <DropdownMenuItem className="text-red-600 data-highlighted:bg-accent data-highlighted:text-white">
                                             {t("navigation.logout")}
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -335,20 +335,20 @@ export function Header() {
 
                 {/* Mobile Search */}
                 {isSearchOpen && (
-                    <div className="lg:hidden border-t border-[#10244f]/30 p-4">
+                    <div className="lg:hidden border-t border-white/10 p-4">
                         <form onSubmit={handleSearch} className="relative w-full">
                             <Input
                                 type="search"
                                 placeholder={t("navigation.cari")}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-10 py-2 bg-white/10 border-[#7487af]/20 text-white placeholder:text-white/60 focus:bg-white/20 focus:border-[#0a4661]/40"
+                                className="w-full pl-10 pr-10 py-2 bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:bg-white/20 focus:border-white/40"
                                 autoFocus
                             />
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/60" />
                             <Button
                                 type="submit"
-                                className="absolute right-0 top-0 bottom-0 px-3 rounded-l-none h-auto bg-[#0a4661] hover:bg-[#115c93] text-white"
+                                className="absolute right-0 top-0 bottom-0 px-3 rounded-l-none h-auto bg-accent hover:bg-accent-600 text-white"
                             >
                                 <Search className="h-4 w-4" />
                             </Button>
@@ -358,7 +358,7 @@ export function Header() {
             </div>
 
             {/* Main Navigation - Desktop */}
-            <nav className="hidden lg:block border-b border-[#10244f]/30">
+            <nav className="hidden lg:block border-b border-white/10">
                 <div className="container mx-auto px-4">
                     <div className="flex items-center justify-center space-x-1 h-12">
                         {/* Main Navigation Items */}
@@ -376,7 +376,7 @@ export function Header() {
                                         <Button
                                             key={item.href}
                                             variant="ghost"
-                                            className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-[#2a77a7]! hover:text-white! rounded-md transition-colors cursor-pointer h-auto"
+                                            className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-white/20! hover:text-white! rounded-md transition-colors cursor-pointer h-auto"
                                         >
                                             <IconComponent className="h-4 w-4 mr-2" />
                                             <span>{item.label}</span>
@@ -389,7 +389,7 @@ export function Header() {
                                         <DropdownMenuTrigger asChild>
                                             <Button
                                                 variant="ghost"
-                                                className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-[#2a77a7]! hover:text-white! data-[state=open]:bg-[#2a77a7]! data-[state=open]:text-white! rounded-md transition-colors cursor-pointer h-auto"
+                                                className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-white/20! hover:text-white! data-[state=open]:bg-white/20! data-[state=open]:text-white! rounded-md transition-colors cursor-pointer h-auto"
                                             >
                                                 <IconComponent className="h-4 w-4 mr-2" />
                                                 <span>{item.label}</span>
@@ -401,7 +401,7 @@ export function Header() {
                                                 <DropdownMenuItem key={subItem.href} asChild>
                                                     <Link
                                                         href={subItem.href}
-                                                        className="w-full cursor-pointer data-highlighted:bg-[#2a77a7] data-highlighted:text-white"
+                                                        className="w-full cursor-pointer data-highlighted:bg-accent data-highlighted:text-white"
                                                     >
                                                         {subItem.label}
                                                     </Link>
@@ -419,7 +419,7 @@ export function Header() {
                                         <Button
                                             key={item.href}
                                             variant="ghost"
-                                            className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-[#2a77a7]! hover:text-white! rounded-md transition-colors cursor-pointer h-auto"
+                                            className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-white/20! hover:text-white! rounded-md transition-colors cursor-pointer h-auto"
                                         >
                                             <IconComponent className="h-4 w-4 mr-2" />
                                             <span>{item.label}</span>
@@ -432,7 +432,7 @@ export function Header() {
                                         <DropdownMenuTrigger asChild>
                                             <Button
                                                 variant="ghost"
-                                                className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-[#2a77a7]! hover:text-white! data-[state=open]:bg-[#2a77a7]! data-[state=open]:text-white! rounded-md transition-colors cursor-pointer h-auto"
+                                                className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-white/20! hover:text-white! data-[state=open]:bg-white/20! data-[state=open]:text-white! rounded-md transition-colors cursor-pointer h-auto"
                                             >
                                                 <IconComponent className="h-4 w-4 mr-2" />
                                                 <span>{item.label}</span>
@@ -444,7 +444,7 @@ export function Header() {
                                                 <DropdownMenuItem key={subItem.href} asChild>
                                                     <Link
                                                         href={subItem.href}
-                                                        className="w-full cursor-pointer data-highlighted:bg-[#2a77a7] data-highlighted:text-white"
+                                                        className="w-full cursor-pointer data-highlighted:bg-accent data-highlighted:text-white"
                                                     >
                                                         {subItem.label}
                                                     </Link>
@@ -462,7 +462,7 @@ export function Header() {
                                         <Button
                                             key={item.href}
                                             variant="ghost"
-                                            className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-[#2a77a7]! hover:text-white! rounded-md transition-colors cursor-pointer h-auto"
+                                            className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-white/20! hover:text-white! rounded-md transition-colors cursor-pointer h-auto"
                                         >
                                             <IconComponent className="h-4 w-4 mr-2" />
                                             <span>{item.label}</span>
@@ -475,7 +475,7 @@ export function Header() {
                                         <DropdownMenuTrigger asChild>
                                             <Button
                                                 variant="ghost"
-                                                className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-[#2a77a7]! hover:text-white! data-[state=open]:bg-[#2a77a7]! data-[state=open]:text-white! rounded-md transition-colors cursor-pointer h-auto"
+                                                className="px-4! py-2! text-sm! text-white! bg-transparent! hover:bg-white/20! hover:text-white! data-[state=open]:bg-white/20! data-[state=open]:text-white! rounded-md transition-colors cursor-pointer h-auto"
                                             >
                                                 <IconComponent className="h-4 w-4 mr-2" />
                                                 <span>{item.label}</span>
@@ -496,7 +496,7 @@ export function Header() {
                                                                 <DropdownMenuItem key={subItem.href} asChild>
                                                                     <Link
                                                                         href={subItem.href}
-                                                                        className="w-full cursor-pointer data-highlighted:bg-[#2a77a7] data-highlighted:text-white"
+                                                                        className="w-full cursor-pointer data-highlighted:bg-accent data-highlighted:text-white"
                                                                     >
                                                                         {subItem.label}
                                                                     </Link>
@@ -516,7 +516,7 @@ export function Header() {
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className="px-4 py-2 text-sm text-white hover:bg-[#2a77a7] hover:text-white! rounded-md transition-colors cursor-pointer flex items-center"
+                                    className="px-4 py-2 text-sm text-white hover:bg-white/20 hover:text-white! rounded-md transition-colors cursor-pointer flex items-center"
                                 >
                                     <IconComponent className="h-4 w-4 mr-2" />
                                     {item.label}

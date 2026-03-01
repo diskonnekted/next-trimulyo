@@ -20,9 +20,9 @@ export default function VisiMisiPage() {
                 <div className="inline-flex items-center justify-center w-20 h-20 bg-[#c2c9df] rounded-full mb-4">
                     <Target className="h-10 w-10 text-gray-900" />
                 </div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">Visi dan Misi Kalurahan Pondokrejo</h1>
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">Visi dan Misi Kalurahan Trimulyo</h1>
                 <p className="text-xl text-gray-600">
-                    Arah pembangunan dan tujuan bersama untuk masa depan Kalurahan Pondokrejo yang lebih baik
+                    Arah pembangunan dan tujuan bersama untuk masa depan Kalurahan Trimulyo yang lebih baik
                 </p>
             </div>
 
@@ -51,7 +51,7 @@ export default function VisiMisiPage() {
                                 </div>
                                 <div className="bg-white/70 p-4 rounded-lg">
                                     <p className="text-gray-600 italic text-center">
-                                        &quot;Visi Kalurahan Pondokrejo akan disusun berdasarkan musyawarah masyarakat
+                                        &quot;Visi Kalurahan Trimulyo akan disusun berdasarkan musyawarah masyarakat
                                         dan analisis kebutuhan pembangunan...&quot;
                                     </p>
                                 </div>

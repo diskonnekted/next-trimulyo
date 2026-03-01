@@ -116,6 +116,8 @@ function NewsDetailContent() {
                             
                             if (wpPost) {
                                 // Transform to Post interface
+                                const readingTime = typeof window !== 'undefined' ? getReadingTime(wpPost.attributes.isi) : "1 menit";
+
                                 postData = {
                                     id: wpPost.id,
                                     title: wpPost.attributes.judul,
@@ -124,7 +126,7 @@ function NewsDetailContent() {
                                     excerpt: wpPost.attributes.isi.replace(/<[^>]*>/g, "").substring(0, 200) + "...",
                                     link: `/berita/${wpPost.attributes.slug}`,
                                     status: "publish",
-                                    readingTime: getReadingTime(wpPost.attributes.isi),
+                                    readingTime: readingTime,
                                     featuredImage: wpPost.attributes.gambar,
                                     featuredImageAlt: wpPost.attributes.judul,
                                     date: wpPost.attributes.tgl_upload,

@@ -20,11 +20,11 @@ import Image from "next/image";
 import { PegawaiDisplay } from "@/components/ui/custom/PegawaiDisplay";
 
 export default function ProfilPage() {
-    // Real comprehensive data Kalurahan Pondokrejo
+    // Real comprehensive data Kalurahan Trimulyo
     const kalurahanData = {
         // Basic Info
-        nama: "Pondokrejo",
-        kapanewon: "Tempel",
+        nama: "Trimulyo",
+        kapanewon: "Sleman",
         kabupaten: "Sleman",
         provinsi: "D.I Yogyakarta",
         tahunSemester: "II/2024",
@@ -39,9 +39,9 @@ export default function ProfilPage() {
 
         batasWilayah: {
             utara: "Kapanewon Turi",
-            timur: "Kapanewon Sleman",
-            selatan: "Kapanewon Seyegan",
-            barat: "Kapanewon Salam, Ngluwar",
+            timur: "Kapanewon Ngaglik",
+            selatan: "Kapanewon Mlati",
+            barat: "Kapanewon Sleman",
         },
 
         jarak: {
@@ -79,9 +79,9 @@ export default function ProfilPage() {
         },
 
         // Land Use
-        luasTotal: "327.1980 Ha",
+        luasTotal: "650 Ha",
         tanahSawah: {
-            total: "52.5 Ha",
+            total: "352.5 Ha",
             irigasiTeknis: "32.5 Ha",
             irigasiSetengahTeknis: "55 Ha",
             irigasiSederhana: "7.5 Ha",
@@ -94,9 +94,9 @@ export default function ProfilPage() {
 
         // Government Structure
         government: {
-            padukuhan: 9,
-            rw: 20,
-            rt: 47,
+            padukuhan: 14,
+            rw: 28,
+            rt: 65,
         },
 
         // LPMK Data
@@ -116,11 +116,11 @@ export default function ProfilPage() {
 
         // Historical Data
         sejarah: {
-            maklumat: "Maklumat Gubernur DIY Sri Sultan Hamengkubuwono ke IX",
-            nomor: "05",
-            tahun: "1948",
+            maklumat: "Maklumat Nomor 16 tahun 1946 Daerah Istimewa Negara Republik Indonesia Yogyakarta",
+            nomor: "16",
+            tahun: "1946",
             deskripsi:
-                "Kalurahan Pondokrejo dulunya terbagi menjadi 2 (dua) Kalurahan yaitu Kalurahan Ngentak dan Kalurahan Glagahombo.",
+                "Berdasarkan maklumat Nomor 16 tahun 1946 Daerah Istimewa Negara Republik Indonesia Yogyakarta (Kasultanan dan Paku Alaman) tertanggal 11/04/1946, maka wilayah Kapanewon Sleman (18 Kalurahan) juga melaksanakan penggabungan 3 Kalurahan lama diantaranya Kalurahan lama Polowidi (Mewilayahi: Pepen, Kadisobo 1, Kadisobo 2, Kalangan, Ngemplak Polowidi, Polowidi, Klegen, Pendeman), Kalurahan lama Kepitu (Mewilayahi: Mantaran, Balong, Jogokerten, Blunyah, Kepitu, Kepanjen, Karang), dan Kalurahan lama Pambregan (Mewilayahi: Pambregan, Tegalsari, Klelen, Sidomulyo, Kalirase). Untuk selanjutnya ketiga kalurahan lama meleburkan diri dan bergabung menjadi satu wilayah pemerintahan baru dengan nama Trimulyo. Sedangkan pengisian Lurah Desa serta Pamong Desa diatur sesuai dengan maklumat Nomor 15 tahun 1946 tanggal 11/04/1946.",
         },
     };
 
@@ -635,10 +635,8 @@ export default function ProfilPage() {
                                             Nomor: {kalurahanData.sejarah.nomor} Tahun {kalurahanData.sejarah.tahun}
                                         </span>
                                     </p>
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-muted-foreground leading-relaxed">
                                         {kalurahanData.sejarah.deskripsi}
-                                        Kalurahan Ngentak (dengan pusat pemerintahan di Plotengan) dan Kalurahan
-                                        Glagahombo (dengan pusat pemerintahan di Babadan/Banjarharjo).
                                     </p>
                                 </div>
                             </div>

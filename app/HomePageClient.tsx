@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
     FileText,
     Download,
@@ -23,6 +24,10 @@ import {
     NotebookPen,
     BriefcaseBusiness,
     Lightbulb,
+    Map,
+    Users,
+    Building2,
+    Home,
 } from "lucide-react";
 
 import ImageFallback from "@/components/ui/custom/ImageFallback";
@@ -172,13 +177,31 @@ export function HomePageClient({ serverData }: { serverData: ServerData }) {
         <div className="beranda-container bg-background">
             {/* Hero Section with Layanan Cepat */}
             <section className="hero-area bg-[#3eafdf] py-16 relative">
+                {/* Hero Background Image */}
+                <div className="absolute inset-0 z-0">
+                    <Image
+                        src="/uploads/sliders/desa.avif"
+                        alt="Desa Trimulyo"
+                        fill
+                        className="object-cover"
+                        priority
+                    />
+                    <div className="absolute inset-0 bg-secondary/80 mix-blend-multiply" /> {/* Hero overlay using secondary color #f26a8d */}
+                    <div className="absolute inset-0 bg-black/30" />
+                </div>
                 <WeatherAnimation weatherData={weatherData} className="z-10" />
                 <div className="container mx-auto px-4 relative z-20">
                     {/* Hero Text */}
                     <div className="text-center text-white mb-16">
-                        <h1 className="text-4xl md:text-6xl font-bold mb-4">Selamat Datang</h1>
-                        <p className="text-lg md:text-xl mb-6 text-white/90">
-                            Portal Resmi Kalurahan Pondokrejo, Kabupaten Sleman, D.I Yogyakarta
+                        <h1 className="text-4xl lg:text-6xl font-bold mb-4 text-white leading-tight">
+                            Selamat Datang di <br />
+                            <span className="text-secondary bg-white/90 px-4 rounded-lg inline-block mt-2">
+                                Kalurahan Trimulyo
+                            </span>
+                        </h1>
+                        <p className="text-lg lg:text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed backdrop-blur-sm bg-black/10 p-4 rounded-lg border border-white/10">
+                            Mewujudkan Trimulyo sebagai Kalurahan Cerdas, Mandiri, dan Sejahtera melalui inovasi
+                            teknologi dan pemberdayaan masyarakat.
                         </p>
                         <div className="flex flex-wrap gap-4 justify-center">
                             <Badge
@@ -205,6 +228,22 @@ export function HomePageClient({ serverData }: { serverData: ServerData }) {
                             >
                                 <Lightbulb /> Inovatif
                             </Badge>
+                        </div>
+
+                        {/* Quick Info Cards - Updated for Trimulyo */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                            {[
+                                { label: "Luas Wilayah", value: "650 Ha", icon: Map },
+                                { label: "Penduduk", value: "12.5K", icon: Users },
+                                { label: "Padukuhan", value: "14", icon: Building2 },
+                                { label: "RT/RW", value: "68/30", icon: Home },
+                            ].map((stat, index) => (
+                                <div key={index} className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20 hover:bg-white/20 transition-colors">
+                                    <stat.icon className="h-5 w-5 text-secondary mb-2" />
+                                    <div className="text-xl font-bold text-white">{stat.value}</div>
+                                    <div className="text-xs text-blue-100">{stat.label}</div>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
@@ -243,10 +282,10 @@ export function HomePageClient({ serverData }: { serverData: ServerData }) {
                     {/* Layanan Mandiri CTA Button */}
                     <div className="mt-16 flex justify-center">
                         <a
-                            href="https://pondokrejo.sleman-desa.id/layanan-mandiri"
+                            href="https://trimulyo.sleman-desa.id/layanan-mandiri"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="group relative inline-flex items-center gap-4 px-8 py-4 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-2xl shadow-2xl hover:shadow-emerald-500/50 transition-all duration-500 hover:scale-105 overflow-hidden border"
+                            className="group relative inline-flex items-center gap-4 px-8 py-4 bg-[#dd2d4a] rounded-2xl shadow-2xl hover:shadow-red-500/50 transition-all duration-500 hover:scale-105 overflow-hidden border border-white/20"
                         >
                             {/* Animated background shimmer */}
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
@@ -359,7 +398,7 @@ export function HomePageClient({ serverData }: { serverData: ServerData }) {
                 <div className="text-center">
                     <h2 className="text-3xl font-bold text-primary mb-2">Berita & Informasi Terbaru</h2>
                     <p className="text-gray-600 max-w-2xl mx-auto">
-                        Ada kegiatan apa saja di Kalurahan Pondokrejo hari ini?
+                        Ada kegiatan apa saja di Kalurahan Trimulyo hari ini?
                     </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -638,7 +677,7 @@ export function HomePageClient({ serverData }: { serverData: ServerData }) {
                 <div className="text-center">
                     <h2 className="text-3xl font-bold text-primary mb-2">Tujuan Pembangunan Berkelanjutan (SDGs)</h2>
                     <p className="text-gray-600 max-w-2xl mx-auto">
-                        Pantau kemajuan implementasi 18 Tujuan Pembangunan Berkelanjutan di Kalurahan Pondokrejo
+                        Pantau kemajuan implementasi 18 Tujuan Pembangunan Berkelanjutan di Kalurahan Trimulyo
                     </p>
                 </div>
                 <SDGsDashboard />

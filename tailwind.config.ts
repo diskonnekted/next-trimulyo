@@ -10,48 +10,110 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Pondokrejo Village Official Colors
+        // Trimulyo New Color Scheme
+        "molten-lava": {
+          DEFAULT: "#780000",
+          100: "#180000",
+          200: "#310000",
+          300: "#490000",
+          400: "#620000",
+          500: "#780000",
+          600: "#c80000",
+          700: "#ff1616",
+          800: "#ff6464",
+          900: "#ffb1b1",
+        },
+        "brick-red": {
+          DEFAULT: "#c1121f",
+          100: "#260406",
+          200: "#4d070c",
+          300: "#730b12",
+          400: "#990e17",
+          500: "#c1121f",
+          600: "#eb2330",
+          700: "#f05a64",
+          800: "#f59198",
+          900: "#fac8cb",
+        },
+        "papaya-whip": {
+          DEFAULT: "#fdf0d5",
+          100: "#593c04",
+          200: "#b17908",
+          300: "#f5ae22",
+          400: "#f9cf7b",
+          500: "#fdf0d5",
+          600: "#fdf2dc",
+          700: "#fef5e5",
+          800: "#fef9ed",
+          900: "#fffcf6",
+        },
+        "deep-space-blue": {
+          DEFAULT: "#003049",
+          100: "#00090e",
+          200: "#00131d",
+          300: "#001c2b",
+          400: "#002539",
+          500: "#003049",
+          600: "#00679f",
+          700: "#00a0f7",
+          800: "#50c2ff",
+          900: "#a7e0ff",
+        },
+        "steel-blue": {
+          DEFAULT: "#669bbc",
+          100: "#122028",
+          200: "#233f51",
+          300: "#355f79",
+          400: "#477fa2",
+          500: "#669bbc",
+          600: "#85afc9",
+          700: "#a4c3d7",
+          800: "#c2d7e4",
+          900: "#e1ebf2",
+        },
+
+        // Mapped Semantic Colors
         primary: {
-          DEFAULT: "#39a2cf", // Header BG
-          50: "#e6f0fa",
-          100: "#cce0f5",
-          200: "#99c2eb",
-          300: "#66a3e0",
-          400: "#3385d6",
-          500: "#3eafdf", // Hero BG
-          600: "#39a2cf", // Main primary color (Header)
-          700: "#0a4766",
-          800: "#08374c",
-          900: "#052632",
-          950: "#03161d",
+          DEFAULT: "#003049", // Deep Space Blue
+          50: "#a7e0ff", // using 900 from palette
+          100: "#50c2ff", // using 800
+          200: "#00a0f7", // using 700
+          300: "#00679f", // using 600
+          400: "#003049", // using 500
+          500: "#003049", // using 500
+          600: "#002539", // using 400
+          700: "#001c2b", // using 300
+          800: "#00131d", // using 200
+          900: "#00090e", // using 100
+          950: "#00090e",
         },
         secondary: {
-          DEFAULT: "#3eafdf", // Hero BG
-          50: "#e6f2fa",
-          100: "#cce5f5",
-          200: "#99cceb",
-          300: "#66b2e0",
-          400: "#3399d6",
-          500: "#3eafdf", // Main secondary color (Hero)
-          600: "#39a2cf",
-          700: "#0a4766",
-          800: "#08374c",
-          900: "#052632",
-          950: "#03161d",
+          DEFAULT: "#c1121f", // Brick Red
+          50: "#fac8cb",
+          100: "#f59198",
+          200: "#f05a64",
+          300: "#eb2330",
+          400: "#c1121f",
+          500: "#c1121f",
+          600: "#990e17",
+          700: "#730b12",
+          800: "#4d070c",
+          900: "#260406",
+          950: "#260406",
         },
         accent: {
-          DEFAULT: "#0a4661", // Footer BG
-          50: "#e6f0f5",
-          100: "#cce0eb",
-          200: "#99c2d7",
-          300: "#66a3c2",
-          400: "#3385ae",
-          500: "#0a4661", // Main accent color (Footer)
-          600: "#062942",
-          700: "#041d2f",
-          800: "#03121c",
-          900: "#010609",
-          950: "#000000",
+          DEFAULT: "#669bbc", // Steel Blue
+          50: "#e1ebf2",
+          100: "#c2d7e4",
+          200: "#a4c3d7",
+          300: "#85afc9",
+          400: "#669bbc",
+          500: "#669bbc",
+          600: "#477fa2",
+          700: "#355f79",
+          800: "#233f51",
+          900: "#122028",
+          950: "#122028",
         },
         background: "#f8f9fc", // Dasar halaman bersih - Wordpress background
         surface: "#e6eaf3", // Latar kartu/komponen - Wordpress surface

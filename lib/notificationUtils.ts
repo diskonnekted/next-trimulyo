@@ -1,6 +1,6 @@
 /**
  * Notification Utilities for Smart Notification Bar
- * Handles notifications, alerts, and system messages for Pondokrejo Village Portal
+ * Handles notifications, alerts, and system messages for Trimulyo Village Portal
  */
 
 // Notification types
@@ -386,7 +386,7 @@ export function formatNotificationTimestamp(timestamp: number): string {
  * Local storage implementation for notifications
  */
 export class LocalNotificationStorage implements NotificationStorage {
-    private storageKey = "pondokrejo_notifications";
+    private storageKey = "trimulyo_notifications";
 
     addNotification(notification: Notification): void {
         const notifications = this.getNotifications();
@@ -717,7 +717,7 @@ export class NotificationManager {
 
     private loadPreferences(): void {
         try {
-            const stored = localStorage.getItem("pondokrejo_notification_preferences");
+            const stored = localStorage.getItem("trimulyo_notification_preferences");
             if (stored) {
                 this.preferences = { ...this.preferences, ...JSON.parse(stored) };
             }
@@ -726,7 +726,7 @@ export class NotificationManager {
 
     private savePreferences(): void {
         try {
-            localStorage.setItem("pondokrejo_notification_preferences", JSON.stringify(this.preferences));
+            localStorage.setItem("trimulyo_notification_preferences", JSON.stringify(this.preferences));
         } catch {}
     }
 }

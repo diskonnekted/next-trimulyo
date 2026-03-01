@@ -106,9 +106,9 @@ const nextConfig: NextConfig = {
             },
             {
                 protocol: 'https',
-                hostname: 'pondokrejo.sleman-desa.id',
+                hostname: 'trimulyo.sleman-desa.id',
                 port: '',
-                pathname: '/storage-desa',
+                pathname: '/storage/**',
             },
             {
                 protocol: 'https',
