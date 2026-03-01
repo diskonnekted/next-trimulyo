@@ -74,7 +74,11 @@ export function useExternalNews(limit: number = 10) {
                     // OpenSID data structure: { data: Array<OpenSIDArticle>, ... }
                     if (openSidData && Array.isArray(openSidData.data) && openSidData.data.length > 0) {
                         const transformedOpenSidNews = transformOpenSidPosts(openSidData.data);
-                        setNews(transformedOpenSidNews.slice(0, limit));
+                        // Sort by date descending (newest first)
+                        const sortedNews = transformedOpenSidNews.sort((a, b) => 
+                            new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+                        );
+                        setNews(sortedNews.slice(0, limit));
                         return;
                     }
                 }
@@ -89,7 +93,11 @@ export function useExternalNews(limit: number = 10) {
                 if (proxyResponse.ok) {
                     const data: NewsResponse = await proxyResponse.json();
                     if (data.success && data.data && data.data.length > 0) {
-                        setNews(data.data.slice(0, limit));
+                         // Sort by date descending (newest first)
+                        const sortedNews = data.data.sort((a, b) => 
+                            new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+                        );
+                        setNews(sortedNews.slice(0, limit));
                         return;
                     }
                 }
