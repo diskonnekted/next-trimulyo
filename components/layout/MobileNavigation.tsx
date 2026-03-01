@@ -65,7 +65,7 @@ export function MobileNavigation() {
         { href: "/", label: translations.navigation.beranda, icon: Home },
         { href: "/berita", label: translations.navigation.berita, icon: Newspaper },
         {
-            href: "https://pondokrejo.sleman-desa.id/layanan-mandiri",
+            href: "https://trimulyo.sleman-desa.id/layanan-mandiri",
             label: translations.navigation.layanan,
             icon: FileText,
             external: true,

@@ -21,33 +21,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL || "https://pondokrejo.clasnet.co.id"),
-    title: "Portal Resmi Kalurahan Pondokrejo - Sleman, DIY",
+    metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL || "https://trimulyo.sleman-desa.id"),
+    title: "Portal Resmi Kalurahan Trimulyo - Sleman, DIY",
     description:
-        "Portal resmi Pemerintah Kalurahan Pondokrejo, Kabupaten Sleman, DIY. Informasi lengkap layanan publik, berita terkini, dan transparansi pemerintahan kalurahan.",
+        "Portal resmi Pemerintah Kalurahan Trimulyo, Kabupaten Sleman, DIY. Informasi lengkap layanan publik, berita terkini, dan transparansi pemerintahan kalurahan.",
     keywords:
-        "Kalurahan Pondokrejo, Sleman, DIY, pemerintahan kalurahan, layanan publik, berita kalurahan, transparansi, APBDes",
-    authors: [{ name: "Pemerintah Kalurahan Pondokrejo" }],
+        "Kalurahan Trimulyo, Sleman, DIY, pemerintahan kalurahan, layanan publik, berita kalurahan, transparansi, APBDes",
+    authors: [{ name: "Pemerintah Kalurahan Trimulyo" }],
     openGraph: {
-        title: "Portal Resmi Kalurahan Pondokrejo",
-        description: "Portal resmi Pemerintah Kalurahan Pondokrejo, Kabupaten Sleman, DIY",
+        title: "Portal Resmi Kalurahan Trimulyo",
+        description: "Portal resmi Pemerintah Kalurahan Trimulyo, Kabupaten Sleman, DIY",
         type: "website",
         locale: "id_ID",
-        url: "https://pondokrejo.clasnet.co.id",
-        siteName: env.APP_NAME || "Portal Kalurahan Pondokrejo",
+        url: "https://trimulyo.sleman-desa.id",
+        siteName: env.APP_NAME || "Portal Kalurahan Trimulyo",
         images: [
             {
                 url: "/favicon-512x512.png",
                 width: 512,
                 height: 512,
-                alt: "Kalurahan Pondokrejo Logo",
+                alt: "Kalurahan Trimulyo Logo",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "Portal Resmi Kalurahan Pondokrejo",
-        description: "Portal resmi Pemerintah Kalurahan Pondokrejo, Kabupaten Sleman, DIY",
+        title: "Portal Resmi Kalurahan Trimulyo",
+        description: "Portal resmi Pemerintah Kalurahan Trimulyo, Kabupaten Sleman, DIY",
     },
     other: {
         "msapplication-TileColor": "#39a2cf",

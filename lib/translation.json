@@ -19,7 +19,7 @@
         "lainnya": "Lainnya"
     },
     "hero": {
-        "judul1": "Digitalisasi Kalurahan Pondokrejo",
+        "judul1": "Digitalisasi Kalurahan Trimulyo",
         "deskripsi1": "Mewujudkan Tata Kelola Pemerintahan Modern dan Transparan untuk Kesejahteraan Warga",
         "ctaLayananDigital": "Jelajahi Layanan Digital",
         "ctaPantauPembangunan": "Pantau Pembangunan",
@@ -119,7 +119,7 @@
         "pengumumanPrestasi": "Pengumuman Prestasi"
     },
     "sdgs": {
-        "judul": "Target SDGs Kalurahan Pondokrejo",
+        "judul": "Target SDGs Kalurahan Trimulyo",
         "deskripsi": "Sustainable Development Goals",
         "lihatDetailProgress": "Lihat Detail Progress SDGs",
         "goals": {
@@ -174,7 +174,7 @@
     },
     "pemerintah": {
         "judul": "Pemerintah Kalurahan",
-        "lurah": "Lurah Kalurahan Pondokrejo",
+        "lurah": "Lurah Kalurahan Trimulyo",
         "motto": "Melayani dengan hati, membangun bersama warga",
         "jabatan": "Jabatan",
         "email": "Email",
@@ -449,25 +449,15 @@
         }
     },
     "footer": {
-        "copyright": "© 2025 Pemerintah Kalurahan Pondokrejo",
-        "alamat": "Kalurahan Pondokrejo, Kapanewon Tempel, Kabupaten Sleman, D.I Yogyakarta, 55552",
-        "telepon": "0877-4220-3602",
-        "email": "pondokrejo57@gmail.com",
-        "website": "pondokrejo.slemankab.go.id",
-        "jamOperasional": "Senin-Jumat: 08:00-16:00 WIB",
-        "poweredBy": "Powered by: Clasnet Corporation",
-        "securityCertified": "Security Certified",
-        "hotlineDarurat": "Hotline Darurat: 112",
-        "quickLinks": "Quick Links",
+        "quickLinks": "Tautan Cepat",
         "layanan": "Layanan",
-        "legal": "Legal",
-        "socialMedia": "Social Media",
-        "newsletter": "Newsletter",
-        "subscribeNewsletter": "Subscribe untuk update terkini",
-        "privacyPolicy": "Kebijakan Privasi",
-        "termsConditions": "Syarat & Ketentuan",
-        "faq": "FAQ",
-        "sitemap": "Sitemap"
+        "alamat": "Jl. Salak Km. 3, Trimulyo, Kec. Sleman, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55513",
+        "telepon": "(0274) 869248",
+        "email": "trimulyosleman@slemankab.go.id",
+        "jamOperasional": "Senin - Jumat, 08:00 - 15:30 WIB",
+        "copyright": "© 2026 Pemerintah Kalurahan Trimulyo. Hak Cipta Dilindungi.",
+        "developedBy": "Dikembangkan oleh",
+        "developerName": "Tim IT Kalurahan"
     },
     "accessibility": {
         "skipToContent": "Lompat ke konten",

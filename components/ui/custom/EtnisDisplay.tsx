@@ -27,14 +27,23 @@ interface EtnisDisplayProps {
     className?: string;
 }
 
+import { DUMMY_ETNIS_DATA } from "@/lib/dummy-data";
+
 const fetchEtnisData = async (): Promise<EtnisData | null> => {
     try {
         const response = await fetch(`/api/statistik/etnis`);
-        if (!response.ok) throw new Error(`Failed to fetch etnis data: ${response.status}`);
-        return await response.json();
+        if (!response.ok) {
+             console.warn(`Failed to fetch etnis data: ${response.status}, using dummy data`);
+             return DUMMY_ETNIS_DATA as unknown as EtnisData;
+        }
+        const data = await response.json();
+        if (!data || !data.data || data.data.length === 0) {
+             return DUMMY_ETNIS_DATA as unknown as EtnisData;
+        }
+        return data;
     } catch (error) {
         console.error("Failed to fetch etnis data:", error);
-        return null;
+        return DUMMY_ETNIS_DATA as unknown as EtnisData;
     }
 };
 

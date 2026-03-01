@@ -27,14 +27,23 @@ interface BDTDisplayProps {
     className?: string;
 }
 
+import { DUMMY_BDT_DATA } from "@/lib/dummy-data";
+
 const fetchBDTData = async (): Promise<BDTData | null> => {
     try {
         const response = await fetch(`/api/statistik/bdt`);
-        if (!response.ok) throw new Error(`Failed to fetch bdt data: ${response.status}`);
-        return await response.json();
+        if (!response.ok) {
+             console.warn(`Failed to fetch bdt data: ${response.status}, using dummy data`);
+             return DUMMY_BDT_DATA as unknown as BDTData;
+        }
+        const data = await response.json();
+        if (!data || !data.data || data.data.length === 0) {
+             return DUMMY_BDT_DATA as unknown as BDTData;
+        }
+        return data;
     } catch (error) {
         console.error("Failed to fetch bdt data:", error);
-        return null;
+        return DUMMY_BDT_DATA as unknown as BDTData;
     }
 };
 

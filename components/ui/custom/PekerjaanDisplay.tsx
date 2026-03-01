@@ -28,20 +28,26 @@ interface PekerjaanDisplayProps {
     className?: string;
 }
 
+import { DUMMY_PEKERJAAN_DATA } from "@/lib/dummy-data";
+
 // Function to fetch Pekerjaan data from API
 const fetchPekerjaanData = async (): Promise<PekerjaanData | null> => {
     try {
         const response = await fetch(`/api/statistik/pekerjaan`);
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch pekerjaan data: ${response.status}`);
+            console.warn(`Failed to fetch pekerjaan data: ${response.status}, using dummy data`);
+            return DUMMY_PEKERJAAN_DATA as unknown as PekerjaanData;
         }
 
         const data = await response.json();
+        if (!data || !data.data || data.data.length === 0) {
+             return DUMMY_PEKERJAAN_DATA as unknown as PekerjaanData;
+        }
         return data;
     } catch (error) {
         console.error("Failed to fetch pekerjaan data:", error);
-        return null;
+        return DUMMY_PEKERJAAN_DATA as unknown as PekerjaanData;
     }
 };
 

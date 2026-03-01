@@ -319,8 +319,8 @@ function NewsContent({
         <div className="container mx-auto px-4 py-4">
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold mb-2">{t("berita.beritaUtama")}</h1>
-                <p className="text-muted-foreground">{t("seo.newsPageDesc")}</p>
+                <h1 className="text-3xl font-bold text-[#10264f]">Berita Utama</h1>
+                <p className="text-[#7487af]">Informasi terkini seputar Kalurahan Trimulyo</p>
             </div>
 
             {/* Search and Filter Bar */}

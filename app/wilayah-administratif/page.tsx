@@ -81,20 +81,75 @@ interface WilayahAdministratif {
     };
 }
 
-interface ApiResponse {
-    data: WilayahAdministratif[];
+interface ViewAttribute {
+    name: string;
+    isStats: boolean;
+}
+
+interface SigantaraView {
+    id_kalurahan: string;
+    geometry_type: string;
+    attributes: ViewAttribute[];
+    created_at: string;
+    nama: string;
+    default: boolean;
+    id: string;
+    updated_at: string;
+    features: SigantaraFeature[];
+}
+
+interface SigantaraFeature {
+    type: string;
+    geometry: {
+        type: string;
+        coordinates: number[][][]; // Simplified
+    };
+    properties: {
+        name: string;
+        description: string | null;
+        color: string;
+        // Add other properties as needed
+        [key: string]: unknown;
+    };
+}
+
+interface SigantaraResponse {
+    views: SigantaraView[];
 }
 
 export default function WilayahAdministratifPage() {
     const [wilayahData, setWilayahData] = useState<WilayahAdministratif[]>([]);
+    const [sigantaraData, setSigantaraData] = useState<SigantaraResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedDusun, setSelectedDusun] = useState<WilayahAdministratif | null>(null);
 
     useEffect(() => {
-        fetchWilayahData();
+        const loadData = async () => {
+            setLoading(true);
+            try {
+                await Promise.all([fetchWilayahData(), fetchSigantaraData()]);
+            } catch (err) {
+                console.error("Error loading data:", err);
+                // Don't set global error here to allow partial data display
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadData();
     }, []);
+
+    const fetchSigantaraData = async () => {
+        try {
+            const response = await fetch("/api/sigantara");
+            if (!response.ok) throw new Error("Failed to fetch Sigantara data");
+            const data = await response.json();
+            setSigantaraData(data);
+        } catch (err) {
+            console.error("Error fetching Sigantara data:", err);
+        }
+    };
 
     const fetchWilayahData = async () => {
         try {
@@ -198,6 +253,31 @@ export default function WilayahAdministratifPage() {
                         Informasi lengkap mengenai wilayah administratif Kalurahan Pondokrejo
                     </p>
                 </div>
+
+                {/* Peta Sigantara */}
+                {sigantaraData && sigantaraData.views?.length > 0 && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Map className="h-5 w-5 text-primary" />
+                                Peta Wilayah Digital
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="aspect-[3/4] w-full rounded-lg overflow-hidden border">
+                                <iframe 
+                                    src="https://sigantara.vercel.app/DL2XryeXPQXwIFf58iRfWSCZfzq2"
+                                    className="w-full h-full border-0"
+                                    title="Peta Wilayah Sigantara"
+                                    allowFullScreen
+                                />
+                            </div>
+                            <div className="mt-4 text-sm text-gray-600">
+                                <p>Menampilkan {sigantaraData.views[0].features?.length || 0} area wilayah</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Statistics Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">

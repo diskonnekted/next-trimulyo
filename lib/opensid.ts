@@ -54,7 +54,7 @@ interface OpenSIDApiResponse {
 
 // Configuration
 const OPENSID_CONFIG = {
-    baseUrl: `${env.OPENSID_API_URL ?? "https://pondokrejo.sleman-desa.id"}/internal_api/arsip`,
+    baseUrl: `${env.OPENSID_API_URL ?? "https://trimulyo.sleman-desa.id"}/internal_api/berita`,
     postsPerPage: 50, // Increased to show more posts per page
     cacheTimeout: 60 * 60 * 1000, // 1 jam cache
 };
@@ -121,8 +121,14 @@ function decodeHtmlEntities(text: string): string {
 // Base API function - now uses proxy to avoid CORS issues
 async function fetchFromOpenSID(_endpoint: string = "", params: Record<string, string> = {}) {
     // Use proxy API route to avoid CORS issues
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://pondokrejo.clasnet.co.id";
-    const url = new URL("/api/opensid-proxy", baseUrl);
+    let baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:5091";
+    
+    // If running in browser, use current origin to ensure we hit the local API
+    if (typeof window !== "undefined") {
+        baseUrl = window.location.origin;
+    }
+
+    const url = new URL("/api/opensid-berita", baseUrl);
 
     // Add parameters if needed
     Object.entries(params).forEach(([key, value]) => {
@@ -169,11 +175,11 @@ function transformArticle(article: OpenSIDArticle) {
 
         // If it's just a filename (no path), add the OpenSID path with sedang_ prefix
         if (!imageUrl.includes("/")) {
-            imageUrl = `https://pondokrejo.sleman-desa.id/desa/upload/artikel/sedang_${imageUrl}`;
+            imageUrl = `https://trimulyo.sleman-desa.id/desa/upload/artikel/sedang_${imageUrl}`;
         } else {
             // If it's a relative path, add base URL
             if (imageUrl.startsWith("/")) {
-                imageUrl = `https://pondokrejo.sleman-desa.id${imageUrl}`;
+                imageUrl = `https://trimulyo.sleman-desa.id${imageUrl}`;
             }
             // Force HTTPS
             imageUrl = imageUrl.replace(/^http:\/\//i, "https://");

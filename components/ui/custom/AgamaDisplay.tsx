@@ -28,20 +28,26 @@ interface AgamaDisplayProps {
     className?: string;
 }
 
+import { DUMMY_AGAMA_DATA } from "@/lib/dummy-data";
+
 // Function to fetch Agama data from API
 const fetchAgamaData = async (): Promise<AgamaData | null> => {
     try {
         const response = await fetch(`/api/statistik/agama`);
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch agama data: ${response.status}`);
+            console.warn(`Failed to fetch agama data: ${response.status}, using dummy data`);
+            return DUMMY_AGAMA_DATA as unknown as AgamaData;
         }
 
         const data = await response.json();
+        if (!data || !data.data || data.data.length === 0) {
+             return DUMMY_AGAMA_DATA as unknown as AgamaData;
+        }
         return data;
     } catch (error) {
         console.error("Failed to fetch agama data:", error);
-        return null;
+        return DUMMY_AGAMA_DATA as unknown as AgamaData;
     }
 };
 

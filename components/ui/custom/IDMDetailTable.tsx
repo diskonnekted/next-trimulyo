@@ -52,8 +52,11 @@ interface IDMDetailTableProps {
 }
 
 export function IDMDetailTable({ data, className }: IDMDetailTableProps) {
+    // Ensure data.ROW exists and is an array
+    const rows = Array.isArray(data?.ROW) ? data.ROW : [];
+
     // Filter to show only actual indicators (not the summary rows)
-    const indicators = data.ROW.filter((row) => row.NO !== null && row.INDIKATOR !== "STATUS IDM 2024");
+    const indicators = rows.filter((row) => row.NO !== null && row.INDIKATOR !== "STATUS IDM 2024");
 
     // Group indicators by category
     const iksIndicators = indicators.filter((_, index) => index < 35);
@@ -199,8 +202,8 @@ export function IDMDetailTable({ data, className }: IDMDetailTableProps) {
             <div className="text-center">
                 <h1 className="text-4xl font-bold text-primary mb-2">Detail Indikator IDM</h1>
                 <p className="text-gray-600 max-w-2xl mx-auto">
-                    Tabel lengkap semua indikator Indeks Desa Mandiri Tahun {data.SUMMARIES.TAHUN} -{" "}
-                    {data.IDENTITAS[0]?.nama_desa}
+                    Tabel lengkap semua indikator Indeks Desa Mandiri Tahun {data.SUMMARIES?.TAHUN} -{" "}
+                    {data.IDENTITAS?.[0]?.nama_desa || "Trimulyo"}
                 </p>
             </div>
 
@@ -217,7 +220,7 @@ export function IDMDetailTable({ data, className }: IDMDetailTableProps) {
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3">
-                                {indicators
+                                {[...indicators]
                                     .sort(
                                         (a, b) =>
                                             (typeof b.SKOR === "number" ? b.SKOR : parseFloat(b.SKOR as string) || 0) -
@@ -264,7 +267,7 @@ export function IDMDetailTable({ data, className }: IDMDetailTableProps) {
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3">
-                                {indicators
+                                {[...indicators]
                                     .sort(
                                         (a, b) =>
                                             (typeof a.SKOR === "number" ? a.SKOR : parseFloat(a.SKOR as string) || 0) -

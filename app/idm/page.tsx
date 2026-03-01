@@ -54,9 +54,8 @@ const fetchIDMData = async (year: string = "2024"): Promise<IDMData | null> => {
         }
 
         const data = await response.json();
-        // IDM API returns: { data: [{ attributes: { SUMMARIES, ROW, IDENTITAS } }] }
-        // We need to extract the attributes from the first item
-        return data.data?.[0]?.attributes || null;
+        // IDM API returns the data directly now (SUMMARIES, ROW, IDENTITAS)
+        return data || null;
     } catch (error) {
         console.error("Failed to fetch IDM data:", error);
         return null;

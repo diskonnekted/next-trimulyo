@@ -185,11 +185,11 @@ export function Header() {
                             >
                                 <Logo {...LogoVariant.light} size={40} />
                                 <div className="hidden sm:block">
-                                    <h1 className="text-lg font-bold text-white">Kalurahan Pondokrejo</h1>
+                                    <h1 className="text-lg font-bold text-white">Kalurahan Trimulyo</h1>
                                     <p className="text-xs text-[#ddf0ff]">Kabupaten Sleman, DIY</p>
                                 </div>
                                 <div className="block sm:hidden">
-                                    <h1 className="text-lg font-bold text-white">Pondokrejo</h1>
+                                    <h1 className="text-lg font-bold text-white">Trimulyo</h1>
                                     <p className="text-xs text-[#ddf0ff]">Kabupaten Sleman</p>
                                 </div>
                             </Link>

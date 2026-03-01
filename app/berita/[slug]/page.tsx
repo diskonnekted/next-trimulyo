@@ -104,7 +104,45 @@ function NewsDetailContent() {
 
                 // Get post by slug
                 const { getPostBySlug, getPosts } = await import("@/lib/opensid");
-                const postData = (await getPostBySlug(slug)) as Post | null;
+                let postData = (await getPostBySlug(slug)) as Post | null;
+
+                if (!postData) {
+                    // Try fetching directly from WP API if not found via OpenSID helper
+                    try {
+                        const response = await fetch(`/api/opensid-berita`);
+                        if (response.ok) {
+                            const data = await response.json();
+                            const wpPost = data.data?.find((p: any) => p.attributes.slug === slug);
+                            
+                            if (wpPost) {
+                                // Transform to Post interface
+                                postData = {
+                                    id: wpPost.id,
+                                    title: wpPost.attributes.judul,
+                                    slug: wpPost.attributes.slug,
+                                    content: wpPost.attributes.isi,
+                                    featuredImage: wpPost.attributes.gambar,
+                                    featuredImageAlt: wpPost.attributes.judul,
+                                    date: wpPost.attributes.tgl_upload,
+                                    modified: wpPost.attributes.tgl_upload,
+                                    categories: [{
+                                        id: 0,
+                                        name: wpPost.attributes.category.kategori,
+                                        slug: wpPost.attributes.category.slug
+                                    }],
+                                    tags: [],
+                                    author: {
+                                        name: wpPost.attributes.author.nama,
+                                        avatar: "/images/default-avatar.png"
+                                    },
+                                    viewCount: 0,
+                                };
+                            }
+                        }
+                    } catch (wpError) {
+                        console.error("Failed to fetch from WP fallback:", wpError);
+                    }
+                }
 
                 if (!postData) {
                     setError("Berita tidak ditemukan");
@@ -116,16 +154,39 @@ function NewsDetailContent() {
 
                 // Load related posts (posts with same categories)
                 if (postData.categories.length > 0) {
-                    const categoryId = postData.categories[0].id;
-                    const relatedData = await getPosts(1, 3, categoryId);
+                    const category = postData.categories[0];
 
-                    if (relatedData) {
-                        // Exclude current post from related posts
-                        const filtered = relatedData.posts.filter((p: Post) => p.id !== postData.id);
-                        setRelatedPosts(filtered);
+                    // If it's a "Berita Resmi" (category slug match), we need special handling
+                    if (category.slug === 'berita-resmi') {
+                        // Fetch all posts first, then filter client-side as getPosts filtering might be strict on IDs
+                        const allPosts = await getPosts(1, 10);
+                        if (allPosts && allPosts.posts) {
+                            // Filter for other official news or just recent ones
+                            const related = allPosts.posts
+                                .filter((p: Post) => p.id !== postData!.id)
+                                .slice(0, 3);
+                            setRelatedPosts(related);
+                        }
+                    } else if (category.id !== 0) {
+                        // Only fetch related if valid category ID (not fallback 0)
+                        const relatedData = await getPosts(1, 3, category.id);
+
+                        if (relatedData) {
+                            // Exclude current post from related posts
+                            const filtered = relatedData.posts.filter((p: Post) => p.id !== postData!.id);
+                            setRelatedPosts(filtered);
+                        }
+                    } else {
+                         // Fallback related posts (recent)
+                         const relatedData = await getPosts(1, 3);
+                         if (relatedData) {
+                            const filtered = relatedData.posts.filter((p: Post) => p.id !== postData!.id);
+                            setRelatedPosts(filtered);
+                         }
                     }
                 }
-            } catch {
+            } catch (err) {
+                console.error("Error loading post:", err);
                 setError("Gagal memuat berita. Silakan coba lagi.");
             } finally {
                 setLoading(false);

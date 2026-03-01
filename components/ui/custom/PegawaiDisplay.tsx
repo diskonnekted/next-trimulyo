@@ -1,60 +1,27 @@
 "use client";
 
 import * as React from "react";
-import { Users, Mail, Phone, MapPin, Calendar, UserCheck, Briefcase } from "lucide-react";
+import { Users, UserCheck, Briefcase, GraduationCap, User } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { ProtectedContact } from "./ProtectedContact";
+import Image from "next/image";
 
-interface Pegawai {
-    pamong_id: number;
-    pamong_nama: string;
-    pamong_nik: string;
-    pamong_tempatlahir: string;
-    pamong_tanggallahir: string;
-    pamong_sex: number;
-    pamong_pendidikan: number;
-    pamong_agama: number;
-    foto: string;
-    nama_jabatan: string;
-    pamong_nosk: string;
-    pamong_tglsk: string;
-    pamong_masajab: string | null;
-    status_kehadiran: string;
-    tanggal: string | null;
-    foto_staff: string;
-    penduduk: {
-        alamat_wilayah: string;
-        jenis_kelamin: {
-            nama: string;
-        };
-        agama: {
-            nama: string;
-        };
-        pendidikan_k_k: {
-            nama: string;
-        };
-        pekerjaan: {
-            nama: string;
-        };
-        usia: string;
-        telepon: string | null;
-        email: string | null;
-    };
-    jabatan: {
-        nama: string;
-        tupoksi: string;
-    };
+interface GovernmentOfficial {
+    id: string;
+    nama: string;
+    jabatan: string;
+    jenis_kelamin: string;
+    pendidikan: string;
+    usia: number | string;
+    foto: string | null;
+    status: string;
 }
 
-interface PegawaiData {
-    data: Array<{
-        type: string;
-        id: string;
-        attributes: Pegawai;
-    }>;
+interface ApiResponse {
+    success: boolean;
+    data: any[]; // Changed to any[] to support both mock and real data structures
 }
 
 interface PegawaiDisplayProps {
@@ -62,7 +29,7 @@ interface PegawaiDisplayProps {
 }
 
 // Function to fetch Pegawai data from API
-const fetchPegawaiData = async (): Promise<PegawaiData | null> => {
+const fetchPegawaiData = async (): Promise<ApiResponse | null> => {
     try {
         const response = await fetch(`/api/pemerintah`);
 
@@ -79,7 +46,7 @@ const fetchPegawaiData = async (): Promise<PegawaiData | null> => {
 };
 
 export function PegawaiDisplay({ className }: PegawaiDisplayProps) {
-    const [data, setData] = React.useState<PegawaiData | null>(null);
+    const [data, setData] = React.useState<ApiResponse | null>(null);
     const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
@@ -87,14 +54,9 @@ export function PegawaiDisplay({ className }: PegawaiDisplayProps) {
             setLoading(true);
             setData(null);
 
-            // Create a timeout promise that rejects after 30 seconds
-            const timeoutPromise = new Promise((_, reject) => {
-                setTimeout(() => reject(new Error("Timeout: API took too long")), 30000);
-            });
-
             try {
-                const result = await Promise.race([fetchPegawaiData(), timeoutPromise]);
-                setData(result as PegawaiData);
+                const result = await fetchPegawaiData();
+                setData(result);
             } catch (error) {
                 console.error("Failed to load pegawai data:", error);
                 setData(null);
@@ -105,33 +67,6 @@ export function PegawaiDisplay({ className }: PegawaiDisplayProps) {
 
         loadData();
     }, []);
-
-    // Format date
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString("id-ID", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-        });
-    };
-
-    // Get photo URL
-    const getPhotoUrl = (fotoPath: string, fotoStaff: string) => {
-        // Try foto first (direct URL)
-        if (fotoPath && fotoPath.startsWith("http")) {
-            return fotoPath;
-        }
-        // Try foto_staff (construct URL from filename)
-        if (fotoStaff) {
-            return `https://pondokrejo.sleman-desa.id/storage-desa?path=upload/user_pict/${fotoStaff}&signature=placeholder`;
-        }
-        // Fallback to foto with constructed URL
-        if (fotoPath) {
-            return `https://pondokrejo.sleman-desa.id/storage-desa?path=${fotoPath}&signature=placeholder`;
-        }
-        return null;
-    };
 
     if (loading) {
         return (
@@ -176,7 +111,7 @@ export function PegawaiDisplay({ className }: PegawaiDisplayProps) {
         );
     }
 
-    const pegawaiList = data.data.map((item) => item.attributes);
+    const pegawaiList = data.data;
 
     return (
         <div className={cn("w-full space-y-6", className)}>
@@ -191,86 +126,58 @@ export function PegawaiDisplay({ className }: PegawaiDisplayProps) {
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                         {pegawaiList.map((pegawai) => {
-                            const photoUrl = getPhotoUrl(pegawai.foto, pegawai.foto_staff);
+                            // Since our mock data doesn't have foto_staff, we just use foto or null
+                            // If we had foto_staff logic, we'd restore it here
+                            const photoUrl = pegawai.foto;
 
                             return (
                                 <Card
-                                    key={pegawai.pamong_id}
+                                    key={pegawai.id}
                                     className="overflow-hidden hover:shadow-lg transition-shadow pt-0"
                                 >
                                     <div className="relative w-full h-[316px] bg-gradient-to-br from-sky-100 to-blue-200 overflow-hidden">
                                         {photoUrl ? (
-                                            <img
+                                            <Image
                                                 src={photoUrl}
-                                                alt={pegawai.pamong_nama}
-                                                className="w-full h-full object-cover object-top scale-102"
-                                                style={{
-                                                    objectFit: "cover",
-                                                    objectPosition: "top center",
-                                                }}
+                                                alt={pegawai.nama}
+                                                fill
+                                                className="object-cover object-top scale-102"
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
-                                                <Users className="h-20 w-20 text-muted-foreground/30" />
+                                                <User className="h-20 w-20 text-muted-foreground/30" />
                                             </div>
                                         )}
                                     </div>
                                     <CardContent className="p-4 pt-0 pb-0 space-y-3">
                                         <div>
                                             <h3 className="text-sm font-bold text-primary mb-1">
-                                                {pegawai.pamong_nama}
+                                                {pegawai.nama}
                                             </h3>
                                             <Badge variant="secondary" className="text-xs">
-                                                {pegawai.nama_jabatan}
+                                                {pegawai.jabatan}
                                             </Badge>
                                         </div>
 
                                         <div className="space-y-2 text-xs">
                                             <div className="flex items-center gap-2 text-muted-foreground">
                                                 <Briefcase className="h-4 w-4" />
-                                                <span>{pegawai.penduduk.pekerjaan?.nama || "-"}</span>
+                                                <span>{pegawai.status}</span>
                                             </div>
 
                                             <div className="flex items-center gap-2 text-muted-foreground">
                                                 <UserCheck className="h-4 w-4" />
                                                 <span>
-                                                    {pegawai.penduduk.jenis_kelamin?.nama} • {pegawai.penduduk.usia}
+                                                    {pegawai.jenis_kelamin} • {pegawai.usia} Tahun
                                                 </span>
                                             </div>
 
                                             <div className="flex items-center gap-2 text-muted-foreground">
-                                                <MapPin className="h-4 w-4" />
-                                                <span>{pegawai.penduduk.alamat_wilayah}</span>
-                                            </div>
-
-                                            {pegawai.penduduk.telepon && (
-                                                <div className="flex items-center gap-2 text-muted-foreground">
-                                                    <Phone className="h-4 w-4" />
-                                                    <ProtectedContact value={pegawai.penduduk.telepon} type="phone" />
-                                                </div>
-                                            )}
-
-                                            {pegawai.penduduk.email && (
-                                                <div className="flex items-center gap-2 text-muted-foreground">
-                                                    <Mail className="h-4 w-4" />
-                                                    <ProtectedContact value={pegawai.penduduk.email} type="email" />
-                                                </div>
-                                            )}
-
-                                            <div className="flex items-center gap-2 text-muted-foreground">
-                                                <Calendar className="h-4 w-4" />
-                                                <span>SK: {formatDate(pegawai.pamong_tglsk)}</span>
+                                                <GraduationCap className="h-4 w-4" />
+                                                <span>{pegawai.pendidikan}</span>
                                             </div>
                                         </div>
-
-                                        {pegawai.penduduk.pendidikan_k_k?.nama && (
-                                            <div className="pt-2 border-t">
-                                                <p className="text-xs text-muted-foreground">
-                                                    <span className="font-semibold">Pendidikan:</span>{" "}
-                                                    {pegawai.penduduk.pendidikan_k_k.nama}
-                                                </p>
-                                            </div>
-                                        )}
                                     </CardContent>
                                 </Card>
                             );

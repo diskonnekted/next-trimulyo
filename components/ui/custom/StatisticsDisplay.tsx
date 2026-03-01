@@ -45,20 +45,26 @@ interface StatisticsDisplayProps {
     description?: string;
 }
 
+import { DUMMY_PENDUDUK_DATA } from "@/lib/dummy-data";
+
 // Function to fetch real statistik data from API
 const fetchStatistikData = async (): Promise<StatistikAPIResponse | null> => {
     try {
         const response = await fetch(`/api/statistik/penduduk`);
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch statistik data: ${response.status}`);
+            console.warn(`Failed to fetch statistik data: ${response.status}, using dummy data`);
+            return DUMMY_PENDUDUK_DATA as unknown as StatistikAPIResponse;
         }
 
         const data = await response.json();
+        if (!data || !data.data || data.data.length === 0) {
+             return DUMMY_PENDUDUK_DATA as unknown as StatistikAPIResponse;
+        }
         return data;
     } catch (error) {
         console.error("Failed to fetch statistik data:", error);
-        return null;
+        return DUMMY_PENDUDUK_DATA as unknown as StatistikAPIResponse;
     }
 };
 

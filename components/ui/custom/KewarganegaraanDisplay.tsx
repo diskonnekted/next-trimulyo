@@ -28,20 +28,26 @@ interface KewarganegaraanDisplayProps {
     className?: string;
 }
 
+import { DUMMY_KEWARGANEGARAAN_DATA } from "@/lib/dummy-data";
+
 // Function to fetch Kewarganegaraan data from API
 const fetchKewarganegaraanData = async (): Promise<KewarganegaraanData | null> => {
     try {
         const response = await fetch(`/api/statistik/kewarganegaraan`);
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch kewarganegaraan data: ${response.status}`);
+             console.warn(`Failed to fetch kewarganegaraan data: ${response.status}, using dummy data`);
+             return DUMMY_KEWARGANEGARAAN_DATA as unknown as KewarganegaraanData;
         }
 
         const data = await response.json();
+        if (!data || !data.data || data.data.length === 0) {
+             return DUMMY_KEWARGANEGARAAN_DATA as unknown as KewarganegaraanData;
+        }
         return data;
     } catch (error) {
         console.error("Failed to fetch kewarganegaraan data:", error);
-        return null;
+        return DUMMY_KEWARGANEGARAAN_DATA as unknown as KewarganegaraanData;
     }
 };
 

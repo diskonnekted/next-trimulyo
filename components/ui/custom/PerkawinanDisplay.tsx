@@ -28,20 +28,26 @@ interface PerkawinanDisplayProps {
     className?: string;
 }
 
+import { DUMMY_PERKAWINAN_DATA } from "@/lib/dummy-data";
+
 // Function to fetch Perkawinan data from API
 const fetchPerkawinanData = async (): Promise<PerkawinanData | null> => {
     try {
         const response = await fetch(`/api/statistik/perkawinan`);
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch perkawinan data: ${response.status}`);
+            console.warn(`Failed to fetch perkawinan data: ${response.status}, using dummy data`);
+            return DUMMY_PERKAWINAN_DATA as unknown as PerkawinanData;
         }
 
         const data = await response.json();
+        if (!data || !data.data || data.data.length === 0) {
+             return DUMMY_PERKAWINAN_DATA as unknown as PerkawinanData;
+        }
         return data;
     } catch (error) {
         console.error("Failed to fetch perkawinan data:", error);
-        return null;
+        return DUMMY_PERKAWINAN_DATA as unknown as PerkawinanData;
     }
 };
 

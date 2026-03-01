@@ -28,20 +28,26 @@ interface DisabilitasDisplayProps {
     className?: string;
 }
 
+import { DUMMY_DISABILITAS_DATA } from "@/lib/dummy-data";
+
 // Function to fetch Disabilitas data from API
 const fetchDisabilitasData = async (): Promise<DisabilitasData | null> => {
     try {
         const response = await fetch(`/api/statistik/disabilitas`);
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch disabilitas data: ${response.status}`);
+             console.warn(`Failed to fetch disabilitas data: ${response.status}, using dummy data`);
+             return DUMMY_DISABILITAS_DATA as unknown as DisabilitasData;
         }
 
         const data = await response.json();
+        if (!data || !data.data || data.data.length === 0) {
+             return DUMMY_DISABILITAS_DATA as unknown as DisabilitasData;
+        }
         return data;
     } catch (error) {
         console.error("Failed to fetch disabilitas data:", error);
-        return null;
+        return DUMMY_DISABILITAS_DATA as unknown as DisabilitasData;
     }
 };
 

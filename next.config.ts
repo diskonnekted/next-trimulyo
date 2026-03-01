@@ -16,6 +16,66 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             {
                 protocol: 'http',
+                hostname: 'trimulyo.sleman-desa.id',
+                port: '',
+                pathname: '/desa/upload/media/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'trimulyo.sleman-desa.id',
+                port: '',
+                pathname: '/desa/upload/media/**',
+            },
+            {
+                protocol: 'http',
+                hostname: 'trimulyo.sleman-desa.id',
+                port: '',
+                pathname: '/desa/upload/artikel/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'trimulyo.sleman-desa.id',
+                port: '',
+                pathname: '/desa/upload/artikel/**',
+            },
+            {
+                protocol: 'http',
+                hostname: 'trimulyo.sleman-desa.id',
+                port: '',
+                pathname: '/storage-desa',
+            },
+            {
+                protocol: 'https',
+                hostname: 'trimulyo.sleman-desa.id',
+                port: '',
+                pathname: '/storage-desa',
+            },
+            {
+                protocol: 'http',
+                hostname: 'trimulyo.sleman-desa.id',
+                port: '',
+                pathname: '/desa/upload/pembangunan/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'trimulyo.sleman-desa.id',
+                port: '',
+                pathname: '/desa/upload/pembangunan/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'trimulyosid.slemankab.go.id',
+                port: '',
+                pathname: '/wp-content/uploads/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'static.bmkg.go.id',
+                port: '',
+                pathname: '/**',
+            },
+            {
+                protocol: 'http',
                 hostname: 'pondokrejo.sleman-desa.id',
                 port: '',
                 pathname: '/desa/upload/media/**',
@@ -49,18 +109,6 @@ const nextConfig: NextConfig = {
                 hostname: 'pondokrejo.sleman-desa.id',
                 port: '',
                 pathname: '/storage-desa',
-            },
-            {
-                protocol: 'http',
-                hostname: 'pondokrejo.sleman-desa.id',
-                port: '',
-                pathname: '/desa/upload/galeri/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'pondokrejo.sleman-desa.id',
-                port: '',
-                pathname: '/desa/upload/galeri/**',
             },
         ],
 

@@ -3,10 +3,10 @@ import { env } from "process";
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: env.APP_NAME || "Portal Pondokrejo",
-        short_name: "Pondokrejo",
+        name: env.APP_NAME || "Portal Trimulyo",
+        short_name: "Trimulyo",
         description:
-            "Portal resmi Pemerintah Kalurahan Pondokrejo, Kabupaten Sleman, DIY. Informasi lengkap layanan publik, berita terkini, dan transparansi pemerintahan kalurahan.",
+            "Portal resmi Pemerintah Kalurahan Trimulyo, Kabupaten Sleman, DIY. Informasi lengkap layanan publik, berita terkini, dan transparansi pemerintahan kalurahan.",
         start_url: "/",
         display: "standalone",
         background_color: "#f8f9fc",
@@ -83,14 +83,14 @@ export default function manifest(): MetadataRoute.Manifest {
                 sizes: "1280x720",
                 type: "image/png",
                 form_factor: "wide",
-                label: "Homepage " + env.APP_NAME || "Portal Kalurahan Pondokrejo",
+                label: "Homepage " + env.APP_NAME || "Portal Kalurahan Trimulyo",
             },
             {
                 src: "/images/home-mobile.png",
                 sizes: "390x844",
                 type: "image/png",
                 form_factor: "narrow",
-                label: "Tampilan Mobile " + env.APP_NAME || "Portal Kalurahan Pondokrejo",
+                label: "Tampilan Mobile " + env.APP_NAME || "Portal Kalurahan Trimulyo",
             },
         ],
         related_applications: [],

@@ -33,7 +33,7 @@ function getServerSideData() {
             {
                 id: "4",
                 title: "Pelestarian Budaya",
-                description: "Melestarikan Seni dan Budaya Lokal Pondokrejo",
+                description: "Melestarikan Seni dan Budaya Lokal Trimulyo",
                 image: "/uploads/sliders/taman.avif",
                 ctaText: getServerTranslation("hero.ctaDownloadAplikasi"),
                 ctaLink: "/aplikasi",

@@ -1,190 +1,165 @@
-import { Building, Users, Award, FileText, Calendar, Mail, Phone } from "lucide-react";
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { Building, Users, Award, FileText, Calendar, Mail, Phone, User, GraduationCap, Briefcase } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
+
+interface GovernmentOfficial {
+    id: string;
+    nama: string;
+    jabatan: string;
+    jenis_kelamin: string;
+    pendidikan: string;
+    usia: number;
+    foto: string | null;
+    status: string;
+}
 
 export default function PemerintahanPage() {
+    const [officials, setOfficials] = useState<GovernmentOfficial[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchOfficials = async () => {
+            try {
+                const response = await fetch("/api/pemerintah");
+                if (response.ok) {
+                    const data = await response.json();
+                    setOfficials(data.data || []);
+                }
+            } catch (error) {
+                console.error("Failed to fetch officials:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchOfficials();
+    }, []);
+
+    // Group officials by role for better display
+    const lurah = officials.find(o => o.jabatan.toLowerCase() === "lurah");
+    const carik = officials.find(o => o.jabatan.toLowerCase() === "carik");
+    const kasiKaur = officials.filter(o => 
+        (o.jabatan.toLowerCase().includes("kaur") || o.jabatan.toLowerCase().includes("kasi") || 
+         o.jabatan.toLowerCase().includes("ulu-ulu") || o.jabatan.toLowerCase().includes("kamituwa") ||
+         o.jabatan.toLowerCase().includes("jagabaya")) && 
+        o.id !== lurah?.id && o.id !== carik?.id
+    );
+    const dukuh = officials.filter(o => o.jabatan.toLowerCase().includes("dukuh"));
+    const staff = officials.filter(o => o.jabatan.toLowerCase().includes("staff"));
+
+    const OfficialCard = ({ official, className = "" }: { official: GovernmentOfficial, className?: string }) => (
+        <Card className={`overflow-hidden hover:shadow-lg transition-shadow duration-300 ${className}`}>
+            <div className="aspect-[3/4] relative bg-gray-100">
+                {official.foto ? (
+                    <Image
+                        src={official.foto}
+                        alt={official.nama}
+                        fill
+                        className="object-cover"
+                    />
+                ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
+                        <User className="w-20 h-20" />
+                    </div>
+                )}
+            </div>
+            <CardHeader className="pb-2">
+                <CardTitle className="text-lg font-bold text-center leading-tight min-h-[3rem] flex items-center justify-center">
+                    {official.nama}
+                </CardTitle>
+                <CardDescription className="text-center font-medium text-primary">
+                    {official.jabatan}
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="text-sm space-y-2 pt-0">
+                <div className="flex items-center gap-2 text-gray-600">
+                    <GraduationCap className="w-4 h-4" />
+                    <span>{official.pendidikan}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600">
+                    <Briefcase className="w-4 h-4" />
+                    <span>{official.usia} Tahun</span>
+                </div>
+            </CardContent>
+        </Card>
+    );
+
     return (
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-8">
             {/* Page Title */}
-            <div className="text-center mb-4">
+            <div className="text-center mb-12">
                 <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-4">
                     <Building className="h-10 w-10 text-blue-600" />
                 </div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">Pemerintahan Kalurahan Pondokrejo</h1>
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">Pemerintahan Kalurahan Trimulyo</h1>
                 <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Struktur organisasi, program kerja, dan layanan pemerintahan kalurahan untuk masyarakat
+                    Struktur organisasi dan profil aparatur pemerintah Kalurahan Trimulyo
                 </p>
             </div>
 
-            {/* Main Content */}
-            <Card className="mb-4">
-                <CardHeader>
-                    <CardTitle className="text-2xl text-center">Halaman dalam Pengembangan</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="text-center py-4">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-100 rounded-full mb-4">
-                            <Building className="h-8 w-8 text-amber-600" />
-                        </div>
-                        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                            Informasi Pemerintahan Sedang Disusun
-                        </h2>
-                        <p className="text-gray-600 mb-4 max-w-2xl mx-auto">
-                            Kami sedang mempersiapkan informasi lengkap mengenai pemerintahan Kalurahan Pondokrejo untuk
-                            memberikan transparansi dan akses informasi kepada masyarakat.
-                        </p>
-
-                        <div className="space-y-4 max-w-4xl mx-auto">
-                            {/* Features Preview */}
-                            <div className="bg-gray-50 p-4 rounded-lg">
-                                <h3 className="font-semibold text-gray-900 mb-4">Fitur yang Akan Hadir:</h3>
-                                <div className="grid md:grid-cols-2 gap-4">
-                                    <div className="space-y-4">
-                                        <div className="flex items-start gap-3">
-                                            <Users className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
-                                            <div>
-                                                <h4 className="font-medium text-gray-900">Struktur Organisasi</h4>
-                                                <p className="text-sm text-gray-600">
-                                                    Hierarki dan tugas perangkat kalurahan
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-3">
-                                            <Award className="h-5 w-5 text-gray-900 mt-1 flex-shrink-0" />
-                                            <div>
-                                                <h4 className="font-medium text-gray-900">Program Kerja</h4>
-                                                <p className="text-sm text-gray-600">Prioritas pembangunan kalurahan</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-3">
-                                            <FileText className="h-5 w-5 text-purple-600 mt-1 flex-shrink-0" />
-                                            <div>
-                                                <h4 className="font-medium text-gray-900">Produk Hukum</h4>
-                                                <p className="text-sm text-gray-600">
-                                                    Peraturan dan keputusan kalurahan
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-4">
-                                        <div className="flex items-start gap-3">
-                                            <Calendar className="h-5 w-5 text-orange-600 mt-1 flex-shrink-0" />
-                                            <div>
-                                                <h4 className="font-medium text-gray-900">Agenda Kegiatan</h4>
-                                                <p className="text-sm text-gray-600">Jadwal kegiatan pemerintahan</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-3">
-                                            <Mail className="h-5 w-5 text-teal-600 mt-1 flex-shrink-0" />
-                                            <div>
-                                                <h4 className="font-medium text-gray-900">Layanan Online</h4>
-                                                <p className="text-sm text-gray-600">Pengajuan surat dan permohonan</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-3">
-                                            <Phone className="h-5 w-5 text-red-600 mt-1 flex-shrink-0" />
-                                            <div>
-                                                <h4 className="font-medium text-gray-900">Kontak Darurat</h4>
-                                                <p className="text-sm text-gray-600">Hotline layanan masyarakat</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Status Indicators */}
-                            <div className="grid md:grid-cols-3 gap-4">
-                                <div className="bg-blue-50 p-4 rounded-lg text-center">
-                                    <Users className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-                                    <h4 className="font-semibold text-gray-900 mb-2">Perangkat Kalurahan</h4>
-                                    <Badge variant="secondary">Dalam Proses</Badge>
-                                    <p className="text-sm text-gray-600 mt-2">Data kepegawaian sedang diverifikasi</p>
-                                </div>
-                                <div className="bg-[#e6eaf3] p-4 rounded-lg text-center">
-                                    <FileText className="h-8 w-8 text-gray-900 mx-auto mb-3" />
-                                    <h4 className="font-semibold text-gray-900 mb-2">Dokumen</h4>
-                                    <Badge variant="secondary">Dalam Proses</Badge>
-                                    <p className="text-sm text-gray-600 mt-2">Dokumen sedang diarsipkan</p>
-                                </div>
-                                <div className="bg-purple-50 p-4 rounded-lg text-center">
-                                    <Calendar className="h-8 w-8 text-purple-600 mx-auto mb-3" />
-                                    <h4 className="font-semibold text-gray-900 mb-2">Agenda</h4>
-                                    <Badge variant="secondary">Dalam Proses</Badge>
-                                    <p className="text-sm text-gray-600 mt-2">Jadwal sedang disusun</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-                                <Building className="h-4 w-4" />
-                                <span>Perkiraan selesai: Q1 2025</span>
-                            </div>
-                        </div>
+            {loading ? (
+                <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                    <p className="mt-4 text-gray-500">Memuat data aparatur...</p>
+                </div>
+            ) : (
+                <div className="space-y-12">
+                    {/* Lurah & Carik */}
+                    <div className="flex flex-col md:flex-row justify-center gap-8 max-w-4xl mx-auto">
+                        {lurah && <OfficialCard official={lurah} className="w-full md:w-80 border-blue-200 bg-blue-50/50" />}
+                        {carik && <OfficialCard official={carik} className="w-full md:w-80 border-green-200 bg-green-50/50" />}
                     </div>
-                </CardContent>
-            </Card>
 
-            {/* Preview Structure */}
-            <div className="grid md:grid-cols-2 gap-4">
-                <Card className="opacity-50">
-                    <CardHeader>
-                        <CardTitle>Struktur Pemerintahan</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            <div className="border-l-4 border-blue-600 pl-4">
-                                <h4 className="font-semibold">Kepala Kalurahan</h4>
-                                <p className="text-sm text-gray-600">Pimpinan eksekutif kalurahan</p>
-                            </div>
-                            <div className="border-l-4 border-[#3a4d74] pl-4">
-                                <h4 className="font-semibold">Sekretaris Kalurahan</h4>
-                                <p className="text-sm text-gray-600">Administrasi dan keuangan</p>
-                            </div>
-                            <div className="border-l-4 border-purple-600 pl-4">
-                                <h4 className="font-semibold">Kepala Seksi</h4>
-                                <p className="text-sm text-gray-600">Koordinator bidang</p>
+                    {/* Kasi & Kaur */}
+                    {kasiKaur.length > 0 && (
+                        <div>
+                            <h2 className="text-2xl font-bold text-center mb-8 flex items-center justify-center gap-2">
+                                <Award className="w-6 h-6 text-primary" />
+                                Pelaksana Teknis & Kewilayahan
+                            </h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {kasiKaur.map((official) => (
+                                    <OfficialCard key={official.id} official={official} />
+                                ))}
                             </div>
                         </div>
-                    </CardContent>
-                </Card>
+                    )}
 
-                <Card className="opacity-50">
-                    <CardHeader>
-                        <CardTitle>Layanan Pemerintahan</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <FileText className="h-4 w-4 text-blue-600" />
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-sm">Pelayanan Administrasi</h4>
-                                    <p className="text-xs text-gray-600">Surat dan dokumen</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-[#c2c9df] rounded-full flex items-center justify-center">
-                                    <Users className="h-4 w-4 text-gray-900" />
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-sm">Konsultasi Masyarakat</h4>
-                                    <p className="text-xs text-gray-600">Aspirasi warga</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                                    <Calendar className="h-4 w-4 text-purple-600" />
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-sm">Musyawarah Kalurahan</h4>
-                                    <p className="text-xs text-gray-600">Forum pengambilan keputusan</p>
-                                </div>
+                    {/* Dukuh */}
+                    {dukuh.length > 0 && (
+                        <div>
+                            <h2 className="text-2xl font-bold text-center mb-8 flex items-center justify-center gap-2">
+                                <Users className="w-6 h-6 text-primary" />
+                                Dukuh
+                            </h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {dukuh.map((official) => (
+                                    <OfficialCard key={official.id} official={official} />
+                                ))}
                             </div>
                         </div>
-                    </CardContent>
-                </Card>
-            </div>
+                    )}
+
+                    {/* Staff */}
+                    {staff.length > 0 && (
+                        <div>
+                            <h2 className="text-2xl font-bold text-center mb-8 flex items-center justify-center gap-2">
+                                <FileText className="w-6 h-6 text-primary" />
+                                Staff Pamong
+                            </h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {staff.map((official) => (
+                                    <OfficialCard key={official.id} official={official} />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

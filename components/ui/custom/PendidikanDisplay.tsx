@@ -27,20 +27,26 @@ interface PendidikanDisplayProps {
     className?: string;
 }
 
+import { DUMMY_PENDIDIKAN_DATA } from "@/lib/dummy-data";
+
 // Function to fetch Pendidikan data from API
 const fetchPendidikanData = async (): Promise<PendidikanData | null> => {
     try {
         const response = await fetch(`/api/statistik/pendidikan`);
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch pendidikan data: ${response.status}`);
+            console.warn(`Failed to fetch pendidikan data: ${response.status}, using dummy data`);
+            return DUMMY_PENDIDIKAN_DATA as unknown as PendidikanData;
         }
 
         const data = await response.json();
+        if (!data || !data.data || data.data.length === 0) {
+             return DUMMY_PENDIDIKAN_DATA as unknown as PendidikanData;
+        }
         return data;
     } catch (error) {
         console.error("Failed to fetch pendidikan data:", error);
-        return null;
+        return DUMMY_PENDIDIKAN_DATA as unknown as PendidikanData;
     }
 };
 

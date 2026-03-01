@@ -108,10 +108,10 @@ export default function ProfilPage() {
 
         // Lurah Info
         lurah: {
-            nama: "R. Widayatma, SE",
+            nama: "Cholik Harmoko, S.TP, NL.P",
             jabatan: "Lurah/Kepala Kalurahan",
             periode: "2021-2026",
-            foto: "/uploads/perangkat-desa/lurah.jpg",
+            foto: "/images/lurah-trimulyo.jpg",
         },
 
         // Historical Data

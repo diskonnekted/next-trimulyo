@@ -27,14 +27,23 @@ interface UmurDisplayProps {
     className?: string;
 }
 
+import { DUMMY_UMUR_DATA } from "@/lib/dummy-data";
+
 const fetchUmurData = async (): Promise<UmurData | null> => {
     try {
         const response = await fetch(`/api/statistik/umur`);
-        if (!response.ok) throw new Error(`Failed to fetch umur data: ${response.status}`);
-        return await response.json();
+        if (!response.ok) {
+             console.warn(`Failed to fetch umur data: ${response.status}, using dummy data`);
+             return DUMMY_UMUR_DATA as unknown as UmurData;
+        }
+        const data = await response.json();
+        if (!data || !data.data || data.data.length === 0) {
+             return DUMMY_UMUR_DATA as unknown as UmurData;
+        }
+        return data;
     } catch (error) {
         console.error("Failed to fetch umur data:", error);
-        return null;
+        return DUMMY_UMUR_DATA as unknown as UmurData;
     }
 };
 

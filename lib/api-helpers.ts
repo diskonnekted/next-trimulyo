@@ -79,11 +79,11 @@ export async function fetchOpenSIDArsip() {
 /**
  * SDGS API helper with location code
  */
-export async function fetchSDGSData(locationCode = "3404140004") {
+export async function fetchSDGSData(locationCode = "3404132005", config?: { cacheTags?: string[] }) {
     return sdgsApi.get(`/sdgs/searching/score-sdgs?location_code=${locationCode}`, {
         cache: {
             revalidate: 60 * 60 * 24 * 30, // 30 days
-            tags: ["sdgs-data"],
+            tags: config?.cacheTags || ["sdgs-data"],
         },
     });
 }
@@ -91,11 +91,11 @@ export async function fetchSDGSData(locationCode = "3404140004") {
 /**
  * SDGS detail API helper with goal and location code
  */
-export async function fetchSDGSDetail(goalId: string, locationCode = "3404140004") {
+export async function fetchSDGSDetail(goalId: string | number, locationCode = "3404132005", config?: { cacheTags?: string[] }) {
     return sdgsApi.get(`/sdgs/searching/score-sdgs-detail?goal=${goalId}&location_code=${locationCode}`, {
         cache: {
             revalidate: 60 * 60 * 24 * 30, // 30 days
-            tags: ["sdgs-data-detail"],
+            tags: config?.cacheTags || ["sdgs-data-detail"],
         },
     });
 }
@@ -104,12 +104,36 @@ export async function fetchSDGSDetail(goalId: string, locationCode = "3404140004
  * IDM API helper with year parameter
  */
 export async function fetchIDMData(year = "2024") {
-    return opensidApi.get(`/internal_api/idm/${year}`, {
-        cache: {
-            revalidate: 60 * 60 * 24 * 30, // 30 days
-            tags: ["idm-data"],
-        },
-    });
+    try {
+        const response = await fetch(`https://idm.kemendesa.go.id/open/api/desa/rumusan/3404132005/${year}`, {
+            next: {
+                revalidate: 60 * 60 * 24 * 30, // 30 days
+                tags: ["idm-data"],
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`IDM API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        if (data.error) {
+            throw new Error(data.message || "IDM API returned error");
+        }
+
+        return {
+            success: true,
+            data: data.mapData,
+        };
+    } catch (error) {
+        console.error("Error fetching IDM data:", error);
+        return {
+            success: false,
+            error: "Failed to fetch IDM data",
+            data: null
+        };
+    }
 }
 
 /**

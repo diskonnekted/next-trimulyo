@@ -8,16 +8,24 @@ import { createSuccessResponse, createErrorResponse, createValidationErrorRespon
 const mockBerita = [
     {
         id: 1,
-        judul: "Peluncuran Portal Web Kalurahan Pondokrejo",
-        slug: "peluncuran-portal-web-kalurahan-pondokrejo",
-        ringkasan: "Portal web resmi Kalurahan Pondokrejo telah diluncurkan untuk meningkatkan pelayanan masyarakat.",
-        konten: "Portal web resmi Kalurahan Pondokrejo telah diluncurkan dengan berbagai fitur canggih untuk meningkatkan pelayanan masyarakat...",
-        gambar: "/images/berita/portal-launch.jpg",
-        kategori: "Teknologi",
+        judul: "Pembangunan Menuju Kemajuan dan Kemandirian",
+        slug: "pembangunan-menuju-kemajuan-dan-kemandirian",
+        ringkasan: "Pembangunan desa merupakan salah satu upaya penting dalam meningkatkan kesejahteraan masyarakat dan kualitas hidup warga.",
+        konten: `
+            <p>Pembangunan desa merupakan salah satu upaya penting dalam meningkatkan kesejahteraan masyarakat dan kualitas hidup warga. Berbagai program pembangunan terus dijalankan secara bertahap, baik yang bersumber dari dana pemerintah maupun swadaya masyarakat.</p>
+            <p>Fokus utama pembangunan desa terletak pada perbaikan infrastruktur dasar seperti jalan, jembatan, saluran irigasi, serta fasilitas umum lainnya. Dalam beberapa tahun terakhir, telah dilakukan peningkatan kualitas jalan lingkungan agar akses antarwilayah menjadi lebih mudah. Pembangunan dan perbaikan saluran air juga dilakukan untuk mendukung kegiatan pertanian, yang menjadi sumber penghidupan utama masyarakat.</p>
+            <p>Selain infrastruktur fisik, pemerintah desa juga mendorong pembangunan di bidang pendidikan dan kesehatan. Renovasi gedung sekolah, penyediaan fasilitas belajar, serta peningkatan kualitas tenaga pendidik menjadi perhatian utama agar anak-anak desa mendapat akses pendidikan yang lebih baik. Di bidang kesehatan, pembangunan posyandu dan peningkatan layanan kesehatan dasar turut membantu menjaga kesejahteraan masyarakat.</p>
+            <p>Bidang perekonomian desa juga mendapat perhatian melalui pembentukan dan penguatan Badan Usaha Milik Desa (BUMDes). Melalui BUMDes, warga dapat mengembangkan usaha bersama seperti perdagangan hasil pertanian, simpan pinjam, dan pengelolaan wisata desa. Kegiatan ini tidak hanya menciptakan lapangan kerja, tetapi juga meningkatkan pendapatan masyarakat secara berkelanjutan.</p>
+            <p>Selain itu, pembangunan desa juga diarahkan untuk memperkuat ketahanan sosial dan lingkungan. Program penghijauan, pengelolaan sampah, serta pelatihan kebencanaan dilakukan agar masyarakat lebih siap menghadapi perubahan iklim dan menjaga kelestarian alam.</p>
+            <p>Seluruh kegiatan pembangunan ini dilaksanakan dengan semangat gotong royong dan partisipasi aktif masyarakat. Warga terlibat mulai dari tahap perencanaan hingga pelaksanaan agar hasil pembangunan benar-benar sesuai dengan kebutuhan bersama.</p>
+            <p>Secara keseluruhan, pembangunan desa menunjukkan kemajuan yang positif. Melalui kerja sama antara pemerintah dan masyarakat, diharapkan desa dapat terus berkembang menjadi wilayah yang mandiri, produktif, dan berdaya saing, sekaligus tetap menjaga nilai-nilai kebersamaan yang menjadi ciri khas kehidupan pedesaan.</p>
+        `,
+        gambar: "/images/berita/infrastruktur.jpg",
+        kategori: "Pembangunan",
         status: "PUBLISHED",
-        publishedAt: "2025-10-24T10:00:00Z",
-        createdAt: "2025-10-24T09:30:00Z",
-        updatedAt: "2025-10-24T10:00:00Z",
+        publishedAt: "2026-02-12T10:00:00Z",
+        createdAt: "2026-02-12T09:30:00Z",
+        updatedAt: "2026-02-12T10:00:00Z",
         penulis: "Admin Kalurahan",
         views: 150,
     },
@@ -26,8 +34,8 @@ const mockBerita = [
         judul: "Program Pembangunan Infrastruktur Tahun 2025",
         slug: "program-pembangunan-infrastruktur-tahun-2025",
         ringkasan:
-            "Pemerintah Kalurahan Pondokrejo mengalokasikan dana untuk pembangunan infrastruktur jalan dan drainase.",
-        konten: "Pemerintah Kalurahan Pondokrejo dalam tahun anggaran 2025 mengalokasikan dana pembangunan sebesar Rp 2.5 Miliar...",
+            "Pemerintah Kalurahan Trimulyo mengalokasikan dana untuk pembangunan infrastruktur jalan dan drainase.",
+        konten: "Pemerintah Kalurahan Trimulyo dalam tahun anggaran 2025 mengalokasikan dana pembangunan sebesar Rp 2.5 Miliar...",
         gambar: "/images/berita/infrastruktur.jpg",
         kategori: "Pembangunan",
         status: "PUBLISHED",
@@ -41,8 +49,8 @@ const mockBerita = [
         id: 3,
         judul: "Vaksinasi COVID-19 Tahap Lanjutan",
         slug: "vaksinasi-covid-19-tahap-lanjutan",
-        ringkasan: "Puskesmas Pembantu Kalurahan Pondokrejo menyelenggarakan vaksinasi COVID-19 tahap lanjutan.",
-        konten: "Puskesmas Pembantu Kalurahan Pondokrejo kembali menyelenggarakan vaksinasi COVID-19 tahap lanjutan untuk dosis ketiga...",
+        ringkasan: "Puskesmas Pembantu Kalurahan Trimulyo menyelenggarakan vaksinasi COVID-19 tahap lanjutan.",
+        konten: "Puskesmas Pembantu Kalurahan Trimulyo kembali menyelenggarakan vaksinasi COVID-19 tahap lanjutan untuk dosis ketiga...",
         gambar: "/images/berita/vaksinasi.jpg",
         kategori: "Kesehatan",
         status: "PUBLISHED",
