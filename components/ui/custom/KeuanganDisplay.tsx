@@ -33,19 +33,39 @@ interface KeuanganDisplayProps {
     className?: string;
 }
 
+import { DUMMY_APBDES_DATA } from "@/lib/dummy-data";
+
 // Function to fetch Keuangan data from API
 const fetchKeuanganData = async (tahun: string): Promise<KeuanganData | null> => {
     try {
         const response = await fetch(`/api/keuangan?tahun=${tahun}`);
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch keuangan data: ${response.status}`);
+            console.warn(`Failed to fetch keuangan data: ${response.status}, using dummy data`);
+            // Filter dummy data for the requested year
+            const filteredData = DUMMY_APBDES_DATA.data.filter(item => item.attributes.tahun === tahun.toString());
+            if (filteredData.length > 0) {
+                 return { data: filteredData } as unknown as KeuanganData;
+            }
+            return null;
         }
 
         const data = await response.json();
+        if (!data || !data.data || data.data.length === 0) {
+            // Filter dummy data for the requested year
+            const filteredData = DUMMY_APBDES_DATA.data.filter(item => item.attributes.tahun === tahun.toString());
+            if (filteredData.length > 0) {
+                 return { data: filteredData } as unknown as KeuanganData;
+            }
+        }
         return data;
     } catch (error) {
         console.error("Failed to fetch keuangan data:", error);
+         // Filter dummy data for the requested year
+        const filteredData = DUMMY_APBDES_DATA.data.filter(item => item.attributes.tahun === tahun.toString());
+        if (filteredData.length > 0) {
+             return { data: filteredData } as unknown as KeuanganData;
+        }
         return null;
     }
 };

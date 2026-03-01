@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Building, Users, Award, FileText, Calendar, Mail, Phone, User, GraduationCap, Briefcase } from "lucide-react";
+import { Building, Users, Award, FileText, GraduationCap, Briefcase, User } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 
 interface GovernmentOfficial {
@@ -16,6 +15,61 @@ interface GovernmentOfficial {
     foto: string | null;
     status: string;
 }
+
+const OfficialCard = ({ official, className = "" }: { official: GovernmentOfficial, className?: string }) => (
+    <Card className={`overflow-hidden hover:shadow-lg transition-shadow duration-300 ${className}`}>
+        <div className="aspect-[3/4] relative bg-gray-100">
+            {official.foto ? (
+                <Image
+                    src={official.foto}
+                    alt={official.nama}
+                    fill
+                    className="object-cover"
+                />
+            ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
+                    <User className="w-20 h-20" />
+                </div>
+            )}
+        </div>
+        <CardHeader className="pb-2">
+            <CardTitle className="text-lg font-bold text-center leading-tight min-h-[3rem] flex items-center justify-center">
+                {official.nama}
+            </CardTitle>
+            <CardDescription className="text-center font-medium text-primary">
+                {official.jabatan}
+            </CardDescription>
+        </CardHeader>
+        <CardContent className="text-sm space-y-2 pt-0">
+            <div className="flex items-center gap-2 text-gray-600">
+                <GraduationCap className="w-4 h-4" />
+                <span>{official.pendidikan}</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600">
+                <Briefcase className="w-4 h-4" />
+                <span>{official.usia} Tahun</span>
+            </div>
+        </CardContent>
+    </Card>
+);
+
+const BPKalCard = ({ member }: { member: { nama: string, jabatan: string, foto: string | null } }) => (
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+        <div className="aspect-[3/4] relative bg-gray-100">
+             <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
+                    <User className="w-20 h-20" />
+             </div>
+        </div>
+        <CardHeader className="pb-2">
+            <CardTitle className="text-lg font-bold text-center leading-tight min-h-[3rem] flex items-center justify-center">
+                {member.nama}
+            </CardTitle>
+            <CardDescription className="text-center font-medium text-primary">
+                {member.jabatan}
+            </CardDescription>
+        </CardHeader>
+    </Card>
+);
 
 export default function PemerintahanPage() {
     const [officials, setOfficials] = useState<GovernmentOfficial[]>([]);
@@ -51,42 +105,18 @@ export default function PemerintahanPage() {
     const dukuh = officials.filter(o => o.jabatan.toLowerCase().includes("dukuh"));
     const staff = officials.filter(o => o.jabatan.toLowerCase().includes("staff"));
 
-    const OfficialCard = ({ official, className = "" }: { official: GovernmentOfficial, className?: string }) => (
-        <Card className={`overflow-hidden hover:shadow-lg transition-shadow duration-300 ${className}`}>
-            <div className="aspect-[3/4] relative bg-gray-100">
-                {official.foto ? (
-                    <Image
-                        src={official.foto}
-                        alt={official.nama}
-                        fill
-                        className="object-cover"
-                    />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">
-                        <User className="w-20 h-20" />
-                    </div>
-                )}
-            </div>
-            <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-bold text-center leading-tight min-h-[3rem] flex items-center justify-center">
-                    {official.nama}
-                </CardTitle>
-                <CardDescription className="text-center font-medium text-primary">
-                    {official.jabatan}
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="text-sm space-y-2 pt-0">
-                <div className="flex items-center gap-2 text-gray-600">
-                    <GraduationCap className="w-4 h-4" />
-                    <span>{official.pendidikan}</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-600">
-                    <Briefcase className="w-4 h-4" />
-                    <span>{official.usia} Tahun</span>
-                </div>
-            </CardContent>
-        </Card>
-    );
+    // BPKal Data
+    const bpkalMembers = [
+        { nama: "drh. Yoyong Wahyono", jabatan: "Ketua", foto: null },
+        { nama: "Sayun, S.Ag., M.Si.", jabatan: "Wakil Ketua", foto: null },
+        { nama: "Ngudah Khusnul Hayati, SE", jabatan: "Sekretaris", foto: null },
+        { nama: "Aman Santosa, S.Pd.", jabatan: "Anggota", foto: null },
+        { nama: "Haryono", jabatan: "Anggota", foto: null },
+        { nama: "R. A. Andrijanto", jabatan: "Anggota", foto: null },
+        { nama: "Sugiharto, B.Sc., S.Pd.", jabatan: "Anggota", foto: null },
+        { nama: "Untari Sahban, S.Pd.", jabatan: "Anggota", foto: null },
+        { nama: "Suyanto, BA.", jabatan: "Anggota", foto: null },
+    ];
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -158,6 +188,31 @@ export default function PemerintahanPage() {
                             </div>
                         </div>
                     )}
+
+                    {/* BPKal Section */}
+                    <div className="pt-16 border-t">
+                        <div className="text-center mb-12">
+                            <div className="inline-flex items-center justify-center w-24 h-24 bg-amber-50 rounded-full mb-4 shadow-sm border border-amber-100">
+                                <Image 
+                                    src="/images/bpkal.png" 
+                                    alt="Logo BPKal" 
+                                    width={60} 
+                                    height={60} 
+                                    className="object-contain"
+                                />
+                            </div>
+                            <h2 className="text-3xl font-bold text-gray-900 mb-4">Badan Permusyawaratan Kalurahan (BPKal)</h2>
+                            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                                Mitra kerja Pemerintah Kalurahan dalam penyelenggaraan pemerintahan desa
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center max-w-7xl mx-auto">
+                            {bpkalMembers.map((member, index) => (
+                                <BPKalCard key={index} member={member} />
+                            ))}
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

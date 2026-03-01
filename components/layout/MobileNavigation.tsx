@@ -572,7 +572,7 @@ export function MobileNavigation() {
                                 {/* Additional info section */}
                                 <div className="p-4 border-t mt-2">
                                     <div className="text-xs text-muted-foreground space-y-2">
-                                        <p>Portal Resmi Kalurahan Pondokrejo</p>
+                                        <p>Portal Resmi Kalurahan Trimulyo</p>
                                         <p>Kabupaten Sleman, DIY</p>
                                         <div className="pt-2">
                                             <p className="font-medium text-foreground mb-1">Butuh Bantuan?</p>

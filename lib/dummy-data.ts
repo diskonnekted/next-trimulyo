@@ -53,6 +53,461 @@ export const DUMMY_PENDUDUK_DATA = {
     ],
 };
 
+export const DUMMY_APBDES_DATA = {
+    data: [
+        {
+            type: "keuangan",
+            id: "2025",
+            attributes: {
+                tahun: "2025",
+                pendapatan: {
+                    "PENDAPATAN ASLI DESA": {
+                        anggaran: "250000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "PADes",
+                    },
+                    "DANA DESA": {
+                        anggaran: "1200000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "DD",
+                    },
+                    "BAGI HASIL PAJAK & RETRIBUSI": {
+                        anggaran: "450000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "PBH",
+                    },
+                    "ALOKASI DANA DESA": {
+                        anggaran: "800000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "ADD",
+                    },
+                    "LAIN-LAIN PENDAPATAN DESA YANG SAH": {
+                        anggaran: "50000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "Lainnya",
+                    },
+                },
+                belanja: {
+                    "BIDANG PENYELENGGARAAN PEMERINTAHAN DESA": {
+                        anggaran: "950000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "Pemerintahan",
+                    },
+                    "BIDANG PELAKSANAAN PEMBANGUNAN DESA": {
+                        anggaran: "1100000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "Pembangunan",
+                    },
+                    "BIDANG PEMBINAAN KEMASYARAKATAN": {
+                        anggaran: "350000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "Pembinaan",
+                    },
+                    "BIDANG PEMBERDAYAAN MASYARAKAT": {
+                        anggaran: "250000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "Pemberdayaan",
+                    },
+                    "BIDANG PENANGGULANGAN BENCANA, DARURAT DAN MENDESAK DESA": {
+                        anggaran: "100000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "Bencana",
+                    },
+                },
+                pembiayaan: {
+                    "PENERIMAAN PEMBIAYAAN": {
+                        anggaran: "150000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "Penerimaan",
+                    },
+                    "PENGELUARAN PEMBIAYAAN": {
+                        anggaran: "50000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "Pengeluaran",
+                    },
+                },
+                pelaksanaan: {
+                    "PENDAPATAN": {
+                        anggaran: "2750000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "PENDAPATAN",
+                    },
+                    "BELANJA": {
+                        anggaran: "2750000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "BELANJA",
+                    },
+                    "PEMBIAYAAN": {
+                        anggaran: "100000000",
+                        realisasi: 0,
+                        persen: 0,
+                        judul: "PEMBIAYAAN",
+                    }
+                },
+                laporan: "Laporan Realisasi APBDes Tahun Anggaran 2025",
+                updated_at: "2025-01-15T10:00:00Z",
+            },
+        },
+        {
+            type: "keuangan",
+            id: "2024",
+            attributes: {
+                tahun: "2024",
+                pendapatan: {
+                    "PENDAPATAN ASLI DESA": {
+                        anggaran: "225000000",
+                        realisasi: 230000000,
+                        persen: 102.22,
+                        judul: "PADes",
+                    },
+                    "DANA DESA": {
+                        anggaran: "1150000000",
+                        realisasi: 1150000000,
+                        persen: 100,
+                        judul: "DD",
+                    },
+                    "BAGI HASIL PAJAK & RETRIBUSI": {
+                        anggaran: "420000000",
+                        realisasi: 425000000,
+                        persen: 101.19,
+                        judul: "PBH",
+                    },
+                    "ALOKASI DANA DESA": {
+                        anggaran: "780000000",
+                        realisasi: 780000000,
+                        persen: 100,
+                        judul: "ADD",
+                    },
+                    "LAIN-LAIN PENDAPATAN DESA YANG SAH": {
+                        anggaran: "45000000",
+                        realisasi: 40000000,
+                        persen: 88.89,
+                        judul: "Lainnya",
+                    },
+                },
+                belanja: {
+                    "BIDANG PENYELENGGARAAN PEMERINTAHAN DESA": {
+                        anggaran: "900000000",
+                        realisasi: 890000000,
+                        persen: 98.89,
+                        judul: "Pemerintahan",
+                    },
+                    "BIDANG PELAKSANAAN PEMBANGUNAN DESA": {
+                        anggaran: "1050000000",
+                        realisasi: 1000000000,
+                        persen: 95.24,
+                        judul: "Pembangunan",
+                    },
+                    "BIDANG PEMBINAAN KEMASYARAKATAN": {
+                        anggaran: "320000000",
+                        realisasi: 310000000,
+                        persen: 96.88,
+                        judul: "Pembinaan",
+                    },
+                    "BIDANG PEMBERDAYAAN MASYARAKAT": {
+                        anggaran: "230000000",
+                        realisasi: 200000000,
+                        persen: 86.96,
+                        judul: "Pemberdayaan",
+                    },
+                    "BIDANG PENANGGULANGAN BENCANA, DARURAT DAN MENDESAK DESA": {
+                        anggaran: "120000000",
+                        realisasi: 50000000,
+                        persen: 41.67,
+                        judul: "Bencana",
+                    },
+                },
+                pembiayaan: {
+                    "PENERIMAAN PEMBIAYAAN": {
+                        anggaran: "135000000",
+                        realisasi: 135000000,
+                        persen: 100,
+                        judul: "Penerimaan",
+                    },
+                    "PENGELUARAN PEMBIAYAAN": {
+                        anggaran: "40000000",
+                        realisasi: 40000000,
+                        persen: 100,
+                        judul: "Pengeluaran",
+                    },
+                },
+                pelaksanaan: {
+                    "PENDAPATAN": {
+                        anggaran: "2620000000",
+                        realisasi: 2625000000,
+                        persen: 100.19,
+                        judul: "PENDAPATAN",
+                    },
+                    "BELANJA": {
+                        anggaran: "2620000000",
+                        realisasi: 2450000000,
+                        persen: 93.51,
+                        judul: "BELANJA",
+                    },
+                    "PEMBIAYAAN": {
+                        anggaran: "95000000",
+                        realisasi: 95000000,
+                        persen: 100,
+                        judul: "PEMBIAYAAN",
+                    }
+                },
+                laporan: "Laporan Realisasi APBDes Tahun Anggaran 2024",
+                updated_at: "2024-12-31T23:59:59Z",
+            },
+        },
+    ],
+};
+
+export const DUMMY_PPID_DATA = {
+    data: [
+        // Perencanaan & Penganggaran
+        {
+            type: "informasi_publik",
+            id: "1",
+            attributes: {
+                nama: "PENJABARAN APBKAL 2025",
+                kategori: "Perencanaan & Penganggaran",
+                tgl_upload: "2025-07-23",
+                keterangan: "PERATURAN LURAH TRIMULYO NO 4 TAHUN 2024 TENTANG PENJABARAN ANGGARAN PENDAPATAN DAN BELANJA TAHUN ANGGARAN 2025",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "2",
+            attributes: {
+                nama: "APBKAL TRIMULYO 2025",
+                kategori: "Perencanaan & Penganggaran",
+                tgl_upload: "2025-07-23",
+                keterangan: "PERKAL TRIMULYO NO 4 TAHUN 2024 TENTANG ANGGARAN PENDAPATAN DAN BELANJA KALURAHAN TAHUN ANGGARAN 2025",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "3",
+            attributes: {
+                nama: "PENJABARAN ANGGARAN PENDAPATAN DAN BELANJA TAHUN ANGGARAN 2024",
+                kategori: "Perencanaan & Penganggaran",
+                tgl_upload: "2025-01-08",
+                keterangan: "PERATURAN LURAH TRIMULYO NO 5 TAHUN 2023 TENTANG PENJABARAN ANGGARAN PENDAPATAN DAN BELANJA TAHUN ANGGARAN 2024",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "4",
+            attributes: {
+                nama: "Infografis APBKAL 2024",
+                kategori: "Perencanaan & Penganggaran",
+                tgl_upload: "2024-03-05",
+                keterangan: "Infografis Anggaran Pendapatan dan Belanja Kalurahan Tahun Anggaran 2024",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "5",
+            attributes: {
+                nama: "RKPKAL TRIMULYO TAHUN ANGGARAN 2024",
+                kategori: "Perencanaan & Penganggaran",
+                tgl_upload: "2024-02-01",
+                keterangan: "PERATURAN KALURAHAN TRIMULYO NOMOR 4 TAHUN 2023 TENTANG RENCANA KERJA PEMERINTAH KALURAHAN (RKPKAL) TAHUN ANGGARAN 2024",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "6",
+            attributes: {
+                nama: "APBKAL TRIMULYO TAHUN ANGGARAN 2024",
+                kategori: "Perencanaan & Penganggaran",
+                tgl_upload: "2024-02-01",
+                keterangan: "PERATURAN KALURAHAN TRIMULYO NOMOR 5 TAHUN 2023 TENTANG ANGGARAN PENDAPATAN DAN BELANJA KALURAHAN TAHUN ANGGARAN 2024",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "7",
+            attributes: {
+                nama: "PENJABARAN PERUBAHAN APBKAL TAHUN ANGGARAN 2023",
+                kategori: "Perencanaan & Penganggaran",
+                tgl_upload: "2023-11-16",
+                keterangan: "Peraturan Lurah Tentang Penjabaran Perubahan APBKAL Trimulyo Tahun Anggaran 2023",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "8",
+            attributes: {
+                nama: "Infografis APBKAL 2023",
+                kategori: "Perencanaan & Penganggaran",
+                tgl_upload: "2023-02-03",
+                keterangan: "Infografis Anggaran Pendapatan dan Belanja Kalurahan Tahun Anggaran 2023",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "9",
+            attributes: {
+                nama: "APBKAL TRIMULYO TAHUN ANGGARAN 2023",
+                kategori: "Perencanaan & Penganggaran",
+                tgl_upload: "2023-01-26",
+                keterangan: "Peraturan Kalurahan Trimulyo Nomor 6 Tahun 2022 Tentang Anggaran Pendapatan dan Belanja Kalurahan Tahun Anggaran 2023",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+
+        // Laporan
+        {
+            type: "informasi_publik",
+            id: "10",
+            attributes: {
+                nama: "Laporan Kinerja Pemerintah Kalurahan Trimulyo Tahun 2025",
+                kategori: "Laporan",
+                tgl_upload: "2025-12-29",
+                keterangan: "Laporan kinerja pemkal Trimulyo",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "11",
+            attributes: {
+                nama: "LRA SEMESTER 1 TA 2025",
+                kategori: "Laporan",
+                tgl_upload: "2025-07-23",
+                keterangan: "LAPORAN REALISASI PELAKSANAAN ANGGARAN PENDAPATAN DAN BELANJA KALURAHAN SEMESTER 1 PEMKAL TRIMULYO TAHUN ANGGARAN 2025",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "12",
+            attributes: {
+                nama: "LRA TAHUN ANGGARAN 2024",
+                kategori: "Laporan",
+                tgl_upload: "2025-07-23",
+                keterangan: "PERKAL NO 1 TAHUN 2025 TENTANG LAPORAN PERTANGGUNGJAWABAN REALISASI ANGGARAN PENDAPATAN DAN BELANJA KALURAHAN TAHUN ANGGARAN 2024",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "13",
+            attributes: {
+                nama: "LPPKAL TAHUN 2024",
+                kategori: "Laporan",
+                tgl_upload: "2025-07-23",
+                keterangan: "LAPORAN PENYELENGGARAAN PEMERINTAHAN KALURAHAN TRIMULYO TAHUN ANGGARAN 2024",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "14",
+            attributes: {
+                nama: "Infografis APBKAL Tahun 2025",
+                kategori: "Laporan",
+                tgl_upload: "2025-01-17",
+                keterangan: "BANNER APBKAL 2025",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "15",
+            attributes: {
+                nama: "IPPKAL Trimulyo 2024",
+                kategori: "Laporan",
+                tgl_upload: "2025-01-14",
+                keterangan: "Informasi Penyelenggaraan Pemerintahan Kalurahan Trimulyo Tahun Anggaran 2024",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "16",
+            attributes: {
+                nama: "Infografis IPPKal 2023",
+                kategori: "Laporan",
+                tgl_upload: "2024-06-04",
+                keterangan: "Infografis Informasi Penyelenggaraan Pemerintahan Kalurahan Tahun 2023",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "17",
+            attributes: {
+                nama: "LPPKAL Tahun Anggaran 2023",
+                kategori: "Laporan",
+                tgl_upload: "2024-03-28",
+                keterangan: "Laporan Penyelenggaraan Pemerintahan Kalurahan Tahun Anggaran 2023",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "18",
+            attributes: {
+                nama: "LAPORAN PERTANGGUNGJAWABAN REALISASI ANGGARAN PENDAPATAN DAN BELANJA KALURAHAN TAHUN ANGGARAN 2023",
+                kategori: "Laporan",
+                tgl_upload: "2024-03-18",
+                keterangan: "LAPORAN PERTANGGUNGJAWABAN REALISASI ANGGARAN PENDAPATAN DAN BELANJA KALURAHAN TAHUN ANGGARAN 2023",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+        {
+            type: "informasi_publik",
+            id: "19",
+            attributes: {
+                nama: "LAPORAN REALISASI ANGGARAN 2022 KALURAHAN TRIMULYO",
+                kategori: "Laporan",
+                tgl_upload: "2023-05-29",
+                keterangan: "Peraturan Kalurahan Trimulyo Nomor 1 Tahun 2023 Tentang Laporan Realisasi Anggaran 2022",
+                url: "#",
+                gambar: "/images/pdf-cover.png"
+            },
+        },
+    ],
+};
+
 export const DUMMY_DISABILITAS_DATA = {
     data: [
         {

@@ -195,7 +195,7 @@ export function DptDisplay({ className }: DptDisplayProps) {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Users className="h-5 w-5 text-primary" />
-                        Data Pemilih Tetap (DPT) Kalurahan Pondokrejo
+                        Data Pemilih Tetap (DPT) Kalurahan Trimulyo
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">Distribusi pemilih tetap per dusun dan RW</p>
                 </CardHeader>

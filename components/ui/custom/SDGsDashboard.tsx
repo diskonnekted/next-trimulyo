@@ -115,7 +115,7 @@ const fetchSDGsData = async (locationCode: string = "3404140004"): Promise<SDGGo
             return {
                 id: item.goals,
                 title: item.title,
-                description: `Implementasi ${item.title} di Kalurahan Pondokrejo`,
+                description: `Implementasi ${item.title} di Kalurahan Trimulyo`,
                 imageUrl: localImages[item.goals - 1] || "/images/sdgs/satu.png",
                 color: colors[item.goals - 1] || "bg-gray-600",
                 progress: Math.round(score),

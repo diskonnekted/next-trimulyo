@@ -193,21 +193,38 @@ function transformArticle(article: OpenSIDArticle) {
     const excerpt = `${plainContent.substring(0, 200)}...`;
 
     // Convert OpenSID date format (DD-MM-YYYY HH:mm:ss) to ISO
-    function parseOpenSIDDate(dateStr: string) {
-        // Split date and time
-        const [datePart, timePart] = dateStr.split(" ");
-        const [day, month, year] = datePart.split("-");
-        const [hour, minute, second] = (timePart || "00:00:00").split(":");
+    function parseOpenSIDDate(dateStr: string | null | undefined) {
+        if (!dateStr) {
+            return new Date().toISOString();
+        }
 
-        // Create ISO date string
-        return new Date(
-            parseInt(year),
-            parseInt(month) - 1,
-            parseInt(day),
-            parseInt(hour),
-            parseInt(minute),
-            parseInt(second)
-        ).toISOString();
+        try {
+            // Split date and time
+            const [datePart, timePart] = dateStr.split(" ");
+            if (!datePart) return new Date().toISOString();
+            
+            const [day, month, year] = datePart.split("-");
+            const [hour, minute, second] = (timePart || "00:00:00").split(":");
+
+            const date = new Date(
+                parseInt(year),
+                parseInt(month) - 1,
+                parseInt(day),
+                parseInt(hour),
+                parseInt(minute),
+                parseInt(second)
+            );
+
+            if (isNaN(date.getTime())) {
+                 return new Date().toISOString();
+            }
+
+            // Create ISO date string
+            return date.toISOString();
+        } catch (e) {
+            console.error("Error parsing date:", dateStr, e);
+            return new Date().toISOString();
+        }
     }
 
     return {

@@ -60,6 +60,7 @@ interface InformasiPublikItem {
         attr?: string;
         tipe?: number;
         url?: string | null;
+        gambar?: string | null;
         tahun?: number;
         kategori_info_publik?: number;
         updated_at?: string;
@@ -99,6 +100,8 @@ interface ApiResponse {
     };
 }
 
+import { DUMMY_PPID_DATA } from "@/lib/dummy-data";
+
 export default function InformasiPublikPage() {
     const [items, setItems] = useState<InformasiPublikItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -116,7 +119,10 @@ export default function InformasiPublikPage() {
             setLoading(true);
             const response = await fetch("/api/ppid");
             if (!response.ok) {
-                throw new Error("Failed to fetch data");
+                console.warn(`Failed to fetch ppid data: ${response.status}, using dummy data`);
+                setItems(DUMMY_PPID_DATA.data as unknown as InformasiPublikItem[]);
+                setError(null);
+                return;
             }
             const data = await response.json();
 
@@ -126,13 +132,18 @@ export default function InformasiPublikPage() {
                 : Array.isArray(data.data)
                     ? data.data
                     : [];
-
-            setItems(itemsArray);
+            
+            if (itemsArray.length === 0) {
+                 setItems(DUMMY_PPID_DATA.data as unknown as InformasiPublikItem[]);
+            } else {
+                 setItems(itemsArray);
+            }
             setError(null);
         } catch (err) {
             console.error("Error fetching data:", err);
-            setError("Gagal memuat data informasi publik");
-            setItems([]); // Ensure items is always an array
+            // Use dummy data on error
+            setItems(DUMMY_PPID_DATA.data as unknown as InformasiPublikItem[]);
+            setError(null);
         } finally {
             setLoading(false);
         }
@@ -318,21 +329,21 @@ export default function InformasiPublikPage() {
                 </div>
 
                 {/* Filters */}
-                <Card>
+                <Card className="mb-8">
                     <CardContent className="p-4">
-                        <div className="flex flex-col md:flex-row gap-4">
-                            <div className="flex-1">
+                        <div className="flex flex-col md:flex-row gap-4 items-center">
+                            <div className="flex-1 w-full">
                                 <div className="relative">
                                     <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                                     <Input
-                                        placeholder="Cari berdasarkan judul atau deskripsi..."
+                                        placeholder="Cari dokumen..."
                                         className="pl-10"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
                                 </div>
                             </div>
-                            <div className="flex gap-2 flex-wrap">
+                            <div className="flex gap-2 flex-wrap justify-center md:justify-end">
                                 <Button
                                     variant={selectedCategory === null ? "default" : "outline"}
                                     onClick={() => setSelectedCategory(null)}
@@ -367,129 +378,93 @@ export default function InformasiPublikPage() {
 
                 {/* Items Grid */}
                 {filteredItems.length === 0 ? (
-                    <InformasiPublikDataNotAvailable onRetry={fetchData} />
+                    <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-100">
+                         <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                         <h3 className="text-lg font-semibold text-gray-900">Tidak ada dokumen ditemukan</h3>
+                         <p className="text-gray-500">Coba ubah kata kunci pencarian atau kategori filter</p>
+                    </div>
                 ) : (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                         {filteredItems.map((item) => {
                             const attrs = item.attributes;
                             const title = attrs.nama || "Tanpa Judul";
                             const description = attrs.keterangan || "Tidak ada deskripsi";
                             const category = attrs.kategori || "Lainnya";
                             const date = attrs.tgl_upload;
-                            const pdfUrl = attrs.satuan;
-                            const hasPdf = !!pdfUrl;
+                            const image = attrs.gambar;
 
                             return (
                                 <Card
                                     key={item.id}
-                                    className="overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-full"
+                                    className="group overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full border-gray-200 hover:border-blue-200"
                                 >
-                                    <CardHeader className="pb-3">
-                                        <div className="flex items-start justify-between gap-2 mb-2">
-                                            <div className="flex-1">{getCategoryBadge(category)}</div>
-                                            {attrs.tahun && (
-                                                <Badge variant="outline" className="text-xs">
-                                                    {attrs.tahun}
-                                                </Badge>
-                                            )}
-                                        </div>
-                                        <CardTitle className="text-lg line-clamp-2 leading-tight">{title}</CardTitle>
-                                    </CardHeader>
-
-                                    <CardContent className="flex-1 flex flex-col">
-                                        <div className="space-y-3 flex-1">
-                                            {attrs.attr && (
-                                                <div className="bg-gray-50 p-3 rounded-lg">
-                                                    <p className="text-xs font-semibold text-gray-700 mb-1">
-                                                        Detail Informasi:
-                                                    </p>
-                                                    <div className="text-sm text-gray-600">
-                                                        {(() => {
-                                                            try {
-                                                                const attrData = JSON.parse(attrs.attr);
-                                                                return (
-                                                                    <div className="space-y-1">
-                                                                        {attrData.no_kep_kades && (
-                                                                            <p>
-                                                                                <span className="font-medium">
-                                                                                    No. Kep. Kades:
-                                                                                </span>{" "}
-                                                                                {attrData.no_kep_kades}
-                                                                            </p>
-                                                                        )}
-                                                                        {attrData.tgl_kep_kades && (
-                                                                            <p>
-                                                                                <span className="font-medium">
-                                                                                    Tgl. Kep. Kades:
-                                                                                </span>{" "}
-                                                                                {attrData.tgl_kep_kades}
-                                                                            </p>
-                                                                        )}
-                                                                        {attrData.uraian && (
-                                                                            <p>
-                                                                                <span className="font-medium">
-                                                                                    Uraian:
-                                                                                </span>{" "}
-                                                                                {attrData.uraian}
-                                                                            </p>
-                                                                        )}
-                                                                    </div>
-                                                                );
-                                                            } catch {
-                                                                return null;
-                                                            }
-                                                        })()}
+                                    {/* Cover Image */}
+                                    <div className="aspect-[3/4] relative bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden border-b flex items-center justify-center group-hover:from-blue-50 group-hover:to-indigo-50 transition-colors duration-300">
+                                        {image ? (
+                                            <img 
+                                                src={image} 
+                                                alt={title} 
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                            />
+                                        ) : (
+                                            <div className="text-center p-6 transition-transform duration-300 group-hover:scale-105">
+                                                {category === "Perencanaan & Penganggaran" ? (
+                                                    <div className="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                                                        <Building className="w-10 h-10 text-blue-600" />
                                                     </div>
-                                                </div>
-                                            )}
-
-                                            <p className="text-sm text-gray-600 line-clamp-3">{description}</p>
-
-                                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                                                <Calendar className="h-4 w-4" />
-                                                <span>{formatDate(date)}</span>
+                                                ) : (
+                                                    <div className="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                                                        <FileText className="w-10 h-10 text-emerald-600" />
+                                                    </div>
+                                                )}
+                                                <div className="w-12 h-1 bg-gray-300 mx-auto rounded-full group-hover:bg-blue-400 transition-colors" />
                                             </div>
-
-                                            {hasPdf && (
-                                                <div className="flex items-center gap-2 text-sm text-green-600">
-                                                    <FileText className="h-4 w-4" />
-                                                    <span>Dokumen PDF tersedia</span>
-                                                </div>
-                                            )}
+                                        )}
+                                        
+                                        {/* Overlay Date */}
+                                        <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded-md text-[10px] font-medium text-gray-700 shadow-sm flex items-center gap-1">
+                                            <Calendar className="w-3 h-3" />
+                                            {date ? new Date(date).toLocaleDateString("id-ID", { year: 'numeric', month: 'short', day: 'numeric' }) : "-"}
                                         </div>
+                                    </div>
 
-                                        <div className="flex gap-2 mt-4 pt-4 border-t">
-                                            {hasPdf ? (
-                                                <>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="flex-1"
-                                                        onClick={() => {
-                                                            window.open(pdfUrl, "_blank");
-                                                        }}
-                                                    >
-                                                        <Download className="h-4 w-4 mr-2" />
-                                                        Unduh PDF
-                                                    </Button>
-                                                    <Button
-                                                        variant="default"
-                                                        size="sm"
-                                                        className="flex-1 bg-blue-600 hover:bg-blue-700"
-                                                        onClick={() => {
-                                                            setSelectedItem(item);
-                                                        }}
-                                                    >
-                                                        <Eye className="h-4 w-4 mr-2" />
-                                                        Lihat PDF
-                                                    </Button>
-                                                </>
-                                            ) : (
-                                                <Button variant="outline" size="sm" className="flex-1" disabled>
-                                                    <FileText className="h-4 w-4 mr-2" />
-                                                    Data Belum Tersedia
-                                                </Button>
-                                            )}
+                                    <CardContent className="p-3 flex-1 flex flex-col">
+                                        <div className="mb-2">
+                                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 mb-1 text-[10px] px-1.5 py-0">
+                                                {category}
+                                            </Badge>
+                                            <h3 className="font-bold text-sm text-gray-900 leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors" title={title}>
+                                                {title}
+                                            </h3>
+                                        </div>
+                                        
+                                        <p className="text-xs text-gray-600 line-clamp-2 mb-3 flex-1">
+                                            {description}
+                                        </p>
+
+                                        <div className="flex gap-2 mt-auto pt-3 border-t border-gray-100">
+                                            <Button 
+                                                variant="default" 
+                                                size="sm" 
+                                                className="w-full h-8 text-xs bg-blue-600 hover:bg-blue-700 text-white shadow-sm px-2"
+                                                asChild
+                                            >
+                                                <a href={attrs.url || "#"} target="_blank" rel="noopener noreferrer">
+                                                    <Download className="w-3 h-3 mr-1" />
+                                                    Unduh
+                                                </a>
+                                            </Button>
+                                            <Button 
+                                                variant="outline" 
+                                                size="sm" 
+                                                className="w-full h-8 text-xs border-blue-200 text-blue-700 hover:bg-blue-50 px-2"
+                                                asChild
+                                            >
+                                                <a href={attrs.url || "#"} target="_blank" rel="noopener noreferrer">
+                                                    <Eye className="w-3 h-3 mr-1" />
+                                                    Lihat
+                                                </a>
+                                            </Button>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -538,89 +513,68 @@ export default function InformasiPublikPage() {
                 </Card>
 
                 {/* PDF Viewer Modal */}
-                {selectedItem && selectedItem.attributes.satuan && (
-                    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                        <div className="bg-white rounded-lg max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-                            <div className="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
-                                <div className="flex-1">
-                                    <h2 className="text-xl font-bold truncate pr-4">{selectedItem.attributes.nama}</h2>
-                                    <p className="text-sm text-gray-600">
-                                        Kategori: {selectedItem.attributes.kategori} | Tahun:{" "}
-                                        {selectedItem.attributes.tahun}
+                {selectedItem && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                        <Card className="w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl">
+                            <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
+                                <div>
+                                    <CardTitle className="text-lg line-clamp-1">{selectedItem.attributes.nama}</CardTitle>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        {selectedItem.attributes.kategori} • {selectedItem.attributes.tahun || "-"}
                                     </p>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => window.open(selectedItem.attributes.satuan!, "_blank")}
+                                <Button variant="ghost" size="icon" onClick={() => setSelectedItem(null)}>
+                                    <span className="sr-only">Close</span>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="h-6 w-6"
                                     >
-                                        <Download className="h-4 w-4 mr-2" />
-                                        Unduh
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        onClick={() => setSelectedItem(null)}
-                                        className="rounded-full"
-                                    >
-                                        ✕
-                                    </Button>
-                                </div>
+                                        <path d="M18 6 6 18" />
+                                        <path d="m6 6 12 12" />
+                                    </svg>
+                                </Button>
+                            </CardHeader>
+                            <CardContent className="flex-1 overflow-auto p-0 bg-gray-100 relative">
+                                {selectedItem.attributes.satuan || selectedItem.attributes.url ? (
+                                    <iframe
+                                        src={selectedItem.attributes.satuan || selectedItem.attributes.url || ""}
+                                        className="w-full h-full min-h-[60vh]"
+                                        title="Document Viewer"
+                                    />
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center h-64 text-gray-500 gap-4">
+                                        <FileText className="w-16 h-16 opacity-50" />
+                                        <p>Pratinjau dokumen tidak tersedia</p>
+                                        <Button 
+                                            variant="outline"
+                                            onClick={() => window.open(selectedItem.attributes.url || "#", "_blank")}
+                                        >
+                                            Buka Tautan Eksternal
+                                        </Button>
+                                    </div>
+                                )}
+                            </CardContent>
+                            <div className="p-4 border-t flex justify-end gap-2 bg-white">
+                                <Button variant="outline" onClick={() => setSelectedItem(null)}>
+                                    Tutup
+                                </Button>
+                                <Button
+                                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                                    onClick={() => window.open(selectedItem.attributes.satuan || selectedItem.attributes.url || "#", "_blank")}
+                                >
+                                    <Download className="h-4 w-4 mr-2" />
+                                    Unduh Dokumen
+                                </Button>
                             </div>
-
-                            <div className="flex-1 overflow-auto bg-gray-100">
-                                <iframe
-                                    src={selectedItem.attributes.satuan}
-                                    className="w-full h-[calc(90vh-120px)] border-0"
-                                    title={selectedItem.attributes.nama}
-                                />
-                            </div>
-
-                            <div className="border-t bg-gray-50 p-4">
-                                <div className="text-sm text-gray-600">
-                                    <p className="font-medium mb-1">Detail Informasi:</p>
-                                    {selectedItem.attributes.attr && (
-                                        <div className="grid md:grid-cols-2 gap-2">
-                                            {(() => {
-                                                try {
-                                                    const attrData = JSON.parse(selectedItem.attributes.attr!);
-                                                    return (
-                                                        <>
-                                                            {attrData.no_kep_kades && (
-                                                                <p>
-                                                                    <span className="font-medium">No. Kep. Kades:</span>{" "}
-                                                                    {attrData.no_kep_kades}
-                                                                </p>
-                                                            )}
-                                                            {attrData.tgl_kep_kades && (
-                                                                <p>
-                                                                    <span className="font-medium">
-                                                                        Tgl. Kep. Kades:
-                                                                    </span>{" "}
-                                                                    {attrData.tgl_kep_kades}
-                                                                </p>
-                                                            )}
-                                                            {attrData.uraian && (
-                                                                <p className="md:col-span-2">
-                                                                    <span className="font-medium">Uraian:</span>{" "}
-                                                                    {attrData.uraian}
-                                                                </p>
-                                                            )}
-                                                        </>
-                                                    );
-                                                } catch {
-                                                    return null;
-                                                }
-                                            })()}
-                                        </div>
-                                    )}
-                                    <p className="mt-2">
-                                        <span className="font-medium">Upload Date:</span>{" "}
-                                        {formatDate(selectedItem.attributes.tgl_upload)}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        </Card>
                     </div>
                 )}
             </div>

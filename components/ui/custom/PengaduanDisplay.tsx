@@ -43,7 +43,7 @@ interface PengaduanAttributes {
     child: ChildResponse[];
 }
 
-interface PengaduanItem {
+export interface PengaduanItem {
     type: string;
     id: string;
     attributes: PengaduanAttributes;
@@ -71,6 +71,7 @@ interface PengaduanData {
 
 interface PengaduanDisplayProps {
     className?: string;
+    newItems?: PengaduanItem[];
 }
 
 const fetchPengaduanData = async (): Promise<PengaduanData | null> => {
@@ -127,7 +128,7 @@ const formatDate = (dateString: string) => {
     }
 };
 
-export function PengaduanDisplay({ className }: PengaduanDisplayProps) {
+export function PengaduanDisplay({ className, newItems = [] }: PengaduanDisplayProps) {
     const [data, setData] = React.useState<PengaduanData | null>(null);
     const [loading, setLoading] = React.useState(true);
     const [selectedPengaduan, setSelectedPengaduan] = React.useState<PengaduanItem | null>(null);
@@ -152,6 +153,11 @@ export function PengaduanDisplay({ className }: PengaduanDisplayProps) {
         loadData();
     }, []);
 
+    const displayData = React.useMemo(() => {
+        if (!data) return newItems;
+        return [...newItems, ...data.data];
+    }, [data, newItems]);
+
     if (loading) {
         return (
             <div className={cn("w-full space-y-6", className)}>
@@ -172,7 +178,7 @@ export function PengaduanDisplay({ className }: PengaduanDisplayProps) {
         );
     }
 
-    if (!data || !data.data || data.data.length === 0) {
+    if ((!data || !data.data || data.data.length === 0) && newItems.length === 0) {
         return (
             <div className={cn("w-full space-y-6", className)}>
                 <Card>
@@ -206,14 +212,14 @@ export function PengaduanDisplay({ className }: PengaduanDisplayProps) {
                         Daftar Pengaduan Masyarakat
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                        Total {data.meta?.pagination.total || data.data.length} pengaduan yang terdaftar
+                        Total {displayData.length} pengaduan yang terdaftar
                     </p>
                 </CardHeader>
             </Card>
 
             {/* Pengaduan List - Simplified Cards */}
             <div className="space-y-4">
-                {data.data.map((pengaduan) => {
+                {displayData.map((pengaduan) => {
                     const attrs = pengaduan.attributes;
                     // Preview of content (first 150 characters)
                     const preview = attrs.isi.length > 150 ? attrs.isi.substring(0, 150) + "..." : attrs.isi;
@@ -426,13 +432,13 @@ export function PengaduanDisplay({ className }: PengaduanDisplayProps) {
             </Dialog>
 
             {/* Pagination Info */}
-            {data.meta && data.meta.pagination.total_pages > 1 && (
+            {data?.meta && data.meta.pagination.total_pages > 1 && (
                 <Card>
                     <CardContent className="py-4">
                         <div className="text-center text-sm text-muted-foreground">
                             Halaman {data.meta.pagination.current_page} dari {data.meta.pagination.total_pages}
                             {" • "}
-                            Menampilkan {data.meta.pagination.count} dari {data.meta.pagination.total} pengaduan
+                            Menampilkan {data.meta.pagination.count + newItems.length} dari {data.meta.pagination.total + newItems.length} pengaduan
                         </div>
                     </CardContent>
                 </Card>

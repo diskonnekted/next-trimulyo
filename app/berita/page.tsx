@@ -7,8 +7,8 @@
 // =============================================================================
 
 import { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { Search, Filter, Calendar, FileText, RefreshCw, RotateCcw } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Search, Filter, Calendar, FileText, RefreshCw, RotateCcw, ExternalLink } from "lucide-react";
 import { useTranslation } from "@/lib/useTranslation";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,6 +42,7 @@ function NewsContent({
     searchQuery?: string | null;
 }) {
     const { t } = useTranslation();
+    const router = useRouter();
     const [posts, setPosts] = useState<Post[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [archives, setArchives] = useState<Array<{ key: string; displayText: string; count: number }>>([]);
@@ -541,6 +542,39 @@ function NewsContent({
                     {!loading && posts.length > 0 && (
                         <>
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                {/* WordPress News Placeholder Link (Manual Integration) */}
+                                {!searchTerm && currentPage === 1 && selectedCategory === "all" && (
+                                    <Card 
+                                        className="hover:shadow-lg transition-all cursor-pointer border-blue-200 bg-blue-50 group flex flex-col h-full"
+                                        onClick={() => router.push('/berita/external/tarawih-keliling-di-al-falaq-kalangan-pemkal-trimulyo-pererat-ukhuwah-dengan-warga')}
+                                    >
+                                        <div className="aspect-video relative overflow-hidden rounded-t-lg bg-gray-200">
+                                            {/* Placeholder image */}
+                                            <div className="absolute inset-0 flex items-center justify-center bg-blue-100 text-blue-500">
+                                                <ExternalLink className="w-12 h-12 opacity-50" />
+                                            </div>
+                                            <div className="absolute top-2 right-2">
+                                                <Badge className="bg-blue-600 hover:bg-blue-700">Eksternal</Badge>
+                                            </div>
+                                        </div>
+                                        <CardContent className="p-4 flex-1 flex flex-col">
+                                            <div className="mb-2 flex items-center gap-2 text-xs text-gray-500">
+                                                <Calendar className="w-3 h-3" />
+                                                <span>Terbaru</span>
+                                            </div>
+                                            <h3 className="font-bold text-lg mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                                                Tarawih Keliling di Al Falaq Kalangan, Pemkal Trimulyo Pererat Ukhuwah dengan Warga
+                                            </h3>
+                                            <p className="text-sm text-gray-600 line-clamp-3 mb-4 flex-1">
+                                                Kegiatan tarawih keliling sebagai sarana mempererat silaturahmi antara pemerintah kalurahan dengan warga masyarakat...
+                                            </p>
+                                            <div className="mt-auto flex items-center text-sm text-blue-600 font-medium">
+                                                Baca Selengkapnya <ExternalLink className="w-3 h-3 ml-1" />
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                )}
+
                                 {posts.map((post) => (
                                     <NewsCard
                                         key={post.id}
