@@ -54,6 +54,26 @@ export interface HistoricalDataEntry {
     [key: string]: string | number; // Dynamic sensor values
 }
 
+// Helper function to create a fallback device when API fails
+function createFallbackDevice(channelConfig: ThingSpeakChannel): IoTDevice {
+    return {
+        id: `DEV${channelConfig.id}`,
+        name: channelConfig.name,
+        type: "multi-sensor",
+        lat: channelConfig.lat,
+        lng: channelConfig.lng,
+        status: "inactive",
+        battery: 0,
+        description: "Device unavailable (API Error)",
+        location: channelConfig.location,
+        lastUpdate: new Date().toISOString(),
+        channel_id: parseInt(channelConfig.id),
+        entry_id: 0,
+        sensors: [],
+        historicalData: [],
+    };
+}
+
 // Define all ThingSpeak channels
 export const THINGSPEAK_CHANNELS: ThingSpeakChannel[] = [
     {
@@ -153,31 +173,40 @@ async function fetchChannelData(
     channelConfig: ThingSpeakChannel,
     results: number = 20
 ): Promise<IoTDevice> {
-    const API_BASE_URL = `https://api.thingspeak.com/channels/${channelId}`;
+    // Correct API base URL to ensure valid request
+    const API_BASE_URL = `https://api.thingspeak.com/channels/${channelId}/feeds.json?results=${results}`;
 
+    // Add AbortController for fetch timeout to prevent hanging promises
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     try {
-        const feedsResponse = await fetch(`${API_BASE_URL}/feeds.json?results=${results}`, {
+        const feedsResponse = await fetch(API_BASE_URL, {
             method: "GET",
             headers: {
                 "User-Agent":
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
                 Accept: "application/json",
-                "Accept-Language": "id-ID,id;q=0.9,en;q=0.8",
             },
-            cache: "no-store",
+            next: { revalidate: 0 }, // Disable Next.js caching
             signal: controller.signal,
         });
-
+        
         clearTimeout(timeoutId);
 
         if (!feedsResponse.ok) {
-            throw new Error(`Failed to fetch ThingSpeak feeds: ${feedsResponse.status}`);
+            // Handle HTTP errors gracefully
+            console.error(`ThingSpeak API error for channel ${channelId}: ${feedsResponse.status}`);
+            return createFallbackDevice(channelConfig);
         }
 
         const feedsData = await feedsResponse.json();
+        
+        // Check if data structure is valid
+        if (!feedsData || !feedsData.channel || !feedsData.feeds || feedsData.feeds.length === 0) {
+            console.warn(`Empty or invalid data from ThingSpeak channel ${channelId}`);
+            return createFallbackDevice(channelConfig);
+        }
 
         // Extract latest data
         const latestFeed = feedsData.feeds[feedsData.feeds.length - 1];
@@ -241,7 +270,9 @@ async function fetchChannelData(
         return device;
     } catch (error) {
         clearTimeout(timeoutId);
-        throw error;
+        // Don't rethrow, return fallback device instead to handle fetch failures gracefully
+        console.error(`Error fetching channel ${channelId}:`, error);
+        return createFallbackDevice(channelConfig);
     }
 }
 
@@ -260,34 +291,38 @@ export async function fetchAllIoTData(): Promise<{ devices: IoTDevice[]; summary
     let activeSensors = 0;
 
     // Fetch data from all channels IN PARALLEL
-    const fetchPromises = THINGSPEAK_CHANNELS.map((channel) =>
-        fetchChannelData(channel.id, channel)
-            .then((device) => ({ device, error: null, channel: channel.id }))
-            .catch((error) => {
-                console.error(`Error fetching data for channel ${channel.id}:`, error);
-                return { device: null, error, channel: channel.id };
-            })
-    );
+    const fetchPromises = THINGSPEAK_CHANNELS.map(async (channel) => {
+        try {
+            const device = await fetchChannelData(channel.id, channel);
+            return { device, error: null, channel: channel.id };
+        } catch (error) {
+            console.error(`Error fetching data for channel ${channel.id}:`, error);
+            // Return fallback device on error instead of throwing
+            return { 
+                device: createFallbackDevice(channel), 
+                error: null, // Mark as success with fallback to prevent API failure
+                channel: channel.id 
+            };
+        }
+    });
 
     const results = await Promise.all(fetchPromises);
 
-    // Process results - only add successful devices
+    // Process results
     for (const result of results) {
         if (result.device) {
             devices.push(result.device);
+            // Count sensors
+            if (result.device.status === 'active') {
+                activeSensors += result.device.sensors.length;
+            }
             totalSensors += result.device.sensors.length;
-            activeSensors += result.device.sensors.filter(() => result.device.status === "active").length;
-        } else if (result.error) {
-            errors.push({ channel: result.channel, error: result.error });
         }
     }
 
-    // If no devices were successfully fetched, throw an error
+    // If no devices were successfully fetched, return empty result instead of throwing
     if (devices.length === 0) {
-        const errorMessages = errors
-            .map((e) => `Channel ${e.channel}: ${(e.error as Error).message || "Unknown error"}`)
-            .join("; ");
-        throw new Error(`Failed to fetch any IoT devices. Errors: ${errorMessages}`);
+        console.warn(`Failed to fetch any IoT devices from ThingSpeak.`);
     }
 
     // Log warnings for partial failures
