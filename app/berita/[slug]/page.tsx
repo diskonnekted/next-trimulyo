@@ -7,11 +7,12 @@
 // =============================================================================
 
 import { useState, useEffect, Suspense } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Clock, User, ArrowLeft, Share2, MessageSquare, Eye, Tag, Folder } from "lucide-react";
 import { toast } from "sonner";
+import { useExternalNews } from "@/hooks/useExternalNews";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -85,7 +86,11 @@ function getReadingTime(content: string): number {
 // Detail page component
 function NewsDetailContent() {
     const params = useParams();
+    const router = useRouter();
     const slug = params.slug as string;
+
+    // Use the robust external news hook that handles fallbacks
+    const { news: externalNews, loading: newsLoading, error: newsError } = useExternalNews(50); // Fetch enough items to find the slug
 
     const [post, setPost] = useState<Post | null>(null);
     const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
@@ -95,113 +100,78 @@ function NewsDetailContent() {
 
     // Load post and related posts
     useEffect(() => {
-        async function loadPost() {
-            if (!slug) return;
+        if (!slug || newsLoading) return;
 
-            try {
-                setLoading(true);
-                setError(null);
+        setLoading(true);
+        setError(null);
 
-                // Get post by slug
-                const { getPostBySlug, getPosts } = await import("@/lib/opensid");
-                let postData = (await getPostBySlug(slug)) as Post | null;
+        // Find post by slug in the fetched external news
+        const foundItem = externalNews.find(item => item.slug === slug);
 
-                if (!postData) {
-                    // Try fetching directly from WP API if not found via OpenSID helper
-                    try {
-                        const response = await fetch(`/api/opensid-berita`);
-                        if (response.ok) {
-                            const data = await response.json();
-                            const wpPost = data.data?.find((p: any) => p.attributes.slug === slug);
-                            
-                            if (wpPost) {
-                                // Transform to Post interface
-                                const readingTime = typeof window !== 'undefined' ? getReadingTime(wpPost.attributes.isi) : 1;
+        if (foundItem) {
+            // Transform to Post interface
+            const postData: Post = {
+                id: parseInt(foundItem.id) || 0,
+                title: foundItem.title,
+                slug: foundItem.slug,
+                date: foundItem.publishedAt,
+                modified: foundItem.updatedAt,
+                excerpt: foundItem.excerpt,
+                content: foundItem.content,
+                link: `/berita/${foundItem.slug}`,
+                status: "publish",
+                featuredImage: foundItem.featuredImage || "/images/placeholder-news.jpg",
+                featuredImageAlt: foundItem.title,
+                categories: foundItem.categories.map(c => ({ id: c.id, name: c.name, slug: c.slug, description: "" })),
+                author: { id: 0, name: foundItem.author.name, avatar: foundItem.author.avatar || "/images/default-avatar.png" },
+                viewCount: foundItem.viewCount || 0,
+                readingTime: foundItem.readTime || 1,
+                tags: foundItem.tags.map(t => ({ id: t.id, name: t.name, slug: t.slug }))
+            };
 
-                                postData = {
-                                    id: wpPost.id,
-                                    title: wpPost.attributes.judul,
-                                    slug: wpPost.attributes.slug,
-                                    content: wpPost.attributes.isi,
-                                    excerpt: wpPost.attributes.isi.replace(/<[^>]*>/g, "").substring(0, 200) + "...",
-                                    link: `/berita/${wpPost.attributes.slug}`,
-                                    status: "publish",
-                                    readingTime: readingTime,
-                                    featuredImage: wpPost.attributes.gambar,
-                                    featuredImageAlt: wpPost.attributes.judul,
-                                    date: wpPost.attributes.tgl_upload,
-                                    modified: wpPost.attributes.tgl_upload,
-                                    categories: [{
-                                        id: 0,
-                                        name: wpPost.attributes.category.kategori,
-                                        slug: wpPost.attributes.category.slug
-                                    }],
-                                    tags: [],
-                                    author: {
-                                        id: 0,
-                                        name: wpPost.attributes.author.nama,
-                                        avatar: "/images/default-avatar.png"
-                                    },
-                                    viewCount: 0,
-                                };
-                            }
-                        }
-                    } catch (wpError) {
-                        console.error("Failed to fetch from WP fallback:", wpError);
-                    }
-                }
+            setPost(postData);
+            setViewCount(postData.viewCount);
 
-                if (!postData) {
-                    setError("Berita tidak ditemukan");
-                    return;
-                }
-
-                setPost(postData);
-                setViewCount(postData.viewCount);
-
-                // Load related posts (posts with same categories)
-                if (postData.categories.length > 0) {
-                    const category = postData.categories[0];
-
-                    // If it's a "Berita Resmi" (category slug match), we need special handling
-                    if (category.slug === 'berita-resmi') {
-                        // Fetch all posts first, then filter client-side as getPosts filtering might be strict on IDs
-                        const allPosts = await getPosts(1, 10);
-                        if (allPosts && allPosts.posts) {
-                            // Filter for other official news or just recent ones
-                            const related = allPosts.posts
-                                .filter((p: Post) => p.id !== postData!.id)
-                                .slice(0, 3);
-                            setRelatedPosts(related);
-                        }
-                    } else if (category.id !== 0) {
-                        // Only fetch related if valid category ID (not fallback 0)
-                        const relatedData = await getPosts(1, 3, category.id);
-
-                        if (relatedData) {
-                            // Exclude current post from related posts
-                            const filtered = relatedData.posts.filter((p: Post) => p.id !== postData!.id);
-                            setRelatedPosts(filtered);
-                        }
-                    } else {
-                         // Fallback related posts (recent)
-                         const relatedData = await getPosts(1, 3);
-                         if (relatedData) {
-                            const filtered = relatedData.posts.filter((p: Post) => p.id !== postData!.id);
-                            setRelatedPosts(filtered);
-                         }
-                    }
-                }
-            } catch (err) {
-                console.error("Error loading post:", err);
-                setError("Gagal memuat berita. Silakan coba lagi.");
-            } finally {
-                setLoading(false);
-            }
+            // Find related posts (exclude current post)
+            const related = externalNews
+                .filter(item => item.slug !== slug)
+                .slice(0, 3)
+                .map(item => ({
+                    id: parseInt(item.id) || 0,
+                    title: item.title,
+                    slug: item.slug,
+                    date: item.publishedAt,
+                    modified: item.updatedAt,
+                    excerpt: item.excerpt,
+                    content: item.content,
+                    link: `/berita/${item.slug}`,
+                    status: "publish",
+                    featuredImage: item.featuredImage || "/images/placeholder-news.jpg",
+                    featuredImageAlt: item.title,
+                    categories: item.categories.map(c => ({ id: c.id, name: c.name, slug: c.slug, description: "" })),
+                    author: { id: 0, name: item.author.name, avatar: item.author.avatar || "/images/default-avatar.png" },
+                    viewCount: item.viewCount || 0,
+                    readingTime: item.readTime || 1,
+                    tags: item.tags.map(t => ({ id: t.id, name: t.name, slug: t.slug }))
+                }));
+            
+            setRelatedPosts(related);
+            setLoading(false);
+        } else if (!newsLoading && externalNews.length > 0) {
+            // Only set error if we've finished loading and still haven't found it
+            setError("Berita tidak ditemukan");
+            setLoading(false);
+        } else if (newsError) {
+            setError("Gagal memuat berita. Silakan coba lagi.");
+            setLoading(false);
         }
+        
+    }, [slug, externalNews, newsLoading, newsError]);
 
-        loadPost();
-    }, [slug]);
+    // Handle back
+    const handleBack = () => {
+        router.back();
+    };
 
     // Update view count (simulated)
     useEffect(() => {
