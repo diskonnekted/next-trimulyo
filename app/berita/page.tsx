@@ -10,6 +10,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Search, Filter, Calendar, FileText, RefreshCw, RotateCcw, ExternalLink } from "lucide-react";
 import { useTranslation } from "@/lib/useTranslation";
+import { useExternalNews } from "@/hooks/useExternalNews";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,23 +44,26 @@ function NewsContent({
 }) {
     const { t } = useTranslation();
     const router = useRouter();
+    
+    // Use the robust external news hook that handles fallbacks (WP -> WP Proxy -> OpenSID Proxy)
+    const { news: externalNews, loading: newsLoading, error: newsError } = useExternalNews(50); // Fetch up to 50 items
+
     const [posts, setPosts] = useState<Post[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [archives, setArchives] = useState<Array<{ key: string; displayText: string; count: number }>>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    // Pagination state
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [, setTotalPosts] = useState(0);
-
+    
     // Filter state
     const [selectedCategory, setSelectedCategory] = useState<string>(categorySlug ?? "all");
     const [selectedArchive, setSelectedArchive] = useState<string>(archiveKey ?? "all");
     const [selectedSort, setSelectedSort] = useState<string>("terbaru");
     const [searchTerm, setSearchTerm] = useState(searchQuery ?? "");
     const [searchInput, setSearchInput] = useState(searchQuery ?? "");
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [postsPerPage, setPostsPerPage] = useState(9);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalPosts, setTotalPosts] = useState(0);
 
     // Sync state with URL parameters when they change
     useEffect(() => {
@@ -70,133 +74,117 @@ function NewsContent({
         setCurrentPage(1); // Reset to first page when URL changes
     }, [categorySlug, archiveKey, searchQuery]);
 
-    // Fixed posts per page: 9 on desktop (lg:), 5 on mobile
-    const [postsPerPage, setPostsPerPage] = useState(9);
-
     // Update posts per page based on screen size
     useEffect(() => {
         const updatePostsPerPage = () => {
-            // Use CSS media query approach - check if window is large screen
             const isLargeScreen = window.innerWidth >= 1024;
-            const newPostsPerPage = isLargeScreen ? 9 : 5;
-            setPostsPerPage((prev) => {
-                if (prev !== newPostsPerPage) {
-                    setCurrentPage(1); // Reset to page 1 when posts per page changes
-                }
-                return newPostsPerPage;
-            });
+            setPostsPerPage(isLargeScreen ? 9 : 5);
         };
-
-        // Set initial value
         updatePostsPerPage();
-        // Listen for resize
         window.addEventListener("resize", updatePostsPerPage);
         return () => window.removeEventListener("resize", updatePostsPerPage);
     }, []);
 
-    // Load categories and archives for dropdowns
+    // Transform external news to internal Post format and apply filters
     useEffect(() => {
-        async function loadFilters() {
-            try {
-                const { getCategories, getArchiveDates } = await import("@/lib/opensid");
-                const [categoriesData, archivesData] = await Promise.all([getCategories(), getArchiveDates()]);
+        if (newsLoading) return;
 
-                setCategories((categoriesData as Category[]) ?? []);
-                setArchives(
-                    (archivesData as Array<{ key: string; displayText: string; count: number }>)?.slice(0, 24) ??
-                        []
-                ); // Show up to 2 years of archives
-            } catch {}
+        // Transform data
+        let allPosts: Post[] = externalNews.map(item => ({
+            id: parseInt(item.id) || 0,
+            title: item.title,
+            slug: item.slug,
+            date: item.publishedAt,
+            excerpt: item.excerpt,
+            content: item.content,
+            image: item.featuredImage || "/images/placeholder-news.jpg",
+            categories: item.categories.map(c => ({ id: c.id, name: c.name, slug: c.slug })),
+            author: { name: item.author.name, avatar: item.author.avatar || "/images/default-avatar.png" },
+            viewCount: item.viewCount,
+            readingTime: item.readTime,
+            tags: item.tags.map(t => ({ id: t.id, name: t.name, slug: t.slug }))
+        }));
+
+        // Apply Search
+        if (searchTerm) {
+            const lowerTerm = searchTerm.toLowerCase();
+            allPosts = allPosts.filter(post => 
+                post.title.toLowerCase().includes(lowerTerm) || 
+                post.excerpt.toLowerCase().includes(lowerTerm)
+            );
         }
 
-        loadFilters();
-    }, []);
+        // Apply Category Filter
+        if (selectedCategory && selectedCategory !== "all") {
+            allPosts = allPosts.filter(post => 
+                post.categories.some(c => c.slug === selectedCategory)
+            );
+        }
 
-    // Load posts
-    useEffect(() => {
-        async function loadPosts() {
-            try {
-                setLoading(true);
-                setError(null);
+        // Apply Archive Filter
+        if (selectedArchive && selectedArchive !== "all") {
+            const [year, month] = selectedArchive.split("-");
+            allPosts = allPosts.filter(post => {
+                const date = new Date(post.date);
+                return date.getFullYear() === parseInt(year) && (date.getMonth() + 1) === parseInt(month);
+            });
+        }
 
-                let allPosts: Post[] = [];
+        // Apply Sorting
+        switch (selectedSort) {
+            case "terlama":
+                allPosts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                break;
+            case "terpopuler":
+                allPosts.sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0));
+                break;
+            case "terbaru":
+            default:
+                allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        }
 
-                if (searchTerm) {
-                    // Search functionality
-                    const { searchPosts } = await import("@/lib/opensid");
-                    const searchResult = await searchPosts(searchTerm, 1);
-                    allPosts = (searchResult as { posts?: Post[] })?.posts || [];
-                } else {
-                    // Get all posts first, then filter client-side
-                    const { getPosts } = await import("@/lib/opensid");
-                    const postsResult = await getPosts(1, undefined, undefined);
-                    allPosts = postsResult?.posts || [];
+        // Extract Categories from data
+        const uniqueCategories = new Map<string, Category>();
+        externalNews.forEach(item => {
+            item.categories.forEach(c => {
+                if (!uniqueCategories.has(c.slug)) {
+                    uniqueCategories.set(c.slug, { id: c.id, name: c.name, slug: c.slug, count: 0 });
                 }
+                const cat = uniqueCategories.get(c.slug);
+                if (cat) cat.count = (cat.count || 0) + 1;
+            });
+        });
+        setCategories(Array.from(uniqueCategories.values()));
 
-                // Apply filters
-                let filteredPosts = allPosts;
+        // Extract Archives from data
+        const archiveMap = new Map<string, { key: string; displayText: string; count: number }>();
+        externalNews.forEach(item => {
+            const date = new Date(item.publishedAt);
+            const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            const displayText = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+            
+            if (!archiveMap.has(key)) {
+                archiveMap.set(key, { key, displayText, count: 0 });
+            }
+            const archive = archiveMap.get(key);
+            if (archive) archive.count++;
+        });
+        setArchives(Array.from(archiveMap.values()).sort((a, b) => b.key.localeCompare(a.key)));
 
-                // Category filter
-                if (selectedCategory && selectedCategory !== "all") {
-                    const category = categories.find((c) => c.slug === selectedCategory);
-                    if (category) {
-                        if (category.id === 0) {
-                            // ID 0 = uncategorized posts
-                            filteredPosts = filteredPosts.filter(
-                                (post) => post.categories.length === 0 || post.categories[0].id === 0
-                            );
-                        } else {
-                            filteredPosts = filteredPosts.filter((post) =>
-                                post.categories.some((cat) => cat.id === category.id)
-                            );
-                        }
-                    }
-                }
+        // Pagination
+        setTotalPosts(allPosts.length);
+        setTotalPages(Math.ceil(allPosts.length / postsPerPage) || 1);
+        
+        const startIndex = (currentPage - 1) * postsPerPage;
+        const endIndex = startIndex + postsPerPage;
+        setPosts(allPosts.slice(startIndex, endIndex));
 
-                // Archive filter
-                if (selectedArchive && selectedArchive !== "all") {
-                    const [year, month] = selectedArchive.split("-");
-                    filteredPosts = filteredPosts.filter((post) => {
-                        const postDate = new Date(post.date);
-                        return postDate.getFullYear() === parseInt(year) && postDate.getMonth() + 1 === parseInt(month);
-                    });
-                }
+    }, [externalNews, newsLoading, searchTerm, selectedCategory, selectedArchive, selectedSort, currentPage, postsPerPage]);
 
-                // Apply sorting
-                const sortedPosts = [...filteredPosts];
-                switch (selectedSort) {
-                    case "terbaru":
-                        sortedPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-                        break;
-                    case "terlama":
-                        sortedPosts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-                        break;
-                    case "terpopuler":
-                        sortedPosts.sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0));
-                        break;
-                    default:
-                        // Default to newest first
-                        sortedPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-                }
+    const loading = newsLoading;
+    const error = newsError;
 
-                // Apply pagination
-                const startIndex = (currentPage - 1) * postsPerPage;
-                const endIndex = startIndex + postsPerPage;
-                const paginatedPosts = sortedPosts.slice(startIndex, endIndex);
-
-                if (paginatedPosts.length > 0) {
-                    setPosts(paginatedPosts);
-                    setTotalPosts(sortedPosts.length);
-                    setTotalPages(Math.ceil(sortedPosts.length / postsPerPage));
-                } else {
-                    // No results - show empty state
-                    setPosts([]);
-                    setTotalPosts(sortedPosts.length);
-                    setTotalPages(Math.ceil(sortedPosts.length / postsPerPage) || 1);
-                }
-            } catch (error) {
-                console.error("Error loading posts:", error);
-                setError("Gagal memuat berita. Silakan coba lagi.");
+    // ... existing handlers ...
                 setPosts([]);
                 setTotalPosts(0);
                 setTotalPages(1);
@@ -237,13 +225,16 @@ function NewsContent({
     function getCurrentFilterInfo() {
         const filters = [];
 
-        // Show active sort
+    // Helper function to get current filter info
+    function getCurrentFilterInfo(): string[] {
+        const filters: string[] = [];
+        
         const sortNames = {
             terbaru: "Terbaru",
             terpopuler: "Terpopuler",
             terlama: "Terlama",
         };
-        filters.push(`Urutkan: ${sortNames[selectedSort as keyof typeof sortNames]}`);
+        filters.push(`Urutkan: ${sortNames[selectedSort as keyof typeof sortNames] || "Terbaru"}`);
 
         if (selectedCategory && selectedCategory !== "all") {
             const category = categories.find((c) => c.slug === selectedCategory);
@@ -253,20 +244,11 @@ function NewsContent({
         if (selectedArchive && selectedArchive !== "all") {
             const [year, month] = selectedArchive.split("-");
             const monthNames = [
-                "Januari",
-                "Februari",
-                "Maret",
-                "April",
-                "Mei",
-                "Juni",
-                "Juli",
-                "Agustus",
-                "September",
-                "Oktober",
-                "November",
-                "Desember",
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember",
             ];
-            filters.push(`${monthNames[parseInt(month) - 1]} ${year}`);
+            const monthName = monthNames[parseInt(month) - 1] || "";
+            filters.push(`${monthName} ${year}`);
         }
 
         if (searchTerm) {
@@ -277,43 +259,52 @@ function NewsContent({
     }
 
     const currentFilterInfo = getCurrentFilterInfo();
-    const currentCategoryId = selectedCategory ? categories.find((c) => c.slug === selectedCategory)?.id : undefined;
 
-    // Helper function for pagination numbers (same as IoT page)
+    // Handlers
+    const handleSearch = () => {
+        setSearchTerm(searchInput);
+        setCurrentPage(1);
+    };
+
+    const handleReset = () => {
+        setSearchInput("");
+        setSearchTerm("");
+        setSelectedCategory("all");
+        setSelectedArchive("all");
+        setSelectedSort("terbaru");
+        setCurrentPage(1);
+    };
+
+    // Helper function for pagination numbers
     function getPageNumbers(currentPage: number, totalPages: number): (number | "...")[] {
-        if (totalPages <= 5) {
+        // Simple pagination logic if totalPages is small
+        if (totalPages <= 7) {
             return Array.from({ length: totalPages }, (_, i) => i + 1);
         }
 
-        if (currentPage === 1) {
-            return [currentPage, currentPage + 1, currentPage + 2, "...", totalPages];
+        // Always show first, last, current, and surrounding pages
+        const pages: (number | "...")[] = [1];
+        
+        if (currentPage > 3) {
+            pages.push("...");
         }
-
-        if (currentPage === 2) {
-            return [currentPage - 1, currentPage, currentPage + 1, currentPage + 2, "...", totalPages];
+        
+        const start = Math.max(2, currentPage - 1);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+        
+        for (let i = start; i <= end; i++) {
+            pages.push(i);
         }
-
-        if (currentPage === 3) {
-            return [currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2, "...", totalPages];
+        
+        if (currentPage < totalPages - 2) {
+            pages.push("...");
         }
-
-        if (currentPage >= 4 && currentPage <= totalPages - 3) {
-            return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
+        
+        if (totalPages > 1) {
+            pages.push(totalPages);
         }
-
-        if (currentPage === totalPages - 2) {
-            return [1, "...", currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
-        }
-
-        if (currentPage === totalPages - 1) {
-            return [1, "...", currentPage - 2, currentPage - 1, currentPage, currentPage + 1];
-        }
-
-        if (currentPage === totalPages) {
-            return [1, "...", currentPage - 3, currentPage - 2, currentPage - 1, currentPage];
-        }
-
-        return Array.from({ length: totalPages }, (_, i) => i + 1);
+        
+        return pages;
     }
 
     return (
