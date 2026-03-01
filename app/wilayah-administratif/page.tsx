@@ -134,10 +134,10 @@ export default function WilayahAdministratifPage() {
         const loadData = async () => {
             setLoading(true);
             try {
-                await Promise.all([fetchWilayahData(), fetchSigantaraData()]);
+                // Fetch data from statistik penduduk API instead of wilayah API
+                await Promise.all([fetchPendudukData(), fetchSigantaraData()]);
             } catch (err) {
                 console.error("Error loading data:", err);
-                // Don't set global error here to allow partial data display
             } finally {
                 setLoading(false);
             }
@@ -148,29 +148,51 @@ export default function WilayahAdministratifPage() {
     const fetchSigantaraData = async () => {
         try {
             const response = await fetch("/api/sigantara");
-            if (!response.ok) throw new Error("Failed to fetch Sigantara data");
-            const data = await response.json();
-            setSigantaraData(data);
+            if (response.ok) {
+                const data = await response.json();
+                setSigantaraData(data);
+            }
         } catch (err) {
             console.error("Error fetching Sigantara data:", err);
         }
     };
 
-    const fetchWilayahData = async () => {
+    const fetchPendudukData = async () => {
         try {
-            setLoading(true);
-            const response = await fetch("/api/wilayah");
+            // Use the same API as /statistik/penduduk for accurate data
+            const response = await fetch("/api/statistik/penduduk");
             if (!response.ok) {
-                throw new Error("Failed to fetch wilayah data");
+                throw new Error("Failed to fetch penduduk data");
             }
-            const data: ApiResponse = await response.json();
-            setWilayahData(data.data || []);
-            setError(null);
+            const result = await response.json();
+            
+            if (result.success && result.data) {
+                // Transform statistik/penduduk data to match WilayahAdministratif structure
+                // or use it directly for statistics
+                const transformedData = result.data.map((item: any, index: number) => ({
+                    id: `dusun-${index}`,
+                    attributes: {
+                        dusun: item.dusun,
+                        kepala_nama: item.kepalaDusun,
+                        rws_count: item.jumlahRw,
+                        rts_count: item.jumlahRt,
+                        keluarga_aktif_count: item.jumlahKk,
+                        penduduk_pria_count: item.lakiLaki,
+                        penduduk_wanita_count: item.perempuan,
+                        penduduk_pria_wanita_count: item.jiwa,
+                        sebutan_dusun: "Dusun"
+                    }
+                }));
+                
+                setWilayahData(transformedData);
+                setError(null);
+            } else {
+                throw new Error("Invalid data format");
+            }
         } catch (err) {
-            console.error("Error fetching wilayah data:", err);
-            setError("Gagal memuat data wilayah administratif");
-        } finally {
-            setLoading(false);
+            console.error("Error fetching penduduk data:", err);
+            setError("Gagal memuat data statistik penduduk");
+            // Fallback to wilayah API if needed, or just show error
         }
     };
 

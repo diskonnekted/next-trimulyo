@@ -75,9 +75,9 @@ export function useExternalNews(limit: number = 10) {
                     if (openSidData && Array.isArray(openSidData.data) && openSidData.data.length > 0) {
                         const transformedOpenSidNews = transformOpenSidPosts(openSidData.data);
                         // Sort by date descending (newest first)
-                        const sortedNews = transformedOpenSidNews.sort((a, b) => 
-                            new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-                        );
+                        const sortedNews = transformedOpenSidNews.sort((a, b) => {
+                            return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+                        });
                         setNews(sortedNews.slice(0, limit));
                         return;
                     }
@@ -93,10 +93,10 @@ export function useExternalNews(limit: number = 10) {
                 if (proxyResponse.ok) {
                     const data: NewsResponse = await proxyResponse.json();
                     if (data.success && data.data && data.data.length > 0) {
-                         // Sort by date descending (newest first)
-                        const sortedNews = data.data.sort((a, b) => 
-                            new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-                        );
+                        // Sort by date descending (newest first)
+                        const sortedNews = data.data.sort((a, b) => {
+                            return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+                        });
                         setNews(sortedNews.slice(0, limit));
                         return;
                     }
