@@ -166,27 +166,27 @@ async function fetchFromOpenSID(_endpoint: string = "", params: Record<string, s
 function transformArticle(article: OpenSIDArticle) {
     const { attributes } = article;
 
-    // Featured image with fallback - OpenSID uses /desa/upload/artikel/sedang_ prefix
-    let featuredImage =
-        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='100%25' height='100%25' fill='%231f2b44'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='20' fill='%23ffffff' text-anchor='middle' dy='.3em'%3ENo Image%3C/text%3E%3C/svg%3E";
-    if (attributes.gambar) {
-        // OpenSID image pattern: /desa/upload/artikel/sedang_<filename>
-        let imageUrl = attributes.gambar;
-
-        // If it's just a filename (no path), add the OpenSID path with sedang_ prefix
-        if (!imageUrl.includes("/")) {
-            imageUrl = `https://trimulyo.sleman-desa.id/desa/upload/artikel/sedang_${imageUrl}`;
-        } else {
-            // If it's a relative path, add base URL
-            if (imageUrl.startsWith("/")) {
-                imageUrl = `https://trimulyo.sleman-desa.id${imageUrl}`;
+    // Helper to normalize image URL
+    const normalizeImageUrl = (raw: string | null): string => {
+        const base = (process.env.OPENSID_API_URL ?? "https://trimulyo.sleman-desa.id").replace(/^http:\/\//, "https://");
+        const placeholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='100%25' height='100%25' fill='%231f2b44'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='20' fill='%23ffffff' text-anchor='middle' dy='.3em'%3ENo Image%3C/text%3E%3C/svg%3E";
+        
+        if (!raw) return placeholder;
+        
+        let urlStr = raw.trim();
+        try {
+            if (urlStr.startsWith("/")) return `${base}${urlStr}`;
+            if (!urlStr.includes("/")) return `${base}/desa/upload/artikel/sedang_${urlStr}`;
+            if (urlStr.startsWith("http://") || urlStr.startsWith("https://")) {
+                return new URL(urlStr).toString().replace(/^http:\/\//i, "https://");
             }
-            // Force HTTPS
-            imageUrl = imageUrl.replace(/^http:\/\//i, "https://");
+            return urlStr;
+        } catch {
+            return placeholder;
         }
+    };
 
-        featuredImage = imageUrl;
-    }
+    const featuredImage = normalizeImageUrl(attributes.gambar);
 
     // Generate excerpt from content
     const plainContent = attributes.isi.replace(/<[^>]*>/g, "");

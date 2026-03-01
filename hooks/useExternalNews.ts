@@ -160,21 +160,44 @@ function transformWordPressPosts(posts: any[]): NewsItem[] {
 
 // Helper to transform OpenSID posts
 function transformOpenSidPosts(posts: any[]): NewsItem[] {
+    const normalizeImageUrl = (raw: string | null): string | null => {
+        if (!raw) return null;
+        let urlStr = raw.trim();
+        
+        // Base URL for OpenSID
+        const base = "https://trimulyo.sleman-desa.id";
+        
+        try {
+            // Handle relative paths starting with /
+            if (urlStr.startsWith("/")) {
+                return `${base}${urlStr}`;
+            }
+            
+            // Handle filenames only (OpenSID default location)
+            if (!urlStr.includes("/")) {
+                return `${base}/desa/upload/artikel/sedang_${urlStr}`;
+            }
+            
+            // Handle absolute URLs - force HTTPS and ensure correct domain
+            if (urlStr.startsWith("http://") || urlStr.startsWith("https://")) {
+                const u = new URL(urlStr);
+                // If it's pointing to the old http domain or IP, force it to the https domain
+                // But mostly we just want to ensure it's https
+                return u.toString().replace(/^http:\/\//i, "https://");
+            }
+            
+            return urlStr;
+        } catch (e) {
+            // Fallback for weird formats
+            return `${base}/desa/upload/artikel/sedang_${urlStr}`;
+        }
+    };
+
     return posts.map((post: any) => {
         const attrs = post.attributes || {};
         const content = attrs.isi || "";
         const wordCount = cleanContent(content).split(/\s+/).length;
         const readTime = Math.ceil(wordCount / 200);
-        
-        // Handle image URLs properly
-        let featuredImage = attrs.gambar;
-        if (featuredImage && featuredImage.startsWith("/")) {
-            // Prepend base URL for relative paths
-            featuredImage = `https://trimulyo.sleman-desa.id${featuredImage}`;
-        } else if (featuredImage && featuredImage.startsWith("http://")) {
-            // Upgrade to HTTPS
-            featuredImage = featuredImage.replace("http://", "https://");
-        }
         
         return {
             id: post.id?.toString() || Math.random().toString(),
@@ -182,7 +205,7 @@ function transformOpenSidPosts(posts: any[]): NewsItem[] {
             slug: attrs.slug || attrs.url_slug || `post-${post.id}`,
             excerpt: cleanContent(content).substring(0, 150) + "...",
             content: content,
-            featuredImage: featuredImage || null,
+            featuredImage: normalizeImageUrl(attrs.gambar),
             author: {
                 name: attrs.author?.nama || "Admin",
                 avatar: "/images/default-avatar.png",
