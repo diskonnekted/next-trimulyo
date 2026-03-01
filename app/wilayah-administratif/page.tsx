@@ -262,7 +262,7 @@ export default function WilayahAdministratifPage() {
                             Informasi lengkap mengenai wilayah administratif Kalurahan Pondokrejo
                         </p>
                     </div>
-                    <WilayahDataNotAvailable onRetry={fetchWilayahData} />
+                    <WilayahDataNotAvailable onRetry={fetchPendudukData} />
                 </div>
             </div>
         );
@@ -411,7 +411,7 @@ export default function WilayahAdministratifPage() {
 
                 {/* Dusun Grid */}
                 {filteredWilayah.length === 0 ? (
-                    <WilayahDataNotAvailable onRetry={fetchWilayahData} />
+                    <WilayahDataNotAvailable onRetry={fetchPendudukData} />
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredWilayah.map((dusun) => {
