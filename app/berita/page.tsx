@@ -152,7 +152,7 @@ function NewsContent({
         externalNews.forEach(item => {
             item.categories.forEach(c => {
                 if (!uniqueCategories.has(c.slug)) {
-                    uniqueCategories.set(c.slug, { id: c.id, name: c.name, slug: c.slug, count: 0 });
+                    uniqueCategories.set(c.slug, { id: c.id, name: c.name, slug: c.slug, count: 0, description: "" });
                 }
                 const cat = uniqueCategories.get(c.slug);
                 if (cat) cat.count = (cat.count || 0) + 1;
