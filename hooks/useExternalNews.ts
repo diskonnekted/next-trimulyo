@@ -82,24 +82,8 @@ export function useExternalNews(limit: number = 10) {
                 console.error("OpenSID Proxy fetch failed", e);
             }
 
-            // 2. Fallback: Try fetching directly from WordPress API (Client-side)
-            try {
-                console.warn("OpenSID fetch failed/empty, falling back to WordPress...");
-                const response = await fetch(`https://trimulyosid.slemankab.go.id/wp-json/wp/v2/posts?per_page=${limit}&_embed`);
-                
-                if (response.ok) {
-                    const posts = await response.json();
-                    const transformedNews = transformWordPressPosts(posts);
-                    if (transformedNews.length > 0) {
-                        setNews(transformedNews);
-                        return;
-                    }
-                }
-            } catch (e) {
-                console.warn("Direct WP fetch failed, trying proxies...", e);
-            }
-
-            // 3. Fallback: Try fetching via our WP Proxy (Server-side)
+            // 2. Fallback: Try fetching via our News Proxy (Server-side)
+            // This proxy now also uses OpenSID but acts as a backup route or transformer
             try {
                 const proxyResponse = await fetch("/api/external-news");
                 if (proxyResponse.ok) {
@@ -110,7 +94,7 @@ export function useExternalNews(limit: number = 10) {
                     }
                 }
             } catch (e) {
-                console.warn("WP Proxy fetch failed", e);
+                console.warn("News Proxy fetch failed", e);
             }
 
             // If all failed
