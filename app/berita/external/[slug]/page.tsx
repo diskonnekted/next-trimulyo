@@ -97,22 +97,6 @@ function ExternalNewsContent() {
                                 </div>
                             </div>
                         )}
-                        {/* Iframe content would go here */}
-                    </Card>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-export default function ExternalNewsPage() {
-    return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
-            <ExternalNewsContent />
-        </Suspense>
-    );
-}
-
                         <div className={`relative w-full transition-opacity duration-500 ${isLoading ? 'opacity-0 h-0' : 'opacity-100'}`}>
                             <iframe 
                                 src={targetUrl}
@@ -154,5 +138,13 @@ export default function ExternalNewsPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function ExternalNewsPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+            <ExternalNewsContent />
+        </Suspense>
     );
 }
