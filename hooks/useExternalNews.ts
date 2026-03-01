@@ -43,6 +43,17 @@ interface NewsResponse {
     error?: string;
 }
 
+// Helper to decode HTML entities
+function decodeHtmlEntities(text: string): string {
+    const doc = new DOMParser().parseFromString(text, "text/html");
+    return doc.documentElement.textContent || "";
+}
+
+// Helper to clean HTML content
+function cleanContent(html: string): string {
+    return html.replace(/<[^>]*>?/gm, '');
+}
+
 export function useExternalNews(limit: number = 10) {
     const [news, setNews] = useState<NewsItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -53,25 +64,67 @@ export function useExternalNews(limit: number = 10) {
             setLoading(true);
             setError(null);
 
-            const response = await fetch("/api/external-news");
+            // Fetch directly from WordPress API to avoid server-side blocking
+            const response = await fetch(`https://trimulyosid.slemankab.go.id/wp-json/wp/v2/posts?per_page=${limit}&_embed`);
+            
             if (!response.ok) {
-                throw new Error(`API error: ${response.status}`);
+                // If direct fetch fails (e.g. CORS), try the proxy route as fallback
+                console.warn(`Direct WP fetch failed (${response.status}), trying proxy...`);
+                const proxyResponse = await fetch("/api/external-news");
+                if (!proxyResponse.ok) throw new Error(`Proxy error: ${proxyResponse.status}`);
+                
+                const data: NewsResponse = await proxyResponse.json();
+                if (data.success) {
+                    setNews(data.data.slice(0, limit));
+                } else {
+                    setNews([]);
+                }
+                return;
             }
             
-            const data: NewsResponse = await response.json();
+            const posts = await response.json();
 
-            if (data.success) {
-                // Limit the results and sort by date (newest first)
-                const limitedNews = data.data
-                    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-                    .slice(0, limit);
-                setNews(limitedNews);
-            } else {
-                console.warn("News API returned success: false", data);
-                // Don't set error immediately if data is empty, just set empty news
-                // setError(data.error ?? "Failed to fetch news");
-                setNews([]); 
-            }
+            // Transform WordPress data
+            const transformedNews: NewsItem[] = posts.map((post: any) => {
+                const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
+                const imageUrl = featuredMedia?.source_url || null;
+                const author = post._embedded?.['author']?.[0];
+                const authorName = author?.name || "Admin Kalurahan";
+                
+                const content = post.content.rendered;
+                const wordCount = cleanContent(content).split(/\s+/).length;
+                const readTime = Math.ceil(wordCount / 200);
+
+                return {
+                    id: post.id.toString(),
+                    title: decodeHtmlEntities(post.title.rendered),
+                    slug: post.slug,
+                    excerpt: decodeHtmlEntities(cleanContent(post.excerpt.rendered)).substring(0, 150) + "...",
+                    content: post.content.rendered,
+                    featuredImage: imageUrl,
+                    author: {
+                        name: authorName,
+                        avatar: "/images/default-avatar.png",
+                    },
+                    category: "Berita Desa",
+                    categories: [{ id: 1, name: "Berita Desa", slug: "berita-desa" }],
+                    tags: [],
+                    publishedAt: post.date,
+                    updatedAt: post.modified,
+                    link: `/berita/${post.slug}`,
+                    readTime: Math.max(1, readTime),
+                    isBreaking: false,
+                    isFeatured: false,
+                    isPinned: false,
+                    viewCount: 0,
+                    likeCount: 0,
+                    commentCount: 0,
+                    shareCount: 0,
+                    isBookmarked: false,
+                };
+            });
+
+            setNews(transformedNews);
         } catch (err) {
             console.error("Error fetching news:", err);
             setError("Failed to connect to news server");
