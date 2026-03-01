@@ -369,7 +369,6 @@ function NewsDetailContent() {
                                 </div>
                              </div>
                         )}
-                        </div>
 
                         <CardHeader className="pb-4">
                             {/* Title */}
