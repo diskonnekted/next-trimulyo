@@ -304,6 +304,10 @@ function NewsContent({
         return pages;
     }
 
+    const currentCategoryId = selectedCategory && selectedCategory !== "all" 
+        ? categories.find((c) => c.slug === selectedCategory)?.id 
+        : undefined;
+
     return (
         <div className="container mx-auto px-4 py-4">
             {/* Header */}
