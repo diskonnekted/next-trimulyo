@@ -102,7 +102,7 @@ function NewsContent({
             status: "publish",
             featuredImage: item.featuredImage || "/images/placeholder-news.jpg",
             featuredImageAlt: item.title,
-            categories: item.categories.map(c => ({ id: c.id, name: c.name, slug: c.slug })),
+            categories: item.categories.map(c => ({ id: c.id, name: c.name, slug: c.slug, description: "" })),
             author: { id: 0, name: item.author.name, avatar: item.author.avatar || "/images/default-avatar.png" },
             viewCount: item.viewCount,
             readingTime: item.readTime,
@@ -149,8 +149,14 @@ function NewsContent({
 
         // Extract Categories from data
         const uniqueCategories = new Map<string, Category>();
+        
+        // Always add default categories if they exist in data or we want to enforce them
+        const allowedCategories = ["Berita Desa", "Berita"];
+        
         externalNews.forEach(item => {
             item.categories.forEach(c => {
+                // Only process if we want to filter specific categories or just take all
+                // For now taking all, but highlighting the ones mentioned
                 if (!uniqueCategories.has(c.slug)) {
                     uniqueCategories.set(c.slug, { id: c.id, name: c.name, slug: c.slug, count: 0, description: "" });
                 }
@@ -158,7 +164,15 @@ function NewsContent({
                 if (cat) cat.count = (cat.count || 0) + 1;
             });
         });
-        setCategories(Array.from(uniqueCategories.values()));
+        
+        // Convert to array and sort to prioritize "Berita Desa" and "Berita"
+        const sortedCategories = Array.from(uniqueCategories.values()).sort((a, b) => {
+            const aPriority = allowedCategories.includes(a.name) ? 1 : 0;
+            const bPriority = allowedCategories.includes(b.name) ? 1 : 0;
+            return bPriority - aPriority || a.name.localeCompare(b.name);
+        });
+        
+        setCategories(sortedCategories);
 
         // Extract Archives from data
         const archiveMap = new Map<string, { key: string; displayText: string; count: number }>();
