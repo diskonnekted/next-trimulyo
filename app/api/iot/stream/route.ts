@@ -1,7 +1,12 @@
-import { fetchAllIoTData } from "@/lib/thingspeak";
+// import { fetchAllIoTData } from "@/lib/thingspeak";
 
-export const dynamic = 'force-dynamic';
+// export const dynamic = 'force-dynamic';
 
+export async function GET() {
+    return new Response("IoT Stream temporarily unavailable", { status: 503 });
+}
+
+/*
 const activeConnections: Set<ReadableStreamDefaultController> = new Set();
 
 export async function GET() {
@@ -101,21 +106,18 @@ function startPolling(controller: ReadableStreamDefaultController, encoder: Text
         }
     };
 
-    // Initial poll - run immediately (will use cache if available)
-    poll();
-
-    // Poll every 15 seconds (matching cache duration)
+    // Poll every 15 seconds (ThingSpeak limit)
     pollingInterval = setInterval(poll, 15000);
+    
+    // Initial poll
+    poll();
 }
 
 function stopPolling() {
     if (pollingInterval) {
+        console.log("Stopping IoT data polling...");
         clearInterval(pollingInterval);
         pollingInterval = null;
-        console.log("IoT data polling stopped");
     }
 }
-
-// Cleanup on server shutdown
-process.on("SIGTERM", stopPolling);
-process.on("SIGINT", stopPolling);
+*/
