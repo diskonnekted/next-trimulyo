@@ -10,7 +10,7 @@ function getServerSideData() {
                 id: "1",
                 title: getServerTranslation("hero.judul1"),
                 description: getServerTranslation("hero.deskripsi1"),
-                image: "/uploads/sliders/desa.avif",
+                image: "/images/hero.jpg",
                 ctaText: getServerTranslation("hero.ctaLayananDigital"),
                 ctaLink: "/layanan",
             },
