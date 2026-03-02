@@ -59,7 +59,7 @@ export function Header() {
         { href: "/ppid", label: "PPID", icon: BookCheck },
         { href: "/idm", label: "IDM", icon: FileText },
         { href: "/sdgs", label: "SDGs", icon: Globe },
-        { href: "/iot", label: "IoT", icon: Cpu },
+        // { href: "/iot", label: "IoT", icon: Cpu },
         { href: "/komunitas", label: "Komunitas", icon: Users },
         { href: "/layanan-mandiri", label: "Layanan Mandiri", icon: UserCheck },
         { href: "/pengaduan", label: t("navigation.pengaduan"), icon: MessageSquare },

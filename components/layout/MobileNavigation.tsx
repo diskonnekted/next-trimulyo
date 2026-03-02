@@ -81,7 +81,7 @@ export function MobileNavigation() {
         { href: "/ppid", label: "PPID", icon: FileCheck },
         { href: "/idm", label: "IDM", icon: FileText },
         { href: "/sdgs", label: "SDGs", icon: Globe },
-        { href: "/iot", label: "IoT", icon: Monitor },
+        // { href: "/iot", label: "IoT", icon: Monitor },
         { href: "/komunitas", label: "Komunitas", icon: Users },
         { href: "/pengaduan", label: translations.navigation.pengaduan, icon: MessageSquare },
     ];
