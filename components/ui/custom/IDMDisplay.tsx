@@ -63,10 +63,15 @@ interface IDMDisplayProps {
 const fetchIDMData = async (year: string = "2024"): Promise<IDMData | null> => {
     try {
         // Try fetching directly from Kemendesa API (client-side to avoid Vercel server blocking)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
         const directUrl = `https://idm.kemendesa.go.id/open/api/desa/rumusan/3404132005/${year}`;
         const response = await fetch(directUrl, {
             headers: { Accept: "application/json" },
+            signal: controller.signal,
         });
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             throw new Error(`IDM API error: ${response.status}`);
@@ -81,7 +86,17 @@ const fetchIDMData = async (year: string = "2024"): Promise<IDMData | null> => {
         const data = json.mapData;
         return data?.SUMMARIES ? data : null;
     } catch (error) {
-        console.error("Failed to fetch IDM data:", error);
+        console.warn(`Direct IDM fetch failed for ${year}, trying server proxy:`, error);
+        // Fallback to server-side proxy
+        try {
+            const response = await fetch(`/api/idm?year=${year}`);
+            if (response.ok) {
+                const data = await response.json();
+                return data?.SUMMARIES ? data : null;
+            }
+        } catch (e) {
+            console.error("Server IDM proxy also failed:", e);
+        }
         return null;
     }
 };
@@ -114,9 +129,9 @@ export function IDMDisplay({ className, year = "2024" }: IDMDisplayProps) {
             setLoading(true);
             setData(null);
 
-            // Create a timeout promise that rejects after 30 seconds
+            // Create a timeout promise that rejects after 15 seconds
             const timeoutPromise = new Promise((_, reject) => {
-                setTimeout(() => reject(new Error("Timeout: API took too long")), 30000);
+                setTimeout(() => reject(new Error("Timeout: API took too long")), 15000);
             });
 
             try {
