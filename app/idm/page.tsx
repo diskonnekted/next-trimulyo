@@ -47,15 +47,24 @@ interface IDMData {
 // Function to fetch IDM data from API
 const fetchIDMData = async (year: string = "2024"): Promise<IDMData | null> => {
     try {
-        const response = await fetch(`/api/idm?year=${year}`);
+        // Try fetching directly from Kemendesa API (client-side to avoid Vercel server blocking)
+        const directUrl = `https://idm.kemendesa.go.id/open/api/desa/rumusan/3404132005/${year}`;
+        const response = await fetch(directUrl, {
+            headers: { Accept: "application/json" },
+        });
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch IDM data: ${response.status}`);
+            throw new Error(`IDM API error: ${response.status}`);
         }
 
-        const data = await response.json();
-        // IDM API returns the data directly now (SUMMARIES, ROW, IDENTITAS)
-        return data.SUMMARIES ? data : null;
+        const json = await response.json();
+        if (json.error) {
+            return null;
+        }
+
+        // IDM API returns: { status: 200, error: false, mapData: { SUMMARIES, ROW, IDENTITAS } }
+        const data = json.mapData;
+        return data?.SUMMARIES ? data : null;
     } catch (error) {
         console.error("Failed to fetch IDM data:", error);
         return null;
