@@ -31,7 +31,7 @@ interface SKMSurvey {
 interface SKMStats {
     totalResponses: number;
     averageScore: number;
-    category: { label: string; badgeClass: string };
+    category: { label: string; badgeClass: string; color: string };
     byService: Array<{ service: string; count: number; avgScore: number }>;
     byGender: Array<{ gender: string; count: number; avgScore: number }>;
     byEducation: Array<{ education: string; count: number; avgScore: number }>;
@@ -52,10 +52,10 @@ const SKM_CONFIG = {
     ],
     skorMax: 4,
     categories: [
-        { min: 3.6, label: "Sangat Baik", badgeClass: "bg-green-100 text-green-800 border-green-300" },
-        { min: 3.0, label: "Baik", badgeClass: "bg-blue-100 text-blue-800 border-blue-300" },
-        { min: 2.4, label: "Cukup Baik", badgeClass: "bg-yellow-100 text-yellow-800 border-yellow-300" },
-        { min: 0, label: "Kurang Baik", badgeClass: "bg-red-100 text-red-800 border-red-300" },
+        { min: 3.6, label: "Sangat Baik", badgeClass: "bg-green-100 text-green-800 border-green-300", color: "text-green-600" },
+        { min: 3.0, label: "Baik", badgeClass: "bg-blue-100 text-blue-800 border-blue-300", color: "text-blue-600" },
+        { min: 2.4, label: "Cukup Baik", badgeClass: "bg-yellow-100 text-yellow-800 border-yellow-300", color: "text-yellow-600" },
+        { min: 0, label: "Kurang Baik", badgeClass: "bg-red-100 text-red-800 border-red-300", color: "text-red-600" },
     ],
 };
 
