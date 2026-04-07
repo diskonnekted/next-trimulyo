@@ -52,8 +52,8 @@ function cleanContent(html: string): string {
     return html.replace(/<[^>]*>?/gm, "");
 }
 
-// Cloudflare Worker Proxy - primary source for WordPress posts
-const WP_PROXY_URL = "https://wp-proxy-trimulyo.arif-susilo.workers.dev";
+// WordPress REST API (direct from browser - works because WordPress allows CORS)
+const WP_API_URL = "https://trimulyosid.slemankab.go.id/wp-json/wp/v2/posts";
 
 export function useExternalNews(limit: number = 10) {
     const [news, setNews] = useState<NewsItem[]>([]);
@@ -65,10 +65,12 @@ export function useExternalNews(limit: number = 10) {
             setLoading(true);
             setError(null);
 
-            // 1. Cloudflare Worker Proxy (Primary)
+            // 1. WordPress REST API directly from browser (CORS is open)
             try {
-                const proxyUrl = `${WP_PROXY_URL}?per_page=${limit}&_embed=1`;
-                const wpResponse = await fetch(proxyUrl);
+                const url = `${WP_API_URL}?per_page=${limit}&_embed=1`;
+                const wpResponse = await fetch(url, {
+                    headers: { Accept: "application/json" },
+                });
                 if (wpResponse.ok) {
                     const wpPosts = await wpResponse.json();
                     if (Array.isArray(wpPosts) && wpPosts.length > 0) {
@@ -77,25 +79,10 @@ export function useExternalNews(limit: number = 10) {
                     }
                 }
             } catch (e) {
-                console.error("Cloudflare Worker fetch failed", e);
+                console.error("WordPress direct browser fetch failed", e);
             }
 
-            // 2. Local wp-posts API (Vercel server proxy fallback)
-            try {
-                const wpApiResponse = await fetch("/api/wp-posts");
-                if (wpApiResponse.ok) {
-                    const wpJson = await wpApiResponse.json();
-                    const wpPosts = wpJson?.data ?? [];
-                    if (Array.isArray(wpPosts) && wpPosts.length > 0) {
-                        setNews(transformWordPressPosts(wpPosts).slice(0, limit));
-                        return;
-                    }
-                }
-            } catch (e) {
-                console.error("Local wp-posts API fetch failed", e);
-            }
-
-            // 3. OpenSID Proxy
+            // 2. Fallback: OpenSID Proxy
             try {
                 const openSidResponse = await fetch("/api/opensid-proxy");
                 if (openSidResponse.ok) {
@@ -112,7 +99,7 @@ export function useExternalNews(limit: number = 10) {
                 console.error("OpenSID Proxy fetch failed", e);
             }
 
-            // 4. External News Proxy
+            // 3. Fallback: External News Proxy
             try {
                 const proxyResponse = await fetch("/api/external-news");
                 if (proxyResponse.ok) {
@@ -148,37 +135,51 @@ export function useExternalNews(limit: number = 10) {
 
 function transformWordPressPosts(posts: any[]): NewsItem[] {
     return posts.map((post: any) => {
-        const content = post.content || "";
-        const wordCount = cleanContent(content).split(/\s+/).length;
-        const readTime = post.readingTime ?? Math.max(1, Math.ceil(wordCount / 200));
+        const featuredMedia = post._embedded?.["wp:featuredmedia"]?.[0];
+        const author = post._embedded?.author?.[0];
+        const terms = post._embedded?.["wp:term"];
 
-        let categories: Array<{ id: number; name: string; slug: string }> = [];
-        if (post.categories && Array.isArray(post.categories)) {
-            categories = post.categories.map((c: any) => ({
-                id: c.id ?? 0,
-                name: c.name ?? "Berita",
-                slug: c.slug ?? "berita",
-            }));
+        let featuredImage: string | null = null;
+        if (featuredMedia) {
+            featuredImage =
+                featuredMedia.media_details?.sizes?.full?.source_url ??
+                featuredMedia.media_details?.sizes?.large?.source_url ??
+                featuredMedia.media_details?.sizes?.medium_large?.source_url ??
+                featuredMedia.media_details?.sizes?.medium?.source_url ??
+                featuredMedia.source_url ??
+                null;
+            if (featuredImage && featuredImage.startsWith("http://")) {
+                featuredImage = featuredImage.replace("http://", "https://");
+            }
         }
+
+        const categories = (terms?.[0] ?? []).map((c: any) => ({
+            id: c.id ?? 0,
+            name: c.name ?? "Berita",
+            slug: c.slug ?? "berita",
+        }));
+
+        const content = post.content?.rendered || "";
+        const wordCount = cleanContent(content).split(/\s+/).length;
 
         return {
             id: post.id?.toString() ?? Math.random().toString(),
-            title: post.title ?? "Tanpa Judul",
+            title: decodeHtmlEntities(post.title?.rendered || "Tanpa Judul"),
             slug: post.slug ?? `post-${post.id}`,
-            excerpt: post.excerpt ? post.excerpt.substring(0, 150) + "..." : "",
+            excerpt: decodeHtmlEntities(post.excerpt?.rendered || "").substring(0, 150) + "...",
             content: content,
-            featuredImage: post.featuredImage ?? null,
+            featuredImage,
             author: {
-                name: post.author?.name ?? "Admin Kalurahan",
-                avatar: post.author?.avatar ?? "/images/default-avatar.png",
+                name: author?.name ?? "Admin Kalurahan",
+                avatar: author?.avatar_urls?.["48"] ?? "/images/default-avatar.png",
             },
             category: categories[0]?.name ?? "Berita",
             categories: categories.length > 0 ? categories : [{ id: 0, name: "Berita", slug: "berita" }],
-            tags: (post.tags ?? []).map((t: any) => ({ id: t.id ?? 0, name: t.name ?? "", slug: t.slug ?? "" })),
+            tags: (terms?.[1] ?? []).map((t: any) => ({ id: t.id ?? 0, name: t.name ?? "", slug: t.slug ?? "" })),
             publishedAt: post.date ?? new Date().toISOString(),
             updatedAt: post.modified ?? post.date ?? new Date().toISOString(),
             link: `/berita/${post.slug}`,
-            readTime: Math.max(1, readTime),
+            readTime: Math.max(1, Math.ceil(wordCount / 200)),
             isBreaking: false,
             isFeatured: false,
             isPinned: false,
