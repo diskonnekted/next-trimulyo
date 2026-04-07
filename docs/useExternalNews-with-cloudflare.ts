@@ -1,3 +1,12 @@
+/**
+ * hooks/useExternalNews.ts
+ *
+ * Updated to use Cloudflare Worker as the PRIMARY source for WordPress news.
+ *
+ * IMPORTANT: Change WP_PROXY_URL below to your actual Cloudflare Worker URL
+ *            after you deploy the worker.
+ */
+
 import { useState, useEffect, useCallback } from "react";
 
 interface NewsItem {
@@ -52,8 +61,10 @@ function cleanContent(html: string): string {
     return html.replace(/<[^>]*>?/gm, "");
 }
 
-// Cloudflare Worker Proxy - primary source for WordPress posts
-const WP_PROXY_URL = "https://wp-proxy-trimulyo.arif-susilo.workers.dev";
+// ==========================================================================
+// CONFIG: GANTI URL DI BAWAH DENGAN URL CLOUDFLARE WORKER ANDA
+// ==========================================================================
+const WP_PROXY_URL = "https://wp-proxy-trimulyo.nama-anda.workers.dev";
 
 export function useExternalNews(limit: number = 10) {
     const [news, setNews] = useState<NewsItem[]>([]);
@@ -174,7 +185,11 @@ function transformWordPressPosts(posts: any[]): NewsItem[] {
             },
             category: categories[0]?.name ?? "Berita",
             categories: categories.length > 0 ? categories : [{ id: 0, name: "Berita", slug: "berita" }],
-            tags: (post.tags ?? []).map((t: any) => ({ id: t.id ?? 0, name: t.name ?? "", slug: t.slug ?? "" })),
+            tags: (post.tags ?? []).map((t: any) => ({
+                id: t.id ?? 0,
+                name: t.name ?? "",
+                slug: t.slug ?? "",
+            })),
             publishedAt: post.date ?? new Date().toISOString(),
             updatedAt: post.modified ?? post.date ?? new Date().toISOString(),
             link: `/berita/${post.slug}`,
@@ -227,7 +242,13 @@ function transformOpenSidPosts(posts: any[]): NewsItem[] {
                 avatar: "/images/default-avatar.png",
             },
             category: attrs.category?.kategori || "Berita",
-            categories: [{ id: 1, name: attrs.category?.kategori || "Berita", slug: "berita" }],
+            categories: [
+                {
+                    id: 1,
+                    name: attrs.category?.kategori || "Berita",
+                    slug: "berita",
+                },
+            ],
             tags: [],
             publishedAt: attrs.tgl_upload || new Date().toISOString(),
             updatedAt: attrs.tgl_upload || new Date().toISOString(),
