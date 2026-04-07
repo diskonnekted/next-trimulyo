@@ -64,11 +64,29 @@ export function useExternalNews(limit: number = 10) {
             setLoading(true);
             setError(null);
 
-            // 1. Try fetching via WordPress REST API (Primary Source - trimulyosid.slemankab.go.id)
+            // 1. Try fetching directly from WordPress REST API (client-side to avoid Vercel server blocking)
             try {
-                const wpResponse = await fetch("/api/wp-posts");
+                const wpUrl = `https://trimulyosid.slemankab.go.id/wp-json/wp/v2/posts?per_page=20&_embed=1`;
+                const wpResponse = await fetch(wpUrl, {
+                    headers: { Accept: "application/json" },
+                });
                 if (wpResponse.ok) {
-                    const wpJson = await wpResponse.json();
+                    const wpPosts = await wpResponse.json();
+                    if (Array.isArray(wpPosts) && wpPosts.length > 0) {
+                        const transformedWpNews = transformWordPressPosts(wpPosts);
+                        setNews(transformedWpNews.slice(0, limit));
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.error("WordPress direct API fetch failed", e);
+            }
+
+            // 2. Fallback: Try fetching via our local wp-posts API (server-side proxy)
+            try {
+                const wpApiResponse = await fetch("/api/wp-posts");
+                if (wpApiResponse.ok) {
+                    const wpJson = await wpApiResponse.json();
                     const wpPosts = wpJson?.data ?? [];
                     if (Array.isArray(wpPosts) && wpPosts.length > 0) {
                         const transformedWpNews = transformWordPressPosts(wpPosts);
@@ -77,10 +95,10 @@ export function useExternalNews(limit: number = 10) {
                     }
                 }
             } catch (e) {
-                console.error("WordPress API fetch failed", e);
+                console.error("Local wp-posts API fetch failed", e);
             }
 
-            // 2. Fallback: Try fetching via OpenSID Proxy
+            // 3. Fallback: Try fetching via OpenSID Proxy
             try {
                 const openSidResponse = await fetch("/api/opensid-proxy");
                 if (openSidResponse.ok) {
