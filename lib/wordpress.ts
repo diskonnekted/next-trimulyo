@@ -29,6 +29,8 @@ interface WpMedia {
     media_details?: {
         sizes?: {
             medium?: { source_url: string };
+            medium_large?: { source_url: string };
+            large?: { source_url: string };
             thumbnail?: { source_url: string };
             full?: { source_url: string };
         };
