@@ -55,11 +55,28 @@ const fetchIDMData = async (year: string = "2024"): Promise<IDMData | null> => {
 
         const data = await response.json();
         // IDM API returns the data directly now (SUMMARIES, ROW, IDENTITAS)
-        return data || null;
+        return data.SUMMARIES ? data : null;
     } catch (error) {
         console.error("Failed to fetch IDM data:", error);
         return null;
     }
+};
+
+// Try to find available data from current year backwards
+const fetchIDMWithFallback = async (preferredYear: string): Promise<IDMData | null> => {
+    const preferred = await fetchIDMData(preferredYear);
+    if (preferred) return preferred;
+
+    const fallbackYears = ["2024", "2023", "2022", "2021"];
+    for (const year of fallbackYears) {
+        const data = await fetchIDMData(year);
+        if (data) {
+            console.log(`IDM: Using data from year ${year} as fallback`);
+            return data;
+        }
+    }
+
+    return null;
 };
 
 export default function IDMPage() {
@@ -90,7 +107,7 @@ export default function IDMPage() {
             });
 
             try {
-                const result = await Promise.race([fetchIDMData(selectedYear.toString()), timeoutPromise]);
+                const result = await Promise.race([fetchIDMWithFallback(selectedYear.toString()), timeoutPromise]);
                 setData(result as IDMData);
             } catch (error) {
                 console.error("Failed to load IDM data:", error);
@@ -179,7 +196,7 @@ export default function IDMPage() {
                             const loadData = async () => {
                                 try {
                                     setLoading(true);
-                                    const result = await fetchIDMData(selectedYear.toString());
+                                    const result = await fetchIDMWithFallback(selectedYear.toString());
                                     setData(result);
                                 } catch (error) {
                                     console.error("Failed to load IDM data:", error);

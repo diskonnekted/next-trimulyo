@@ -69,13 +69,31 @@ const fetchIDMData = async (year: string = "2024"): Promise<IDMData | null> => {
         }
 
         const data = await response.json();
-        // IDM API returns: { data: [{ attributes: { SUMMARIES, ROW, IDENTITAS } }] }
-        // We need to extract the attributes from the first item
-        return data.data?.[0]?.attributes || null;
+        // IDM API returns: { SUMMARIES, ROW, IDENTITAS } directly
+        return data.SUMMARIES ? data : null;
     } catch (error) {
         console.error("Failed to fetch IDM data:", error);
         return null;
     }
+};
+
+// Try to find available data from current year backwards
+const fetchIDMWithFallback = async (preferredYear: string): Promise<IDMData | null> => {
+    // Try preferred year first
+    const preferred = await fetchIDMData(preferredYear);
+    if (preferred) return preferred;
+
+    // Fallback: try previous years (2024, 2023, 2022, 2021)
+    const fallbackYears = ["2024", "2023", "2022", "2021"];
+    for (const year of fallbackYears) {
+        const data = await fetchIDMData(year);
+        if (data) {
+            console.log(`IDM: Using data from year ${year} as fallback`);
+            return data;
+        }
+    }
+
+    return null;
 };
 
 export function IDMDisplay({ className, year = "2024" }: IDMDisplayProps) {
@@ -93,7 +111,7 @@ export function IDMDisplay({ className, year = "2024" }: IDMDisplayProps) {
             });
 
             try {
-                const result = await Promise.race([fetchIDMData(year), timeoutPromise]);
+                const result = await Promise.race([fetchIDMWithFallback(year), timeoutPromise]);
                 setData(result as IDMData);
             } catch (error) {
                 console.error("Failed to load IDM data:", error);
@@ -120,7 +138,7 @@ export function IDMDisplay({ className, year = "2024" }: IDMDisplayProps) {
                     const loadData = async () => {
                         try {
                             setLoading(true);
-                            const result = await fetchIDMData(year);
+                            const result = await fetchIDMWithFallback(year);
                             setData(result);
                         } catch (error) {
                             console.error("Failed to load IDM data:", error);

@@ -6,7 +6,6 @@ import {
     Search,
     Bell,
     ChevronDown,
-    User,
     Home,
     Cpu,
     Building2,
@@ -80,6 +79,7 @@ export function Header() {
         { href: "/berita", label: t("navigation.berita") },
         { href: "/pengumuman", label: "Pengumuman" },
         { href: "/kegiatan", label: t("navigation.kegiatan") },
+        { href: "/informasi", label: "Kepuasan Masyarakat" },
     ];
 
     // Categorized statistik sub-items
@@ -282,49 +282,6 @@ export function Header() {
                                             <Link href="/notifikasi" className="w-full cursor-pointer">
                                                 Lihat Semua Notifikasi
                                             </Link>
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            )}
-
-                            {/* User Account */}
-                            {!mounted ? (
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-white hover:text-white! hover:bg-[#2a77a7]! cursor-pointer px-0! ml-4! sm:ml-0!"
-                                >
-                                    <User className="h-4 w-4 mr-2" />
-                                    <span className="hidden sm:inline">Account</span>
-                                    <ChevronDown className="h-4 w-4 ml-1" />
-                                </Button>
-                            ) : (
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="text-white hover:text-white! hover:bg-white/20! cursor-pointer px-0! ml-4! sm:ml-0!"
-                                        >
-                                            <User className="h-4 w-4 mr-2" />
-                                            <span className="hidden sm:inline">Account</span>
-                                            <ChevronDown className="h-4 w-4 ml-1" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuItem className="data-highlighted:bg-accent data-highlighted:text-white">
-                                            <Link href="/profile" className="w-full cursor-pointer">
-                                                Profil Saya
-                                            </Link>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem className="data-highlighted:bg-accent data-highlighted:text-white">
-                                            <Link href="/admin" className="w-full cursor-pointer">
-                                                Admin Panel
-                                            </Link>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem className="text-red-600 data-highlighted:bg-accent data-highlighted:text-white">
-                                            {t("navigation.logout")}
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>

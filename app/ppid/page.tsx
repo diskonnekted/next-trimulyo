@@ -384,7 +384,7 @@ export default function InformasiPublikPage() {
                          <p className="text-gray-500">Coba ubah kata kunci pencarian atau kategori filter</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2">
                         {filteredItems.map((item) => {
                             const attrs = item.attributes;
                             const title = attrs.nama || "Tanpa Judul";
@@ -396,72 +396,72 @@ export default function InformasiPublikPage() {
                             return (
                                 <Card
                                     key={item.id}
-                                    className="group overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full border-gray-200 hover:border-blue-200"
+                                    className="group overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full border-gray-200 hover:border-blue-200"
                                 >
                                     {/* Cover Image */}
                                     <div className="aspect-[3/4] relative bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden border-b flex items-center justify-center group-hover:from-blue-50 group-hover:to-indigo-50 transition-colors duration-300">
                                         {image ? (
-                                            <img 
-                                                src={image} 
-                                                alt={title} 
+                                            <img
+                                                src={image}
+                                                alt={title}
                                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                             />
                                         ) : (
-                                            <div className="text-center p-6 transition-transform duration-300 group-hover:scale-105">
+                                            <div className="text-center p-4 transition-transform duration-300 group-hover:scale-105">
                                                 {category === "Perencanaan & Penganggaran" ? (
-                                                    <div className="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                                                        <Building className="w-10 h-10 text-blue-600" />
+                                                    <div className="w-14 h-14 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-3">
+                                                        <Building className="w-7 h-7 text-blue-600" />
                                                     </div>
                                                 ) : (
-                                                    <div className="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                                                        <FileText className="w-10 h-10 text-emerald-600" />
+                                                    <div className="w-14 h-14 mx-auto bg-white rounded-full flex items-center justify-center shadow-sm mb-3">
+                                                        <FileText className="w-7 h-7 text-emerald-600" />
                                                     </div>
                                                 )}
-                                                <div className="w-12 h-1 bg-gray-300 mx-auto rounded-full group-hover:bg-blue-400 transition-colors" />
+                                                <div className="w-8 h-0.5 bg-gray-300 mx-auto rounded-full group-hover:bg-blue-400 transition-colors" />
                                             </div>
                                         )}
-                                        
+
                                         {/* Overlay Date */}
-                                        <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 rounded-md text-[10px] font-medium text-gray-700 shadow-sm flex items-center gap-1">
-                                            <Calendar className="w-3 h-3" />
+                                        <div className="absolute top-1.5 right-1.5 bg-white/90 backdrop-blur-sm px-1 py-0.5 rounded text-[9px] font-medium text-gray-700 shadow-sm flex items-center gap-0.5">
+                                            <Calendar className="w-2.5 h-2.5" />
                                             {date ? new Date(date).toLocaleDateString("id-ID", { year: 'numeric', month: 'short', day: 'numeric' }) : "-"}
                                         </div>
                                     </div>
 
-                                    <CardContent className="p-3 flex-1 flex flex-col">
-                                        <div className="mb-2">
-                                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 mb-1 text-[10px] px-1.5 py-0">
+                                    <CardContent className="p-2 flex-1 flex flex-col">
+                                        <div className="mb-1.5">
+                                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 mb-1 text-[9px] px-1 py-0 leading-none">
                                                 {category}
                                             </Badge>
-                                            <h3 className="font-bold text-sm text-gray-900 leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors" title={title}>
+                                            <h3 className="font-bold text-[11px] text-gray-900 leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors" title={title}>
                                                 {title}
                                             </h3>
                                         </div>
-                                        
-                                        <p className="text-xs text-gray-600 line-clamp-2 mb-3 flex-1">
+
+                                        <p className="text-[10px] text-gray-600 line-clamp-2 mb-2 flex-1">
                                             {description}
                                         </p>
 
-                                        <div className="flex gap-2 mt-auto pt-3 border-t border-gray-100">
-                                            <Button 
-                                                variant="default" 
-                                                size="sm" 
-                                                className="w-full h-8 text-xs bg-blue-600 hover:bg-blue-700 text-white shadow-sm px-2"
+                                        <div className="flex gap-1 mt-auto pt-2 border-t border-gray-100">
+                                            <Button
+                                                variant="default"
+                                                size="sm"
+                                                className="w-full h-6 text-[10px] bg-blue-600 hover:bg-blue-700 text-white shadow-sm px-1"
                                                 asChild
                                             >
                                                 <a href={attrs.url || "#"} target="_blank" rel="noopener noreferrer">
-                                                    <Download className="w-3 h-3 mr-1" />
+                                                    <Download className="w-2.5 h-2.5 mr-0.5" />
                                                     Unduh
                                                 </a>
                                             </Button>
-                                            <Button 
-                                                variant="outline" 
-                                                size="sm" 
-                                                className="w-full h-8 text-xs border-blue-200 text-blue-700 hover:bg-blue-50 px-2"
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="w-full h-6 text-[10px] border-blue-200 text-blue-700 hover:bg-blue-50 px-1"
                                                 asChild
                                             >
                                                 <a href={attrs.url || "#"} target="_blank" rel="noopener noreferrer">
-                                                    <Eye className="w-3 h-3 mr-1" />
+                                                    <Eye className="w-2.5 h-2.5 mr-0.5" />
                                                     Lihat
                                                 </a>
                                             </Button>

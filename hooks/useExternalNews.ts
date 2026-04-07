@@ -64,17 +64,29 @@ export function useExternalNews(limit: number = 10) {
             setLoading(true);
             setError(null);
 
-            // 1. Try fetching via OpenSID Proxy (Primary Source)
-            // User requested to use OpenSID as the main source for consistency between localhost and production
+            // 1. Try fetching via WordPress REST API (Primary Source - trimulyosid.slemankab.go.id)
             try {
-                // console.log("Attempting to fetch from OpenSID Proxy...");
+                const wpResponse = await fetch("/api/wp-posts");
+                if (wpResponse.ok) {
+                    const wpJson = await wpResponse.json();
+                    const wpPosts = wpJson?.data ?? [];
+                    if (Array.isArray(wpPosts) && wpPosts.length > 0) {
+                        const transformedWpNews = transformWordPressPosts(wpPosts);
+                        setNews(transformedWpNews.slice(0, limit));
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.error("WordPress API fetch failed", e);
+            }
+
+            // 2. Fallback: Try fetching via OpenSID Proxy
+            try {
                 const openSidResponse = await fetch("/api/opensid-proxy");
                 if (openSidResponse.ok) {
                     const openSidData = await openSidResponse.json();
-                    // OpenSID data structure: { data: Array<OpenSIDArticle>, ... }
                     if (openSidData && Array.isArray(openSidData.data) && openSidData.data.length > 0) {
                         const transformedOpenSidNews = transformOpenSidPosts(openSidData.data);
-                        // Sort by date descending (newest first)
                         const sortedNews = transformedOpenSidNews.sort((a, b) => {
                             return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
                         });
@@ -86,14 +98,12 @@ export function useExternalNews(limit: number = 10) {
                 console.error("OpenSID Proxy fetch failed", e);
             }
 
-            // 2. Fallback: Try fetching via our News Proxy (Server-side)
-            // This proxy now also uses OpenSID but acts as a backup route or transformer
+            // 3. Fallback: Try fetching via our News Proxy (Server-side)
             try {
                 const proxyResponse = await fetch("/api/external-news");
                 if (proxyResponse.ok) {
                     const data: NewsResponse = await proxyResponse.json();
                     if (data.success && data.data && data.data.length > 0) {
-                        // Sort by date descending (newest first)
                         const sortedNews = data.data.sort((a, b) => {
                             return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
                         });
@@ -107,7 +117,6 @@ export function useExternalNews(limit: number = 10) {
 
             // If all failed
             setNews([]);
-            // Don't set error string to avoid scary UI, just show empty state or previous data
         } catch (err) {
             console.error("Error fetching news:", err);
             setError("Failed to connect to news server");
@@ -124,34 +133,40 @@ export function useExternalNews(limit: number = 10) {
     return { news, loading, error, refetch: fetchNews };
 }
 
-// Helper to transform WordPress posts
+// Helper to transform WordPress posts from our /api/wp-posts endpoint
+// (data is already transformed, not raw WordPress format)
 function transformWordPressPosts(posts: any[]): NewsItem[] {
     return posts.map((post: any) => {
-        const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
-        const imageUrl = featuredMedia?.source_url || null;
-        const author = post._embedded?.['author']?.[0];
-        const authorName = author?.name || "Admin Kalurahan";
-        
-        const content = post.content.rendered;
+        const content = post.content || "";
         const wordCount = cleanContent(content).split(/\s+/).length;
-        const readTime = Math.ceil(wordCount / 200);
+        const readTime = post.readingTime ?? Math.max(1, Math.ceil(wordCount / 200));
+
+        // Handle categories - can be array of objects or strings
+        let categories: Array<{ id: number; name: string; slug: string }> = [];
+        if (post.categories && Array.isArray(post.categories)) {
+            categories = post.categories.map((c: any) => ({
+                id: c.id ?? 0,
+                name: c.name ?? "Berita",
+                slug: c.slug ?? "berita",
+            }));
+        }
 
         return {
-            id: post.id.toString(),
-            title: decodeHtmlEntities(post.title.rendered),
-            slug: post.slug,
-            excerpt: decodeHtmlEntities(cleanContent(post.excerpt.rendered)).substring(0, 150) + "...",
-            content: post.content.rendered,
-            featuredImage: imageUrl,
+            id: post.id?.toString() ?? Math.random().toString(),
+            title: post.title ?? "Tanpa Judul",
+            slug: post.slug ?? `post-${post.id}`,
+            excerpt: post.excerpt ? post.excerpt.substring(0, 150) + "..." : "",
+            content: content,
+            featuredImage: post.featuredImage ?? null,
             author: {
-                name: authorName,
-                avatar: "/images/default-avatar.png",
+                name: post.author?.name ?? "Admin Kalurahan",
+                avatar: post.author?.avatar ?? "/images/default-avatar.png",
             },
-            category: "Berita Desa",
-            categories: [{ id: 1, name: "Berita Desa", slug: "berita-desa" }],
-            tags: [],
-            publishedAt: post.date,
-            updatedAt: post.modified,
+            category: categories[0]?.name ?? "Berita",
+            categories: categories.length > 0 ? categories : [{ id: 0, name: "Berita", slug: "berita" }],
+            tags: (post.tags ?? []).map((t: any) => ({ id: t.id ?? 0, name: t.name ?? "", slug: t.slug ?? "" })),
+            publishedAt: post.date ?? new Date().toISOString(),
+            updatedAt: post.modified ?? post.date ?? new Date().toISOString(),
             link: `/berita/${post.slug}`,
             readTime: Math.max(1, readTime),
             isBreaking: false,

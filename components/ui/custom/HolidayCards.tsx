@@ -1,7 +1,24 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Sparkles, Clock } from "lucide-react";
+import {
+    Calendar,
+    Sparkles,
+    Clock,
+    Star,
+    Trees,
+    BookOpen,
+    Flag,
+    Shield,
+    Briefcase,
+    Heart,
+    Moon,
+    Church,
+    Landmark,
+    Scale,
+    Baby,
+    Flower2,
+} from "lucide-react";
 import { Holiday } from "@/hooks/useHolidays";
 
 interface HolidayCardsProps {
@@ -54,6 +71,127 @@ export function HolidayCards({ holidays, loading = false, error = null }: Holida
         if (jenis.includes("Hari Libur Nasional")) return "text-red-600";
         if (jenis.includes("Cuti Bersama")) return "text-blue-600";
         return "text-gray-600";
+    };
+
+    const getIconTheme = (jenis: string) => {
+        if (jenis.includes("Hari Libur Nasional") || jenis.includes("Libur Nasional")) {
+            return { bg: "bg-red-100", color: "text-red-600" };
+        }
+        if (jenis.includes("Cuti Bersama")) {
+            return { bg: "bg-blue-100", color: "text-blue-600" };
+        }
+        return { bg: "bg-gray-100", color: "text-gray-600" };
+    };
+
+    const getHolidayIcon = (nama: string) => {
+        const name = nama.toLowerCase();
+
+        // Islamic holidays
+        if (name.includes("idul fitri") || name.includes("levbaran")) {
+            return <Moon className="h-8 w-8" />;
+        }
+        if (name.includes("idul adha") || name.includes("haji")) {
+            return <Star className="h-8 w-8" />;
+        }
+        if (name.includes("muharram") || name.includes("sura") || name.includes("tahun baru islam")) {
+            return <Flower2 className="h-8 w-8" />;
+        }
+        if (name.includes("maulid") || name.includes("maulid nabi")) {
+            return <BookOpen className="h-8 w-8" />;
+        }
+        if (name.includes("nuzulul")) {
+            return <BookOpen className="h-8 w-8" />;
+        }
+        if (name.includes("isra") || name.includes("mi'raj")) {
+            return <Moon className="h-8 w-8" />;
+        }
+
+        // Christian holidays
+        if (name.includes("natal")) {
+            return <Church className="h-8 w-8" />;
+        }
+        if (name.includes("paskah") || name.includes("jumat agung") || name.includes("kamis putih")) {
+            return <Heart className="h-8 w-8" />;
+        }
+        if (name.includes("kenaikan")) {
+            return <Church className="h-8 w-8" />;
+        }
+
+        // Hindu/Buddhist holidays
+        if (name.includes("nyepi")) {
+            return <Sparkles className="h-8 w-8" />;
+        }
+        if (name.includes("waisak")) {
+            return <Star className="h-8 w-8" />;
+        }
+        if (name.includes("imlek") || name.includes("tahun baru cina")) {
+            return <Flower2 className="h-8 w-8" />;
+        }
+
+        // National holidays
+        if (name.includes("kemerdekaan") || name.includes("17 agustus") || name.includes("dirgahayu")) {
+            return <Flag className="h-8 w-8" />;
+        }
+        if (name.includes("pancasila")) {
+            return <Shield className="h-8 w-8" />;
+        }
+        if (name.includes("tahun baru")) {
+            return <Sparkles className="h-8 w-8" />;
+        }
+        if (name.includes("buruh") || name.includes("pekerja")) {
+            return <Briefcase className="h-8 w-8" />;
+        }
+        if (name.includes("kartini")) {
+            return <Heart className="h-8 w-8" />;
+        }
+        if (name.includes("pendidikan")) {
+            return <BookOpen className="h-8 w-8" />;
+        }
+        if (name.includes("pahlawan")) {
+            return <Landmark className="h-8 w-8" />;
+        }
+        if (name.includes("pemuda")) {
+            return <Shield className="h-8 w-8" />;
+        }
+        if (name.includes("ibu") || name.includes("hari ibu")) {
+            return <Heart className="h-8 w-8" />;
+        }
+        if (name.includes("anak")) {
+            return <Baby className="h-8 w-8" />;
+        }
+        if (name.includes("guru")) {
+            return <BookOpen className="h-8 w-8" />;
+        }
+        if (name.includes("bhayangkara") || name.includes("polri")) {
+            return <Shield className="h-8 w-8" />;
+        }
+        if (name.includes("tentara") || name.includes("tni") || name.includes("abad")) {
+            return <Scale className="h-8 w-8" />;
+        }
+        if (name.includes("kesehatan")) {
+            return <Heart className="h-8 w-8" />;
+        }
+        if (name.includes("hutan") || name.includes("lingkungan") || name.includes("bumi")) {
+            return <Trees className="h-8 w-8" />;
+        }
+        if (name.includes("demokrasi")) {
+            return <Landmark className="h-8 w-8" />;
+        }
+        if (name.includes("tani") || name.includes("pertanian")) {
+            return <Trees className="h-8 w-8" />;
+        }
+        if (name.includes("buku") || name.includes("literasi")) {
+            return <BookOpen className="h-8 w-8" />;
+        }
+        if (name.includes("kebangkitan") || name.includes("budi utomo")) {
+            return <Flag className="h-8 w-8" />;
+        }
+        if (name.includes("sukarno") || name.includes("lahir")) {
+            return <Landmark className="h-8 w-8" />;
+        }
+
+        // Default
+        return <Calendar className="h-8 w-8" />;
     };
 
     if (loading) {
@@ -135,15 +273,21 @@ export function HolidayCards({ holidays, loading = false, error = null }: Holida
             `}
                     >
                         {/* Card Header with Icon and Date */}
-                        <div className="relative h-24 p-3 flex flex-col items-center justify-center">
-                            <div className={`absolute top-2 right-2 ${getIconColor(holiday.jenis)}`}>
-                                <Sparkles className="h-4 w-4" />
-                            </div>
-                            <Calendar className={`h-6 w-6 mb-1 ${getIconColor(holiday.jenis)}`} />
-                            <div className="text-center">
-                                <div className="text-xs font-medium text-gray-600">{formatDate(holiday.tanggal)}</div>
-                            </div>
-                        </div>
+                        {(() => {
+                            const theme = getIconTheme(holiday.jenis);
+                            return (
+                                <div className="relative h-24 p-3 flex flex-col items-center justify-center">
+                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-2 ${theme.bg}`}>
+                                        <div className={theme.color}>
+                                            {getHolidayIcon(holiday.nama_perayaan)}
+                                        </div>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="text-xs font-medium text-gray-600">{formatDate(holiday.tanggal)}</div>
+                                    </div>
+                                </div>
+                            );
+                        })()}
 
                         {/* Card Content */}
                         <CardContent className="p-3 space-y-2">

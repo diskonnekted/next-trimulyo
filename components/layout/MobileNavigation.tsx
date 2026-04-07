@@ -13,6 +13,7 @@ import {
     Landmark,
     Info,
     TrendingUp,
+    Star,
     HardHat,
     CalendarDays,
     Store,
@@ -442,6 +443,27 @@ export function MobileNavigation() {
                                         />
                                         <span className="truncate">Agenda & Kegiatan</span>
                                         {isActive("/kegiatan") && (
+                                            <div className="ml-auto w-2 h-2 bg-current rounded-full" />
+                                        )}
+                                    </Link>
+
+                                    <Link
+                                        key="/informasi"
+                                        href="/informasi"
+                                        onClick={() => setIsSidebarOpen(false)}
+                                        className={`flex items-center gap-3 px-3 py-3 text-sm rounded-md transition-all duration-200 mb-1 cursor-pointer ${
+                                            isActive("/informasi")
+                                                ? "bg-primary text-primary-foreground font-medium"
+                                                : "hover:bg-accent hover:text-accent-foreground"
+                                        }`}
+                                    >
+                                        <Star
+                                            className={`h-5 w-5 shrink-0 ${
+                                                isActive("/informasi") ? "text-primary-foreground" : "text-yellow-500"
+                                            }`}
+                                        />
+                                        <span className="truncate">Kepuasan Masyarakat</span>
+                                        {isActive("/informasi") && (
                                             <div className="ml-auto w-2 h-2 bg-current rounded-full" />
                                         )}
                                     </Link>

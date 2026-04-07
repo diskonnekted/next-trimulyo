@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Users, TrendingUp, TrendingDown, Activity, GraduationCap } from "lucide-react";
+import { Users, TrendingUp, TrendingDown, Activity, GraduationCap, Home, Building2 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -25,7 +25,7 @@ interface StatistikAPIResponse {
     data: Array<{
         type: string;
         id: string;
-        attributes: {
+        attributes?: {
             nama: string;
             jumlah: number;
             laki: number;
@@ -34,7 +34,20 @@ interface StatistikAPIResponse {
             persen1?: string;
             persen2?: string;
         };
+        dusun?: string;
+        kepalaDusun?: string;
+        jumlahRw?: number;
+        jumlahRt?: number;
+        jumlahKk?: number;
+        jiwa?: number;
+        lakiLaki?: number;
     }>;
+    total?: {
+        jiwa: number;
+        lakiLaki: number;
+        perempuan: number;
+        jumlahKk: number;
+    };
 }
 
 interface StatisticsDisplayProps {
@@ -80,35 +93,58 @@ export const StatisticsDisplay = React.forwardRef<HTMLDivElement, StatisticsDisp
                 try {
                     const data = await fetchStatistikData();
                     if (data && data.data) {
-                        // Extract education data and total population
-                        const totalData = data.data.find((item) => item.attributes.nama === "TOTAL");
-                        const totalPopulation = totalData?.attributes.jumlah || 0;
-                        const totalLaki = totalData?.attributes.laki || 0;
-                        const totalPerempuan = totalData?.attributes.perempuan || 0;
+                        let totalPopulation: number;
+                        let totalLaki: number;
+                        let totalPerempuan: number;
+                        let topEducations: { id: string; nama: string; jumlah: number; laki: number; perempuan: number; persentase: number }[] = [];
 
-                        // Get education level data
-                        const educationData = data.data
-                            .filter((item) => {
-                                const nama = item.attributes.nama;
-                                return (
-                                    nama &&
-                                    !nama.includes("JUMLAH") &&
-                                    !nama.includes("TOTAL") &&
-                                    !nama.includes("BELUM MENGISI")
-                                );
-                            })
-                            .map((item) => ({
-                                id: item.id,
-                                nama: item.attributes.nama,
-                                jumlah: item.attributes.jumlah,
-                                laki: item.attributes.laki,
-                                perempuan: item.attributes.perempuan,
-                                persentase: parseFloat(item.attributes.persen.replace(",", ".")),
-                            }))
-                            .sort((a, b) => b.jumlah - a.jumlah);
+                        // Handle OpenSID format (education statistics with attributes)
+                        const isOpenSIDFormat = data.data.some(
+                            (item: { attributes?: { nama?: string } }) => item.attributes?.nama !== undefined
+                        );
 
-                        // Find top 4 education levels for display
-                        const topEducations = educationData.slice(0, 4);
+                        if (isOpenSIDFormat) {
+                            // OpenSID format: { data: [{ id, attributes: { nama, jumlah, laki, perempuan, persen } }] }
+                            const totalData = data.data.find(
+                                (item) => item.attributes?.nama === "TOTAL"
+                            );
+                            totalPopulation = totalData?.attributes?.jumlah || 0;
+                            totalLaki = totalData?.attributes?.laki || 0;
+                            totalPerempuan = totalData?.attributes?.perempuan || 0;
+
+                            const educationData = data.data
+                                .filter((item) => {
+                                    const nama = item.attributes?.nama;
+                                    return (
+                                        nama &&
+                                        !nama.includes("JUMLAH") &&
+                                        !nama.includes("TOTAL") &&
+                                        !nama.includes("BELUM MENGISI")
+                                    );
+                                })
+                                .map((item) => ({
+                                    id: item.id,
+                                    nama: item.attributes!.nama,
+                                    jumlah: item.attributes!.jumlah,
+                                    laki: item.attributes!.laki,
+                                    perempuan: item.attributes!.perempuan,
+                                    persentase: parseFloat(item.attributes!.persen.replace(",", ".")),
+                                }))
+                                .sort((a, b) => b.jumlah - a.jumlah);
+
+                            topEducations = educationData.slice(0, 4);
+                        } else {
+                            // Dusun population format from /api/statistik/penduduk
+                            // { data: [...dusun items], total: { jiwa, lakiLaki, perempuan, jumlahKk } }
+                            const totalData = data.total;
+                            totalPopulation = totalData?.jiwa || 0;
+                            totalLaki = totalData?.lakiLaki || 0;
+                            totalPerempuan = totalData?.perempuan || 0;
+                            const totalKK = totalData?.jumlahKk || 0;
+                            const totalDusun = data.data.length || 0;
+                            const totalRW = data.data.reduce((sum: number, d: { jumlahRw?: number }) => sum + (d.jumlahRw || 0), 0);
+                            const totalRT = data.data.reduce((sum: number, d: { jumlahRt?: number }) => sum + (d.jumlahRt || 0), 0);
+                        }
 
                         // Calculate difference (people not categorized by gender)
                         const genderDifference = totalPopulation - (totalLaki + totalPerempuan);
@@ -131,7 +167,7 @@ export const StatisticsDisplay = React.forwardRef<HTMLDivElement, StatisticsDisp
                                 unit: "jiwa",
                                 icon: <Users className="h-5 w-5" />,
                                 color: "text-indigo-600",
-                                source: `${((totalLaki / totalPopulation) * 100).toFixed(1)}% dari total`,
+                                source: totalPopulation > 0 ? `${((totalLaki / totalPopulation) * 100).toFixed(1)}% dari total` : "Data belum tersedia",
                             },
                             {
                                 id: "perempuan",
@@ -140,45 +176,55 @@ export const StatisticsDisplay = React.forwardRef<HTMLDivElement, StatisticsDisp
                                 unit: "jiwa",
                                 icon: <Users className="h-5 w-5" />,
                                 color: "text-rose-600",
-                                source: `${((totalPerempuan / totalPopulation) * 100).toFixed(1)}% dari total`,
+                                source: totalPopulation > 0 ? `${((totalPerempuan / totalPopulation) * 100).toFixed(1)}% dari total` : "Data belum tersedia",
                             },
-                            {
-                                id: "pendidikan-slta",
-                                title: "SLTA/Sederajat",
-                                value: topEducations[0]?.jumlah || 0,
-                                unit: "jiwa",
-                                icon: <GraduationCap className="h-5 w-5" />,
-                                color: "text-emerald-600",
-                                source: `${topEducations[0]?.persentase.toFixed(1)}% - Jenjang pendidikan tertinggi`,
-                            },
-                            {
-                                id: "pendidikan-sltp",
-                                title: "SLTP/Sederajat",
-                                value: topEducations[1]?.jumlah || 0,
-                                unit: "jiwa",
-                                icon: <GraduationCap className="h-5 w-5" />,
-                                color: "text-teal-600",
-                                source: `${topEducations[1]?.persentase.toFixed(1)}%`,
-                            },
-                            {
-                                id: "pendidikan-sd",
-                                title: "Tamat SD/Sederajat",
-                                value: topEducations[2]?.jumlah || 0,
-                                unit: "jiwa",
-                                icon: <GraduationCap className="h-5 w-5" />,
-                                color: "text-cyan-600",
-                                source: `${topEducations[2]?.persentase.toFixed(1)}%`,
-                            },
-                            {
-                                id: "pendidikan-belum-sekolah",
-                                title: "Belum/Tidak Sekolah",
-                                value: topEducations[3]?.jumlah || 0,
-                                unit: "jiwa",
-                                icon: <GraduationCap className="h-5 w-5" />,
-                                color: "text-amber-600",
-                                source: `${topEducations[3]?.persentase.toFixed(1)}% - Perlu perhatian khusus`,
-                            },
-                            {
+                        ];
+
+                        // Add education items only if available
+                        if (topEducations.length > 0) {
+                            transformedStatistics.push(
+                                {
+                                    id: "pendidikan-slta",
+                                    title: "SLTA/Sederajat",
+                                    value: topEducations[0]?.jumlah || 0,
+                                    unit: "jiwa",
+                                    icon: <GraduationCap className="h-5 w-5" />,
+                                    color: "text-emerald-600",
+                                    source: `${topEducations[0]?.persentase.toFixed(1)}% - Jenjang pendidikan tertinggi`,
+                                },
+                                {
+                                    id: "pendidikan-sltp",
+                                    title: "SLTP/Sederajat",
+                                    value: topEducations[1]?.jumlah || 0,
+                                    unit: "jiwa",
+                                    icon: <GraduationCap className="h-5 w-5" />,
+                                    color: "text-teal-600",
+                                    source: `${topEducations[1]?.persentase.toFixed(1)}%`,
+                                },
+                                {
+                                    id: "pendidikan-sd",
+                                    title: "Tamat SD/Sederajat",
+                                    value: topEducations[2]?.jumlah || 0,
+                                    unit: "jiwa",
+                                    icon: <GraduationCap className="h-5 w-5" />,
+                                    color: "text-cyan-600",
+                                    source: `${topEducations[2]?.persentase.toFixed(1)}%`,
+                                },
+                                {
+                                    id: "pendidikan-belum-sekolah",
+                                    title: "Belum/Tidak Sekolah",
+                                    value: topEducations[3]?.jumlah || 0,
+                                    unit: "jiwa",
+                                    icon: <GraduationCap className="h-5 w-5" />,
+                                    color: "text-amber-600",
+                                    source: `${topEducations[3]?.persentase.toFixed(1)}% - Perlu perhatian khusus`,
+                                }
+                            );
+                        }
+
+                        // Add gender difference if significant
+                        if (genderDifference > 0 && isOpenSIDFormat) {
+                            transformedStatistics.push({
                                 id: "gender-difference",
                                 title: "Belum Dikategorikan",
                                 value: genderDifference,
@@ -186,8 +232,61 @@ export const StatisticsDisplay = React.forwardRef<HTMLDivElement, StatisticsDisp
                                 icon: <Users className="h-5 w-5" />,
                                 color: "text-gray-500",
                                 source: `${((genderDifference / totalPopulation) * 100).toFixed(2)}% dari total - ${t("statistik.sumberDukcapil") || "Data admin"}`,
-                            },
-                        ];
+                            });
+                        }
+
+                        // Add administrative data if available (dusun format)
+                        if (!isOpenSIDFormat) {
+                            const totalKK = (data as any).total?.jumlahKk || 0;
+                            const totalDusun = data.data.length || 0;
+                            const totalRW = data.data.reduce((sum: number, d: any) => sum + (d.jumlahRw || 0), 0);
+                            const totalRT = data.data.reduce((sum: number, d: any) => sum + (d.jumlahRt || 0), 0);
+
+                            if (totalKK > 0) {
+                                transformedStatistics.push({
+                                    id: "kk",
+                                    title: "Kepala Keluarga",
+                                    value: totalKK,
+                                    unit: "KK",
+                                    icon: <Home className="h-5 w-5" />,
+                                    color: "text-violet-600",
+                                    source: "Data administrasi kependudukan",
+                                });
+                            }
+                            if (totalDusun > 0) {
+                                transformedStatistics.push({
+                                    id: "dusun",
+                                    title: "Padukuhan/Dusun",
+                                    value: totalDusun,
+                                    unit: "wilayah",
+                                    icon: <Building2 className="h-5 w-5" />,
+                                    color: "text-orange-600",
+                                    source: "Pembagian wilayah administratif",
+                                });
+                            }
+                            if (totalRW > 0) {
+                                transformedStatistics.push({
+                                    id: "rw",
+                                    title: "Rukun Warga",
+                                    value: totalRW,
+                                    unit: "RW",
+                                    icon: <Building2 className="h-5 w-5" />,
+                                    color: "text-amber-600",
+                                    source: "Organisasi kewilayahan",
+                                });
+                            }
+                            if (totalRT > 0) {
+                                transformedStatistics.push({
+                                    id: "rt",
+                                    title: "Rukun Tetangga",
+                                    value: totalRT,
+                                    unit: "RT",
+                                    icon: <Building2 className="h-5 w-5" />,
+                                    color: "text-teal-600",
+                                    source: "Organisasi kewilayahan",
+                                });
+                            }
+                        }
 
                         setStatistics(transformedStatistics);
                     }
