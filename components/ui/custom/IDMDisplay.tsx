@@ -62,9 +62,9 @@ interface IDMDisplayProps {
 // Function to fetch IDM data from API
 const fetchIDMData = async (year: string = "2024"): Promise<IDMData | null> => {
     try {
-        // Try fetching directly from Kemendesa API (client-side to avoid Vercel server blocking)
+        // Try fetching directly from Kemendesa API (client-side)
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
 
         const directUrl = `https://idm.kemendesa.go.id/open/api/desa/rumusan/3404132005/${year}`;
         const response = await fetch(directUrl, {
@@ -82,20 +82,18 @@ const fetchIDMData = async (year: string = "2024"): Promise<IDMData | null> => {
             return null;
         }
 
-        // IDM API returns: { status: 200, error: false, mapData: { SUMMARIES, ROW, IDENTITAS } }
         const data = json.mapData;
         return data?.SUMMARIES ? data : null;
-    } catch (error) {
-        console.warn(`Direct IDM fetch failed for ${year}, trying server proxy:`, error);
-        // Fallback to server-side proxy
+    } catch {
+        // Fallback to server-side proxy (which has its own 8s timeout)
         try {
             const response = await fetch(`/api/idm?year=${year}`);
             if (response.ok) {
                 const data = await response.json();
                 return data?.SUMMARIES ? data : null;
             }
-        } catch (e) {
-            console.error("Server IDM proxy also failed:", e);
+        } catch {
+            // Both methods failed
         }
         return null;
     }
@@ -107,12 +105,12 @@ const fetchIDMWithFallback = async (preferredYear: string): Promise<IDMData | nu
     const preferred = await fetchIDMData(preferredYear);
     if (preferred) return preferred;
 
-    // Fallback: try previous years (2024, 2023, 2022, 2021)
-    const fallbackYears = ["2024", "2023", "2022", "2021"];
-    for (const year of fallbackYears) {
-        const data = await fetchIDMData(year);
+    // Fallback: try just the most recent available year
+    const fallbackYear = preferredYear === "2025" ? "2024" : "2024";
+    if (fallbackYear !== preferredYear) {
+        const data = await fetchIDMData(fallbackYear);
         if (data) {
-            console.log(`IDM: Using data from year ${year} as fallback`);
+            console.log(`IDM: Using data from year ${fallbackYear} as fallback`);
             return data;
         }
     }
@@ -129,9 +127,9 @@ export function IDMDisplay({ className, year = "2024" }: IDMDisplayProps) {
             setLoading(true);
             setData(null);
 
-            // Create a timeout promise that rejects after 15 seconds
+            // Create a timeout promise that rejects after 10 seconds
             const timeoutPromise = new Promise((_, reject) => {
-                setTimeout(() => reject(new Error("Timeout: API took too long")), 15000);
+                setTimeout(() => reject(new Error("Timeout: API took too long")), 10000);
             });
 
             try {

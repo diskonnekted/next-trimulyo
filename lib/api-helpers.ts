@@ -105,19 +105,24 @@ export async function fetchSDGSDetail(goalId: string | number, locationCode = "3
  */
 export async function fetchIDMData(year = "2024") {
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
+
         const response = await fetch(`https://idm.kemendesa.go.id/open/api/desa/rumusan/3404132005/${year}`, {
             next: {
                 revalidate: 60 * 60 * 24 * 30, // 30 days
                 tags: ["idm-data"],
             },
+            signal: controller.signal,
         });
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             throw new Error(`IDM API error: ${response.status}`);
         }
 
         const data = await response.json();
-        
+
         if (data.error) {
             throw new Error(data.message || "IDM API returned error");
         }
