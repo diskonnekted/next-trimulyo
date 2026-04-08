@@ -152,7 +152,7 @@ function transformWordPressPosts(posts: any[]): NewsItem[] {
                     else if (sizes?.medium_large?.source_url) featuredImage = sizes.medium_large.source_url;
                     else if (sizes?.medium?.source_url) featuredImage = sizes.medium.source_url;
 
-                    if (featuredImage.startsWith("http://")) {
+                    if (featuredImage && featuredImage.startsWith("http://")) {
                         featuredImage = featuredImage.replace("http://", "https://");
                     }
                 }
