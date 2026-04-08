@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
             createSuccessResponse(data, "Posts berhasil dimuat dari WordPress")
         );
     } catch (error) {
-        console.error("Edge proxy error:", error);
+        console.error("wp-posts-edge error:", error);
         return NextResponse.json(
             createErrorResponse("INTERNAL_SERVER_ERROR", "Gagal memuat data dari WordPress"),
             { status: 500 }
