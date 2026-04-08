@@ -8,7 +8,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const YEARS = [2024, 2023, 2022, 2021];
+const YEARS = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014];
 const DESA_ID = "3404132005";
 const OUTPUT = path.join(__dirname, "..", "data", "idm-data.json");
 
