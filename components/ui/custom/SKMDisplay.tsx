@@ -69,10 +69,13 @@ function calculateAverage(questions: string[]): number {
     return nums.reduce((a, b) => a + b, 0) / nums.length;
 }
 
-// Fetch SKM data from WordPress API
+// Fetch SKM data from WordPress API directly from browser
 async function fetchSKMData(): Promise<SKMSurvey[]> {
     try {
-        const response = await fetch("/api/skm-surveys");
+        const response = await fetch(
+            "https://trimulyosid.slemankab.go.id/wp-json/skm/v1/surveys",
+            { headers: { Accept: "application/json" } }
+        );
         if (!response.ok) return [];
         const data = await response.json();
         return data ?? [];

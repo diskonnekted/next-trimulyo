@@ -56,9 +56,6 @@ function cleanContent(html: string): string {
     return html.replace(/<[^>]*>?/gm, "");
 }
 
-// WordPress REST API (direct from browser)
-const WP_API_URL = "https://trimulyosid.slemankab.go.id/wp-json/wp/v2/posts";
-
 export function useExternalNews(limit: number = 10) {
     const [news, setNews] = useState<NewsItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -69,15 +66,13 @@ export function useExternalNews(limit: number = 10) {
             setLoading(true);
             setError(null);
 
-            // 1. WordPress REST API directly from browser
+            // 1. Vercel Edge proxy (bypasses CORS issue)
             try {
-                const url = `${WP_API_URL}?per_page=${limit}&_embed=1`;
-                const wpResponse = await fetch(url, {
-                    headers: { Accept: "application/json" },
-                });
-
-                if (wpResponse.ok) {
-                    const wpPosts = await wpResponse.json();
+                const url = `/api/wp-posts-edge?per_page=${limit}&_embed=1`;
+                const response = await fetch(url);
+                if (response.ok) {
+                    const json = await response.json();
+                    const wpPosts = json?.data ?? [];
                     if (Array.isArray(wpPosts) && wpPosts.length > 0) {
                         const transformed = transformWordPressPosts(wpPosts);
                         setNews(transformed.slice(0, limit));
@@ -85,7 +80,7 @@ export function useExternalNews(limit: number = 10) {
                     }
                 }
             } catch (e) {
-                console.error("[useExternalNews] WordPress fetch failed:", e);
+                console.error("[useExternalNews] Edge proxy failed:", e);
             }
 
             // 2. Fallback: OpenSID Proxy
