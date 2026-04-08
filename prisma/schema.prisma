@@ -593,3 +593,21 @@ model Konfigurasi {
 
   @@map("konfigurasi")
 }
+
+// IDM Data - Cached from Kemendesa API
+model IDMRecord {
+  id         Int    @id @default(autoincrement())
+  tahun      Int    // Year of the IDM data
+  desaId     String @db.VarChar(20) @map("desa_id") // Village code (e.g. 3404132005)
+  summaries  Json   // { SKOR_SAAT_INI, STATUS, TARGET_STATUS, SKOR_MINIMAL, PENAMBAHAN, TAHUN }
+  indicators Json   @map("row_data") // ROW array of indicators
+  identity   Json   @map("identitas") // IDENTITAS info
+  skorIks    Float? @map("skor_iks") // Indeks Sosial
+  skorIke    Float? @map("skor_ike") // Indeks Ekonomi
+  skorIkl    Float? @map("skor_ikl") // Indeks Lingkungan
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@unique([tahun, desaId])
+  @@map("idm_record")
+}
