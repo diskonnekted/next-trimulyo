@@ -26,8 +26,6 @@ import {
     Lightbulb,
     Map,
     Users,
-    Building2,
-    Home,
 } from "lucide-react";
 
 import ImageFallback from "@/components/ui/custom/ImageFallback";
@@ -48,6 +46,7 @@ import { useWeatherAnimation } from "@/hooks/useWeatherAnimation";
 import { WeatherAnimation } from "@/components/ui/custom/WeatherAnimation";
 import { EventDate } from "@/components/EventDate";
 import { HolidayCards } from "@/components/ui/custom/HolidayCards";
+import { HeroStats } from "@/components/ui/custom/HeroStats";
 
 interface ServerData {
     heroSlides: Array<{
@@ -232,21 +231,8 @@ export function HomePageClient({ serverData }: { serverData: ServerData }) {
                             </Badge>
                         </div>
 
-                        {/* Quick Info Cards - Updated for Trimulyo */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                            {[
-                                { label: "Luas Wilayah", value: "650 Ha", icon: Map },
-                                { label: "Penduduk", value: "12.5K", icon: Users },
-                                { label: "Padukuhan", value: "14", icon: Building2 },
-                                { label: "RT/RW", value: "68/30", icon: Home },
-                            ].map((stat, index) => (
-                                <div key={index} className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20 hover:bg-white/20 transition-colors">
-                                    <stat.icon className="h-5 w-5 text-secondary mb-2" />
-                                    <div className="text-xl font-bold text-white">{stat.value}</div>
-                                    <div className="text-xs text-blue-100">{stat.label}</div>
-                                </div>
-                            ))}
-                        </div>
+                        {/* Quick Info Cards */}
+                        <HeroStats />
                     </div>
 
                     {/* Layanan Cepat in Hero */}
