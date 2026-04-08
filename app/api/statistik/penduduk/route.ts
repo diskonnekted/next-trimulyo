@@ -1,45 +1,46 @@
 import { NextResponse } from "next/server";
 
-interface PopulationStat {
-    dusun: string;
-    kepalaDusun: string;
-    jumlahRw: number;
-    jumlahRt: number;
-    jumlahKk: number;
-    jiwa: number;
-    lakiLaki: number;
-    perempuan: number;
-}
-
-const POPULATION_DATA: PopulationStat[] = [
-    { dusun: "BALONG MANTARAN", kepalaDusun: "MUHAMMAD NASRUN", jumlahRw: 2, jumlahRt: 5, jumlahKk: 312, jiwa: 900, lakiLaki: 443, perempuan: 457 },
-    { dusun: "BLUNYAH", kepalaDusun: "ARFAN HARNANTO", jumlahRw: 2, jumlahRt: 4, jumlahKk: 305, jiwa: 868, lakiLaki: 411, perempuan: 457 },
-    { dusun: "JOGOKERTEN", kepalaDusun: "MULYANA JATI", jumlahRw: 2, jumlahRt: 5, jumlahKk: 354, jiwa: 933, lakiLaki: 462, perempuan: 471 },
-    { dusun: "KADISOBO I", kepalaDusun: "SUMANTORO", jumlahRw: 2, jumlahRt: 5, jumlahKk: 253, jiwa: 704, lakiLaki: 367, perempuan: 337 },
-    { dusun: "KADISOBO II", kepalaDusun: "MAWARDI", jumlahRw: 2, jumlahRt: 4, jumlahKk: 216, jiwa: 537, lakiLaki: 266, perempuan: 271 },
-    { dusun: "KALIRASE", kepalaDusun: "INDAH PRIYANI", jumlahRw: 2, jumlahRt: 4, jumlahKk: 297, jiwa: 749, lakiLaki: 370, perempuan: 379 },
-    { dusun: "KARANG KEPANJEN", kepalaDusun: "ERNA NUROHMI", jumlahRw: 2, jumlahRt: 5, jumlahKk: 338, jiwa: 998, lakiLaki: 495, perempuan: 503 },
-    { dusun: "KEPITU", kepalaDusun: "ADHI PRAMONO", jumlahRw: 2, jumlahRt: 5, jumlahKk: 367, jiwa: 1054, lakiLaki: 535, perempuan: 519 },
-    { dusun: "KLEGEN POLOWIDI", kepalaDusun: "ANDAYANI LESTARI", jumlahRw: 2, jumlahRt: 4, jumlahKk: 279, jiwa: 808, lakiLaki: 417, perempuan: 390 },
-    { dusun: "KLELEN TEGALSARI", kepalaDusun: "AGUS SUJENDRO", jumlahRw: 3, jumlahRt: 7, jumlahKk: 459, jiwa: 1178, lakiLaki: 571, perempuan: 607 },
-    { dusun: "NGEMPLAK KALANGAN", kepalaDusun: "SUPRIYANTO", jumlahRw: 2, jumlahRt: 4, jumlahKk: 157, jiwa: 458, lakiLaki: 218, perempuan: 240 },
-    { dusun: "PAMBREGAN", kepalaDusun: "FATONAH", jumlahRw: 2, jumlahRt: 4, jumlahKk: 149, jiwa: 416, lakiLaki: 212, perempuan: 204 },
-    { dusun: "PENDEMAN", kepalaDusun: "BOIMAN", jumlahRw: 2, jumlahRt: 5, jumlahKk: 270, jiwa: 739, lakiLaki: 376, perempuan: 363 },
-    { dusun: "SIDOMULYO", kepalaDusun: "DIDIT NOOR CAHYANTO", jumlahRw: 3, jumlahRt: 7, jumlahKk: 446, jiwa: 1287, lakiLaki: 629, perempuan: 658 },
-];
+const OPENSID_API_URL = "https://trimulyo.sleman-desa.id/internal_api/statistik/penduduk";
+const REVALIDATE = 60 * 30; // 30 minutes
 
 export async function GET() {
-    // Calculate totals
-    const total = POPULATION_DATA.reduce((acc, curr) => ({
-        jumlahKk: acc.jumlahKk + curr.jumlahKk,
-        jiwa: acc.jiwa + curr.jiwa,
-        lakiLaki: acc.lakiLaki + curr.lakiLaki,
-        perempuan: acc.perempuan + curr.perempuan
-    }), { jumlahKk: 0, jiwa: 0, lakiLaki: 0, perempuan: 0 });
+    try {
+        const response = await fetch(OPENSID_API_URL, {
+            next: { revalidate: REVALIDATE },
+        });
+
+        if (!response.ok) {
+            throw new Error(`OpenSID API error: ${response.status}`);
+        }
+
+        const opensidData = await response.json();
+        if (opensidData && opensidData.data && opensidData.data.length > 0) {
+            return NextResponse.json({
+                success: true,
+                data: opensidData.data,
+            });
+        }
+    } catch (error) {
+        console.error("Failed to fetch from OpenSID, using mock data:", error);
+    }
+
+    // Fallback: mock data for development
+    const POPULATION_DATA = [
+        { type: "statistik", id: "total", attributes: { nama: "TOTAL", jumlah: 8430, laki: 4260, perempuan: 4169, persen: "100" } },
+        { type: "statistik", id: "1", attributes: { nama: "TIDAK/BELUM SEKOLAH", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
+        { type: "statistik", id: "2", attributes: { nama: "BELUM TAMAT SD/SEDERAJAT", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
+        { type: "statistik", id: "3", attributes: { nama: "TAMAT SD/SEDERAJAT", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
+        { type: "statistik", id: "4", attributes: { nama: "SLTP/SEDERAJAT", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
+        { type: "statistik", id: "5", attributes: { nama: "SLTA/SEDERAJAT", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
+        { type: "statistik", id: "6", attributes: { nama: "DIPLOMA I/II", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
+        { type: "statistik", id: "7", attributes: { nama: "AKADEMI/DIPLOMA III/S. MUDA", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
+        { type: "statistik", id: "8", attributes: { nama: "DIPLOMA IV/STRATA I", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
+        { type: "statistik", id: "9", attributes: { nama: "STRATA II", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
+        { type: "statistik", id: "10", attributes: { nama: "STRATA III", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
+    ];
 
     return NextResponse.json({
         success: true,
         data: POPULATION_DATA,
-        total
     });
 }
