@@ -72,30 +72,14 @@ export function useExternalNews(limit: number = 10) {
             // 1. WordPress REST API directly from browser
             try {
                 const url = `${WP_API_URL}?per_page=${limit}&_embed=1`;
-                console.log("[useExternalNews] Fetching from WordPress:", url);
-
                 const wpResponse = await fetch(url, {
                     headers: { Accept: "application/json" },
                 });
 
-                console.log("[useExternalNews] WP response status:", wpResponse.status, wpResponse.ok);
-
                 if (wpResponse.ok) {
                     const wpPosts = await wpResponse.json();
-                    console.log("[useExternalNews] WP posts count:", Array.isArray(wpPosts) ? wpPosts.length : "not array");
-
                     if (Array.isArray(wpPosts) && wpPosts.length > 0) {
-                        // Debug first post
-                        const first = wpPosts[0];
-                        console.log("[useExternalNews] First post:", {
-                            title: first.title?.rendered,
-                            hasEmbedded: !!first._embedded,
-                            hasFeatured: !!first._embedded?.["wp:featuredmedia"],
-                            hasAuthor: !!first._embedded?.author,
-                        });
-
                         const transformed = transformWordPressPosts(wpPosts);
-                        console.log("[useExternalNews] Transformed count:", transformed.length);
                         setNews(transformed.slice(0, limit));
                         return;
                     }
@@ -138,7 +122,6 @@ export function useExternalNews(limit: number = 10) {
                 console.warn("[useExternalNews] News Proxy failed:", e);
             }
 
-            console.warn("[useExternalNews] All sources failed, returning empty");
             setNews([]);
         } catch (err) {
             console.error("[useExternalNews] Fatal error:", err);
@@ -158,7 +141,7 @@ export function useExternalNews(limit: number = 10) {
 
 function transformWordPressPosts(posts: any[]): NewsItem[] {
     return posts
-        .filter((post) => post && post.title && post.slug) // filter invalid posts
+        .filter((post) => post && post.title && post.slug)
         .map((post) => {
             try {
                 const featuredMedia = post._embedded?.["wp:featuredmedia"]?.[0];
@@ -168,20 +151,17 @@ function transformWordPressPosts(posts: any[]): NewsItem[] {
                 let featuredImage: string | null = null;
                 if (featuredMedia?.source_url) {
                     featuredImage = featuredMedia.source_url;
-                    // Prefer larger images
                     const sizes = featuredMedia.media_details?.sizes;
                     if (sizes?.full?.source_url) featuredImage = sizes.full.source_url;
                     else if (sizes?.large?.source_url) featuredImage = sizes.large.source_url;
                     else if (sizes?.medium_large?.source_url) featuredImage = sizes.medium_large.source_url;
                     else if (sizes?.medium?.source_url) featuredImage = sizes.medium.source_url;
 
-                    // Ensure HTTPS
                     if (featuredImage.startsWith("http://")) {
                         featuredImage = featuredImage.replace("http://", "https://");
                     }
                 }
 
-                // Extract categories from embedded terms
                 let categories: Array<{ id: number; name: string; slug: string }> = [];
                 if (terms && Array.isArray(terms[0])) {
                     categories = terms[0]
@@ -236,7 +216,7 @@ function transformWordPressPosts(posts: any[]): NewsItem[] {
                     isBookmarked: false,
                 };
             } catch (e) {
-                console.warn("[transformWordPressPosts] Error transforming post:", post.id, e);
+                console.warn("[transformWordPressPosts] Error:", post.id, e);
                 return null;
             }
         })
