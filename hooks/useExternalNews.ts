@@ -68,7 +68,7 @@ export function useExternalNews(limit: number = 10) {
 
             // 1. Vercel Edge proxy (bypasses CORS issue)
             try {
-                const url = `/api/wp-posts-edge?per_page=${limit}&_embed=1`;
+                const url = `/api/wp-posts-proxy?per_page=${limit}&_embed=1`;
                 const response = await fetch(url);
                 if (response.ok) {
                     const json = await response.json();
