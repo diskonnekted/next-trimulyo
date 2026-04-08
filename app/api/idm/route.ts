@@ -1,87 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import { fetchIDMData, createApiRouteHandler } from "@/lib/api-helpers";
+import { createApiRouteHandler } from "@/lib/api-helpers";
+import idmData from "@/data/idm-data.json";
 
-const prisma = new PrismaClient();
-const DESA_ID = "3404132005";
-
+/**
+ * GET /api/idm?year=2024
+ *
+ * Reads from static JSON file first (no DB needed).
+ * Falls back to external API if year not found in JSON.
+ */
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const year = parseInt(searchParams.get("year") || "2024");
 
+    // 1. Read from static JSON file
+    const cached = (idmData as Record<string, unknown>)[year];
+    if (cached) {
+        return NextResponse.json({ source: "local", ...cached });
+    }
+
+    // 2. Fallback: fetch from external API
     try {
-        // 1. Try from database first
-        const dbRecord = await prisma.iDMRecord.findUnique({
-            where: { tahun_desaId: { tahun: year, desaId: DESA_ID } },
+        console.log(`IDM ${year} not in cache, fetching from Kemendesa API...`);
+        const url = `https://idm.kemendesa.go.id/open/api/desa/rumusan/3404132005/${year}`;
+        const response = await fetch(url, {
+            headers: { Accept: "application/json" },
         });
 
-        if (dbRecord) {
-            return NextResponse.json({
-                source: "local",
-                SUMMARIES: dbRecord.summaries,
-                ROW: dbRecord.indicators,
-                IDENTITAS: [dbRecord.identity],
-                skorIks: dbRecord.skorIks,
-                skorIke: dbRecord.skorIke,
-                skorIkl: dbRecord.skorIkl,
-            });
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
         }
 
-        // 2. Fallback: fetch from external API
-        console.log(`IDM ${year} not in database, fetching from external API...`);
-        const response = await fetchIDMData(String(year));
-
-        if (response.success && response.data) {
-            const data = response.data;
-            
-            // Extract scores
-            let skorIks: number | null = null;
-            let skorIke: number | null = null;
-            let skorIkl: number | null = null;
-            
-            for (const row of data.ROW || []) {
-                if (row.INDIKATOR?.startsWith("IKS ")) skorIks = row.SKOR;
-                if (row.INDIKATOR?.startsWith("IKE ")) skorIke = row.SKOR;
-                if (row.INDIKATOR?.startsWith("IKL ")) skorIkl = row.SKOR;
-            }
-
-            // Save to database for future requests
-            try {
-                await prisma.iDMRecord.create({
-                    data: {
-                        tahun: year,
-                        desaId: DESA_ID,
-                        summaries: data.SUMMARIES || {},
-                        indicators: data.ROW || [],
-                        identity: data.IDENTITAS?.[0] || {},
-                        skorIks,
-                        skorIke,
-                        skorIkl,
-                    },
-                });
-                console.log(`IDM ${year} saved to database`);
-            } catch (e) {
-                console.error(`Failed to save IDM ${year} to database:`, e);
-            }
-
-            return NextResponse.json({
-                source: "external",
-                SUMMARIES: data.SUMMARIES,
-                ROW: data.ROW,
-                IDENTITAS: data.IDENTITAS,
-                skorIks,
-                skorIke,
-                skorIkl,
-            });
+        const json = await response.json();
+        if (json.error) {
+            return NextResponse.json({ source: "none", error: json.message }, { status: 404 });
         }
 
-        return NextResponse.json({
-            source: "none",
-            error: "Data tidak tersedia",
-        });
+        return NextResponse.json({ source: "external", ...json.mapData });
     } catch (error) {
-        console.error("Error fetching IDM data:", error);
-        return NextResponse.json({ error: "Failed to fetch IDM data" }, { status: 500 });
+        console.error(`Error fetching IDM ${year}:`, error);
+        return NextResponse.json(
+            { source: "none", error: "Data tidak tersedia" },
+            { status: 500 }
+        );
     }
 }
 
