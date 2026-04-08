@@ -2,9 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import type { ApiResponse } from "@/lib/api-response";
 import { createSuccessResponse, createErrorResponse } from "@/lib/api-response";
 
-// This route handler runs on Edge runtime
-export const runtime = "edge";
-
 const WP_API_URL = "https://trimulyosid.slemankab.go.id/wp-json/wp/v2/posts";
 
 export async function GET(request: NextRequest) {
