@@ -5,8 +5,9 @@ const REVALIDATE = 60 * 30; // 30 minutes
 
 export async function GET() {
     try {
-        const response = await fetch(OPENSID_API_URL, {
-            next: { revalidate: REVALIDATE },
+        // We use wilayah/administratif because it contains population counts per dusun/hamlet
+        const response = await fetch("https://trimulyo.sleman-desa.id/internal_api/wilayah/administratif", {
+            next: { revalidate: 3600 },
         });
 
         if (!response.ok) {
@@ -14,33 +15,48 @@ export async function GET() {
         }
 
         const opensidData = await response.json();
-        if (opensidData && opensidData.data && opensidData.data.length > 0) {
-            return NextResponse.json({
-                success: true,
-                data: opensidData.data,
-            });
-        }
+        const rawData = opensidData.data || [];
+
+        // Transform data into PopulationStat format
+        const transformedData = rawData.map((item: any) => {
+            const attr = item.attributes || {};
+            return {
+                dusun: attr.dusun || "-",
+                kepalaDusun: attr.kepala_nama || "-",
+                jumlahRw: attr.rws_count || 0,
+                jumlahRt: attr.rts_count || 0,
+                jumlahKk: attr.keluarga_aktif_count || 0,
+                jiwa: attr.penduduk_pria_wanita_count || 0,
+                lakiLaki: attr.penduduk_pria_count || 0,
+                perempuan: attr.penduduk_wanita_count || 0,
+            };
+        });
+
+        // Calculate totals
+        const total = transformedData.reduce(
+            (acc: any, curr: any) => ({
+                jumlahKk: acc.jumlahKk + curr.jumlahKk,
+                jiwa: acc.jiwa + curr.jiwa,
+                lakiLaki: acc.lakiLaki + curr.lakiLaki,
+                perempuan: acc.perempuan + curr.perempuan,
+            }),
+            { jumlahKk: 0, jiwa: 0, lakiLaki: 0, perempuan: 0 }
+        );
+
+        return NextResponse.json({
+            success: true,
+            data: transformedData,
+            total,
+        });
     } catch (error) {
-        console.error("Failed to fetch from OpenSID, using mock data:", error);
+        console.error("Failed to fetch population stats from OpenSID:", error);
+        return NextResponse.json(
+            {
+                success: false,
+                message: "Gagal memuat data statistik penduduk",
+                error: error instanceof Error ? error.message : "Unknown error",
+            },
+            { status: 500 }
+        );
     }
-
-    // Fallback: mock data for development
-    const POPULATION_DATA = [
-        { type: "statistik", id: "total", attributes: { nama: "TOTAL", jumlah: 8430, laki: 4260, perempuan: 4169, persen: "100" } },
-        { type: "statistik", id: "1", attributes: { nama: "TIDAK/BELUM SEKOLAH", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
-        { type: "statistik", id: "2", attributes: { nama: "BELUM TAMAT SD/SEDERAJAT", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
-        { type: "statistik", id: "3", attributes: { nama: "TAMAT SD/SEDERAJAT", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
-        { type: "statistik", id: "4", attributes: { nama: "SLTP/SEDERAJAT", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
-        { type: "statistik", id: "5", attributes: { nama: "SLTA/SEDERAJAT", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
-        { type: "statistik", id: "6", attributes: { nama: "DIPLOMA I/II", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
-        { type: "statistik", id: "7", attributes: { nama: "AKADEMI/DIPLOMA III/S. MUDA", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
-        { type: "statistik", id: "8", attributes: { nama: "DIPLOMA IV/STRATA I", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
-        { type: "statistik", id: "9", attributes: { nama: "STRATA II", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
-        { type: "statistik", id: "10", attributes: { nama: "STRATA III", jumlah: 0, laki: 0, perempuan: 0, persen: "0" } },
-    ];
-
-    return NextResponse.json({
-        success: true,
-        data: POPULATION_DATA,
-    });
 }
