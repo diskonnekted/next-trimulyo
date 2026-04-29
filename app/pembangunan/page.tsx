@@ -360,26 +360,35 @@ export default function PembangunanPage() {
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredProjects.map((project) => {
-                            const attrs = project.attributes;
-                            const progress = getLatestProgress(attrs.pembangunan_dokumentasi);
-                            const progressValue = parseInt(progress);
+                             const attrs = project.attributes;
+                             const progress = getLatestProgress(attrs.pembangunan_dokumentasi);
+                             const progressValue = parseInt(progress);
 
-                            return (
-                                <Card
-                                    key={project.id}
-                                    className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                                    onClick={() => setSelectedProject(project)}
-                                >
-                                    <div className="relative h-48 bg-linear-to-br from-gray-100 to-gray-200">
-                                        {attrs.foto && !attrs.foto.includes("404-image-not-found") ? (
-                                            <Image
-                                                src={attrs.foto}
-                                                alt={attrs.judul}
-                                                fill
-                                                className="object-cover"
-                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                            />
-                                        ) : (
+                             // Prioritize first documentation image as cover if main photo is missing or 404
+                             const coverPhoto =
+                                 attrs.foto && !attrs.foto.includes("404-image-not-found")
+                                     ? attrs.foto
+                                     : attrs.pembangunan_dokumentasi && attrs.pembangunan_dokumentasi.length > 0
+                                       ? attrs.pembangunan_dokumentasi[0].gambar
+                                       : null;
+
+                             return (
+                                 <Card
+                                     key={project.id}
+                                     className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                                     onClick={() => setSelectedProject(project)}
+                                 >
+                                     <div className="relative h-48 bg-linear-to-br from-gray-100 to-gray-200">
+                                         {coverPhoto ? (
+                                             <Image
+                                                 src={coverPhoto}
+                                                 alt={attrs.judul}
+                                                 fill
+                                                 className="object-cover"
+                                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                 unoptimized
+                                             />
+                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
                                                 <Building className="h-16 w-16 text-gray-300" />
                                             </div>
