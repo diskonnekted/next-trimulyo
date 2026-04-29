@@ -50,12 +50,32 @@ export async function GET() {
             }, 0);
         }
 
+        // 4. Detailed APBK 2026 Data (from user provided state)
+        const apbk2026 = {
+            pelaksanaan: {
+                pendapatan: { anggaran: 8468530362, realisasi: 0, persen: 0 },
+                belanja: { anggaran: 9342749817, realisasi: 0, persen: 0 },
+                pembiayaan: { anggaran: 874219455, realisasi: 0, persen: 0 }
+            },
+            pendapatan_detail: [
+                { judul: "Hasil Aset Kalurahan", anggaran: 93000000, realisasi: 0, persen: 0 },
+                { judul: "Dana Desa", anggaran: 1415311100, realisasi: 0, persen: 0 },
+                { judul: "Bagi Hasil Pajak Dan Retribusi", anggaran: 1105070656, realisasi: 0, persen: 0 }
+            ],
+            pembelanjaan_detail: [
+                { judul: "Bidang Penyelenggaraan Pemerintahan Kalurahan", anggaran: 2786989153, realisasi: 0, persen: 0 },
+                { judul: "Bidang Pelaksanaan Pembangunan Kalurahan", anggaran: 2990369384, realisasi: 0, persen: 0 },
+                { judul: "Bidang Pembinaan Kemasyarakatan Kalurahan", anggaran: 0, realisasi: 0, persen: 0 }
+            ]
+        };
+
         return NextResponse.json({
             success: true,
             data: {
                 stats: statsByYear,
                 documents: documents,
                 population: totalPopulation,
+                apbk2026: apbk2026,
                 updated_at: new Date().toISOString()
             }
         });
