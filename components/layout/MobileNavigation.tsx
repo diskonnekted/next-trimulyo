@@ -448,6 +448,27 @@ export function MobileNavigation() {
                                     </Link>
 
                                     <Link
+                                        key="/informasi/perpustakaan"
+                                        href="/informasi/perpustakaan"
+                                        onClick={() => setIsSidebarOpen(false)}
+                                        className={`flex items-center gap-3 px-3 py-3 text-sm rounded-md transition-all duration-200 mb-1 cursor-pointer ${
+                                            isActive("/informasi/perpustakaan")
+                                                ? "bg-primary text-primary-foreground font-medium"
+                                                : "hover:bg-accent hover:text-accent-foreground"
+                                        }`}
+                                    >
+                                        <Star
+                                            className={`h-5 w-5 shrink-0 ${
+                                                isActive("/informasi/perpustakaan") ? "text-primary-foreground" : "text-primary"
+                                            }`}
+                                        />
+                                        <span className="truncate">Perpustakaan</span>
+                                        {isActive("/informasi/perpustakaan") && (
+                                            <div className="ml-auto w-2 h-2 bg-current rounded-full" />
+                                        )}
+                                    </Link>
+
+                                    <Link
                                         key="/informasi"
                                         href="/informasi"
                                         onClick={() => setIsSidebarOpen(false)}

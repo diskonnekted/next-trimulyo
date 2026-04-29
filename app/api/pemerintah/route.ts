@@ -277,9 +277,50 @@ const APARATUR_DATA: GovernmentOfficial[] = [
 ];
 
 export async function GET() {
-    // Return mock data directly
-    return NextResponse.json({
-        success: true,
-        data: APARATUR_DATA
-    });
+    try {
+        const response = await fetch("https://trimulyo.sleman-desa.id/internal_api/pemerintah", {
+            next: {
+                revalidate: 3600, // 1 hour
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch from OpenSID: ${response.status}`);
+        }
+
+        const json = await response.json();
+        const rawData = json.data || [];
+
+        // Transform real data to match our UI interface
+        const transformedData: GovernmentOfficial[] = rawData.map((item: any) => {
+            const attr = item.attributes || {};
+            const jabatan = attr.jabatan || {};
+
+            return {
+                id: item.id || Math.random().toString(36).substr(2, 9),
+                nama: attr.nama || "Tanpa Nama",
+                jabatan: jabatan.nama || "Perangkat Desa",
+                jenis_kelamin: attr.jenis_kelamin || "-",
+                pendidikan: attr.pendidikan_kk || "-",
+                usia: attr.usia ? parseInt(attr.usia.replace(" Tahun", "")) : "-",
+                foto: attr.foto || null,
+                status: "Aktif",
+            };
+        });
+
+        return NextResponse.json({
+            success: true,
+            data: transformedData,
+        });
+    } catch (error) {
+        console.error("Error in pemerintah API route:", error);
+        return NextResponse.json(
+            {
+                success: false,
+                message: "Gagal memuat data pemerintah",
+                error: error instanceof Error ? error.message : "Unknown error",
+            },
+            { status: 500 }
+        );
+    }
 }

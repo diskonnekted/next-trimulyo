@@ -183,7 +183,7 @@ export default function PembangunanPage() {
                         <h1 className="text-4xl font-bold text-primary">Pembangunan Kalurahan</h1>
                         <p className="text-gray-600 max-w-2xl mx-auto">
                             Informasi lengkap mengenai proyek pembangunan infrastruktur dan kemajuan Kalurahan
-                            Pondokrejo
+                            Trimulyo
                         </p>
                     </div>
                     <PembangunanDataLoading />
@@ -203,7 +203,7 @@ export default function PembangunanPage() {
                         <h1 className="text-4xl font-bold text-primary">Pembangunan Kalurahan</h1>
                         <p className="text-gray-600 max-w-2xl mx-auto">
                             Informasi lengkap mengenai proyek pembangunan infrastruktur dan kemajuan Kalurahan
-                            Pondokrejo
+                            Trimulyo
                         </p>
                     </div>
                     <PembangunanDataNotAvailable onRetry={fetchProjects} />
@@ -221,7 +221,7 @@ export default function PembangunanPage() {
                     </div>
                     <h1 className="text-4xl font-bold text-primary">Pembangunan Kalurahan</h1>
                     <p className="text-gray-600 max-w-2xl mx-auto">
-                        Informasi lengkap mengenai proyek pembangunan infrastruktur dan kemajuan Kalurahan Pondokrejo
+                        Informasi lengkap mengenai proyek pembangunan infrastruktur dan kemajuan Kalurahan Trimulyo
                     </p>
                 </div>
 
