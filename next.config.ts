@@ -43,13 +43,13 @@ const nextConfig: NextConfig = {
                 protocol: 'http',
                 hostname: 'trimulyo.sleman-desa.id',
                 port: '',
-                pathname: '/storage-desa',
+                pathname: '/storage-desa**',
             },
             {
                 protocol: 'https',
                 hostname: 'trimulyo.sleman-desa.id',
                 port: '',
-                pathname: '/storage-desa',
+                pathname: '/storage-desa**',
             },
             {
                 protocol: 'http',
