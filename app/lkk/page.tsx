@@ -129,61 +129,61 @@ export default function LKKPage() {
                 </div>
 
                 {/* Summary Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-                    <Card className="border-none shadow-sm bg-white/50 backdrop-blur-sm">
-                        <CardContent className="p-6 text-center">
-                            <div className="text-3xl font-bold text-primary mb-1">14</div>
-                            <div className="text-sm text-gray-500 font-medium uppercase tracking-wider">Padukuhan</div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+                    <Card className="border-none shadow-lg bg-linear-to-br from-blue-500 to-blue-600 text-white transform hover:scale-105 transition-transform duration-300">
+                        <CardContent className="p-8 text-center">
+                            <div className="text-4xl font-black mb-2">14</div>
+                            <div className="text-xs text-blue-100 font-bold uppercase tracking-widest">Padukuhan</div>
                         </CardContent>
                     </Card>
-                    <Card className="border-none shadow-sm bg-white/50 backdrop-blur-sm">
-                        <CardContent className="p-6 text-center">
-                            <div className="text-3xl font-bold text-primary mb-1">30</div>
-                            <div className="text-sm text-gray-500 font-medium uppercase tracking-wider">Rukun Warga</div>
+                    <Card className="border-none shadow-lg bg-linear-to-br from-emerald-500 to-emerald-600 text-white transform hover:scale-105 transition-transform duration-300">
+                        <CardContent className="p-8 text-center">
+                            <div className="text-4xl font-black mb-2">30</div>
+                            <div className="text-xs text-emerald-100 font-bold uppercase tracking-widest">Rukun Warga</div>
                         </CardContent>
                     </Card>
-                    <Card className="border-none shadow-sm bg-white/50 backdrop-blur-sm">
-                        <CardContent className="p-6 text-center">
-                            <div className="text-3xl font-bold text-primary mb-1">68</div>
-                            <div className="text-sm text-gray-500 font-medium uppercase tracking-wider">Rukun Tangga</div>
+                    <Card className="border-none shadow-lg bg-linear-to-br from-rose-500 to-rose-600 text-white transform hover:scale-105 transition-transform duration-300">
+                        <CardContent className="p-8 text-center">
+                            <div className="text-4xl font-black mb-2">68</div>
+                            <div className="text-xs text-rose-100 font-bold uppercase tracking-widest">Rukun Tangga</div>
                         </CardContent>
                     </Card>
-                    <Card className="border-none shadow-sm bg-white/50 backdrop-blur-sm">
-                        <CardContent className="p-6 text-center">
-                            <div className="text-3xl font-bold text-primary mb-1">4</div>
-                            <div className="text-sm text-gray-500 font-medium uppercase tracking-wider">Lembaga Utama</div>
+                    <Card className="border-none shadow-lg bg-linear-to-br from-amber-500 to-amber-600 text-white transform hover:scale-105 transition-transform duration-300">
+                        <CardContent className="p-8 text-center">
+                            <div className="text-4xl font-black mb-2">4</div>
+                            <div className="text-xs text-amber-100 font-bold uppercase tracking-widest">Lembaga Utama</div>
                         </CardContent>
                     </Card>
                 </div>
 
                 <Tabs defaultValue="rtrw" className="w-full">
-                    <TabsList className="flex flex-wrap md:grid md:grid-cols-4 gap-2 bg-transparent p-0 mb-12 h-auto">
+                    <TabsList className="flex flex-wrap md:grid md:grid-cols-4 gap-4 bg-transparent p-0 mb-16 h-auto">
                         <TabsTrigger 
                             value="rtrw" 
-                            className="flex-1 py-4 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl border border-gray-200 bg-white transition-all duration-300"
+                            className="flex-1 py-5 px-6 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-[0_10px_20px_rgba(var(--primary-rgb),0.3)] rounded-2xl border-2 border-gray-100 bg-white hover:border-primary/30 transition-all duration-300 text-base font-bold"
                         >
-                            <MapPin className="w-4 h-4 mr-2" />
+                            <MapPin className="w-5 h-5 mr-3" />
                             RT & RW
                         </TabsTrigger>
                         <TabsTrigger 
                             value="karangtaruna" 
-                            className="flex-1 py-4 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl border border-gray-200 bg-white transition-all duration-300"
+                            className="flex-1 py-5 px-6 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-[0_10px_20px_rgba(37,99,235,0.3)] data-[state=active]:border-blue-600 rounded-2xl border-2 border-gray-100 bg-white hover:border-blue-300 transition-all duration-300 text-base font-bold"
                         >
-                            <Users className="w-4 h-4 mr-2" />
+                            <Users className="w-5 h-5 mr-3" />
                             Karang Taruna
                         </TabsTrigger>
                         <TabsTrigger 
                             value="posyandu" 
-                            className="flex-1 py-4 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl border border-gray-200 bg-white transition-all duration-300"
+                            className="flex-1 py-5 px-6 data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-[0_10px_20px_rgba(5,150,105,0.3)] data-[state=active]:border-emerald-600 rounded-2xl border-2 border-gray-100 bg-white hover:border-emerald-300 transition-all duration-300 text-base font-bold"
                         >
-                            <Stethoscope className="w-4 h-4 mr-2" />
+                            <Stethoscope className="w-5 h-5 mr-3" />
                             Posyandu
                         </TabsTrigger>
                         <TabsTrigger 
                             value="lpmk" 
-                            className="flex-1 py-4 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl border border-gray-200 bg-white transition-all duration-300"
+                            className="flex-1 py-5 px-6 data-[state=active]:bg-amber-600 data-[state=active]:text-white data-[state=active]:shadow-[0_10px_20px_rgba(217,119,6,0.3)] data-[state=active]:border-amber-600 rounded-2xl border-2 border-gray-100 bg-white hover:border-amber-300 transition-all duration-300 text-base font-bold"
                         >
-                            <Building2 className="w-4 h-4 mr-2" />
+                            <Building2 className="w-5 h-5 mr-3" />
                             LPMK
                         </TabsTrigger>
                     </TabsList>
