@@ -37,10 +37,10 @@ interface IDMData {
         id_prov: string;
         id_kabupaten: string;
         nama_kab_kota: string;
-        id_kapanewon: string;
-        nama_kapanewon: string;
-        id_kalurahan: string;
-        nama_kalurahan: string;
+        id_kecamatan: string;
+        nama_kecamatan: string;
+        id_desa: string;
+        nama_desa: string;
     }>;
 }
 
