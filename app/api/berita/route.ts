@@ -185,7 +185,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
         return NextResponse.json(createErrorResponse("ERROR", "Gagal memuat berita"), { status: 500 });
     }
 }
-}
 
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse>> {
     try {
