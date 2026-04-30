@@ -199,7 +199,7 @@ export function HomePageClient({ serverData }: { serverData: ServerData }) {
                 {/* Hero Background Image */}
                 <div className="absolute inset-0 z-0">
                     <Image
-                        src="/images/hero.jpg"
+                        src="/images/hero.webp"
                         alt="Kalurahan Trimulyo"
                         fill
                         className="object-cover"

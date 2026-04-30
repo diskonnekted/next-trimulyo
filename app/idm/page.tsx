@@ -137,7 +137,7 @@ export default function IDMPage() {
                     <div className="text-center space-y-6">
                         <div className="inline-flex items-center justify-center rounded-full">
                             <Image
-                                src="/images/idm/logo.png"
+                                src="/images/idm/logo.webp"
                                 alt="Logo IDM"
                                 width={256}
                                 height={256}
@@ -175,7 +175,7 @@ export default function IDMPage() {
                     <div className="text-center space-y-6">
                         <div className="inline-flex items-center justify-center rounded-full">
                             <Image
-                                src="/images/idm/logo.png"
+                                src="/images/idm/logo.webp"
                                 alt="Logo IDM"
                                 width={256}
                                 height={256}
@@ -229,7 +229,7 @@ export default function IDMPage() {
                 <div className="text-center space-y-6">
                     <div className="inline-flex items-center justify-center rounded-full">
                         <Image
-                            src="/images/idm/logo.png"
+                            src="/images/idm/logo.webp"
                             alt="Logo IDM"
                             width={256}
                             height={256}

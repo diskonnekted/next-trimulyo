@@ -203,7 +203,7 @@ export default function PemerintahanPage() {
                         <div className="text-center mb-12">
                             <div className="inline-flex items-center justify-center w-24 h-24 bg-amber-50 rounded-full mb-4 shadow-sm border border-amber-100">
                                 <Image 
-                                    src="/images/bpkal.png" 
+                                    src="/images/bpkal.webp" 
                                     alt="Logo BPKal" 
                                     width={60} 
                                     height={60} 

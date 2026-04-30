@@ -12,7 +12,7 @@ export default function SDGSPage() {
                 <div className="text-center space-y-6">
                     <div className="inline-flex items-center justify-center rounded-full">
                         <Image
-                            src="/images/sdgs/logo.png"
+                            src="/images/sdgs/logo.webp"
                             alt="Logo SDGs"
                             width={256}
                             height={256}

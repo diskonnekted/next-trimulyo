@@ -194,7 +194,7 @@ export default function LKKPage() {
                             <div className="bg-primary/5 p-8 border-b border-primary/10">
                                 <div className="flex flex-col md:flex-row items-center gap-6">
                                     <div className="w-24 h-24 relative shrink-0 bg-white p-2 rounded-2xl shadow-md border border-primary/5">
-                                        <Image src="/images/rt.png" alt="Logo RT RW" fill className="object-contain" />
+                                        <Image src="/images/rt.webp" alt="Logo RT RW" fill className="object-contain" />
                                     </div>
                                     <div className="text-center md:text-left">
                                         <CardTitle className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Administrasi Wilayah</CardTitle>
@@ -254,7 +254,7 @@ export default function LKKPage() {
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-2xl" />
                                 <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
                                     <div className="w-24 h-24 relative shrink-0 bg-white p-2 rounded-2xl shadow-xl">
-                                        <Image src="/images/karangtaruna.jpg" alt="Logo Karang Taruna" fill className="object-contain" />
+                                        <Image src="/images/karangtaruna.webp" alt="Logo Karang Taruna" fill className="object-contain" />
                                     </div>
                                     <div className="text-center md:text-left">
                                         <CardTitle className="text-2xl md:text-3xl font-bold mb-2">Karang Taruna Tri Wira Manunggal</CardTitle>
@@ -326,7 +326,7 @@ export default function LKKPage() {
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-2xl" />
                                 <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
                                     <div className="w-24 h-24 relative shrink-0 bg-white p-2 rounded-2xl shadow-xl">
-                                        <Image src="/images/posyandu.png" alt="Logo Posyandu" fill className="object-contain" />
+                                        <Image src="/images/posyandu.webp" alt="Logo Posyandu" fill className="object-contain" />
                                     </div>
                                     <div className="text-center md:text-left">
                                         <CardTitle className="text-2xl md:text-3xl font-bold mb-2">Pokja Posyandu Kalurahan Trimulyo</CardTitle>
@@ -374,7 +374,7 @@ export default function LKKPage() {
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-2xl" />
                                 <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
                                     <div className="w-24 h-24 relative shrink-0 bg-white p-2 rounded-2xl shadow-xl">
-                                        <Image src="/images/lpmk.png" alt="Logo LPMK" fill className="object-contain" />
+                                        <Image src="/images/lpmk.webp" alt="Logo LPMK" fill className="object-contain" />
                                     </div>
                                     <div className="text-center md:text-left">
                                         <CardTitle className="text-2xl md:text-3xl font-bold mb-2">Lembaga Pemberdayaan Masyarakat Kalurahan</CardTitle>
