@@ -59,18 +59,18 @@ function NewsContent({
             return;
         }
 
-        // 1. Transform
+        // 1. Transform - use CORRECT NewsItem fields from useExternalNews hook
         const allTransformed: Post[] = externalNews.map(item => ({
             id: typeof item.id === 'number' ? item.id : parseInt(item.id) || 0,
-            title: item.judul || item.title || "Tanpa Judul",
+            title: item.title || "Tanpa Judul",           // ✅ NewsItem.title
             slug: item.slug || `post-${item.id}`,
             date: item.publishedAt || new Date().toISOString(),
-            excerpt: item.ringkasan || item.excerpt || "",
-            image: item.gambar || item.featuredImage || "/images/placeholder-news.jpg",
-            category: item.kategori || item.category || "Berita",
-            author: { name: item.penulis || "Admin" },
-            viewCount: item.views || 0,
-            readingTime: 2
+            excerpt: item.excerpt || "",                   // ✅ NewsItem.excerpt
+            image: item.featuredImage || "/images/placeholder-news.jpg", // ✅ NewsItem.featuredImage
+            category: item.category || "Berita",           // ✅ NewsItem.category
+            author: { name: item.author?.name || "Admin" }, // ✅ NewsItem.author.name
+            viewCount: item.viewCount || 0,               // ✅ NewsItem.viewCount
+            readingTime: item.readTime || 2               // ✅ NewsItem.readTime
         }));
 
         console.log("[BeritaPage] Successfully transformed:", allTransformed.length);
