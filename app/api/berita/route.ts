@@ -67,27 +67,16 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
         const { searchParams } = new URL(request.url);
         const page = parseInt(searchParams.get("halaman") ?? "1");
         const limit = parseInt(searchParams.get("limit") ?? "10");
-        const kategori = searchParams.get("kategori");
 
-        // Helper to fetch with timeout
-        const fetchWithTimeout = async (url: string, options: any = {}, timeout = 4000) => {
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), timeout);
-            try {
-                const response = await fetch(url, { ...options, signal: controller.signal });
-                clearTimeout(id);
-                return response;
-            } catch (e) {
-                clearTimeout(id);
-                throw e;
-            }
-        };
-
-        // Attempt Source 1: OpenSID (Primary)
+        // Attempt Source 1: OpenSID (Primary with Server-Side Cache)
         try {
-            console.log("Fetching news from OpenSID...");
             const sidUrl = `https://trimulyo.sleman-desa.id/internal_api/berita?per_page=${limit}&page=${page}`;
-            const response = await fetchWithTimeout(sidUrl, { next: { revalidate: 3600 } });
+            
+            // Revalidate every 1 hour (3600 seconds) - LIKE PONDOKREJO
+            const response = await fetch(sidUrl, { 
+                next: { revalidate: 3600 },
+                signal: AbortSignal.timeout(15000) // 15s timeout
+            });
             
             if (response.ok) {
                 const sidData = await response.json();
@@ -96,7 +85,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
                         id: post.id,
                         judul: post.judul,
                         slug: post.slug || post.id.toString(),
-                        ringkasan: post.ringkasan || (post.isi ? post.isi.substring(0, 160) + '...' : ""),
+                        ringkasan: post.ringkasan || (post.isi ? post.isi.substring(0, 160).replace(/<[^>]*>?/gm, '') + '...' : ""),
                         konten: post.isi || "",
                         gambar: post.gambar ? `https://trimulyo.sleman-desa.id/desa/upload/artikel/sedang_${post.gambar}` : "/images/berita/infrastruktur.jpg",
                         kategori: post.kategori || "Berita",
@@ -108,7 +97,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
                         views: parseInt(post.hit || "0"),
                     }));
 
-                    return NextResponse.json(createSuccessResponse(berita, "Berita OpenSID", {
+                    return NextResponse.json(createSuccessResponse(berita, "Berita OpenSID (Cached)", {
                         total: sidData.total || berita.length,
                         halaman: page,
                         perHalaman: limit,
@@ -117,51 +106,10 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
                 }
             }
         } catch (e) {
-            console.error("OpenSID Fetch Error:", e);
+            console.error("OpenSID Fetch Error (using fallback):", e);
         }
 
-        // Attempt Source 2: WordPress (Fallback)
-        try {
-            console.log("Fetching news from WordPress...");
-            const wpUrl = `https://trimulyosid.slemankab.go.id/wp-json/wp/v2/posts?_embed&per_page=${limit}&page=${page}`;
-            const response = await fetchWithTimeout(wpUrl, { 
-                next: { revalidate: 3600 },
-                headers: { 'User-Agent': 'Mozilla/5.0' }
-            });
-            
-            if (response.ok) {
-                const wpPosts = await response.json();
-                if (Array.isArray(wpPosts) && wpPosts.length > 0) {
-                    const berita = wpPosts.map((post: any) => ({
-                        id: post.id,
-                        judul: post.title.rendered,
-                        slug: post.slug,
-                        ringkasan: post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...',
-                        konten: post.content.rendered,
-                        gambar: post._embedded?.['wp:featuredmedia']?.[0]?.source_url || "/images/berita/infrastruktur.jpg",
-                        kategori: post._embedded?.['wp:term']?.[0]?.[0]?.name || "Berita",
-                        status: "PUBLISHED",
-                        publishedAt: post.date,
-                        createdAt: post.date,
-                        updatedAt: post.modified,
-                        penulis: post._embedded?.author?.[0]?.name || "Admin Kalurahan",
-                        views: 100,
-                    }));
-
-                    return NextResponse.json(createSuccessResponse(berita, "Berita WordPress", {
-                        total: parseInt(response.headers.get('X-WP-Total') || "10"),
-                        halaman: page,
-                        perHalaman: limit,
-                        totalHalaman: parseInt(response.headers.get('X-WP-TotalPages') || "1"),
-                    }));
-                }
-            }
-        } catch (e) {
-            console.error("WordPress Fetch Error:", e);
-        }
-
-        // Source 3: Final Fallback (Mock)
-        console.log("Using Mock Berita as final fallback");
+        // Final Fallback (Mock) - Guaranteed content
         const latestMock = [
             {
                 id: 1795,
@@ -189,8 +137,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse>> {
     try {
         const body = await request.json();
-
-        // Basic validation
         const validationErrors: Record<string, string> = {};
         if (!body.judul) validationErrors.judul = "Judul wajib diisi";
         if (!body.konten) validationErrors.konten = "Konten wajib diisi";
@@ -199,7 +145,6 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
             return NextResponse.json(createValidationErrorResponse(validationErrors), { status: 400 });
         }
 
-        // Mock creating a new berita
         const newBerita = {
             id: mockBerita.length + 1,
             judul: body.judul,
