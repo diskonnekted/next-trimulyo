@@ -472,6 +472,12 @@ export function HomePageClient({ serverData }: { serverData: ServerData }) {
                     {/* Kolom 2 - Berita */}
                     <div className="content-center space-y-4 lg:col-span-2 flex flex-col">
                         {/* Berita Utama */}
+                        {newsData && newsData.beritaUtama && (
+                            <Card className="overflow-hidden py-0 gap-0 pt-0">
+                                <div className="aspect-video relative bg-muted">
+                                    <ImageFallback
+                                        src={newsData.beritaUtama.gambar}
+                                        alt={newsData.beritaUtama.judul}
                                         fill
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
                                         className="object-cover w-full h-full"
