@@ -2,8 +2,18 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { IDMDisplay } from "@/components/ui/custom/IDMDisplay";
-import { IDMDetailTable } from "@/components/ui/custom/IDMDetailTable";
+import dynamic from "next/dynamic";
+
+const IDMDisplay = dynamic(() => import("@/components/ui/custom/IDMDisplay").then(mod => mod.IDMDisplay), {
+    loading: () => <div className="w-full h-[400px] bg-muted animate-pulse rounded-2xl" />,
+    ssr: false
+});
+
+const IDMDetailTable = dynamic(() => import("@/components/ui/custom/IDMDetailTable").then(mod => mod.IDMDetailTable), {
+    loading: () => <div className="w-full h-[300px] bg-muted animate-pulse rounded-2xl" />,
+    ssr: false
+});
+
 import { YearSelector } from "@/components/ui/custom/YearSelector";
 import { IDMDataNotAvailable } from "@/components/ui/custom/IDMDataNotAvailable";
 import { IDMDataLoading } from "@/components/ui/custom/IDMDataLoading";

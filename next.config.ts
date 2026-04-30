@@ -94,7 +94,7 @@ const nextConfig: NextConfig = {
     },
 
     experimental: {
-        optimizePackageImports: ['lucide-react', '@radix-ui/react-icons', 'simple-icons'],
+        optimizePackageImports: ['lucide-react', '@radix-ui/react-icons', 'simple-icons', 'framer-motion', 'recharts'],
     }
 };
 

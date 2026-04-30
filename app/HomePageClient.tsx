@@ -32,10 +32,37 @@ import ImageFallback from "@/components/ui/custom/ImageFallback";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CustomButton } from "@/components/ui/custom/CustomButton";
-import { SDGsDashboard } from "@/components/ui/custom/SDGsDashboard";
-import { StatisticsDisplay } from "@/components/ui/custom/StatisticsDisplay";
-import { WeatherCard } from "@/components/ui/custom/WeatherCard";
-import { IDMDisplay } from "@/components/ui/custom/IDMDisplay";
+import dynamic from "next/dynamic";
+
+const SDGsDashboard = dynamic(() => import("@/components/ui/custom/SDGsDashboard").then(mod => mod.SDGsDashboard), {
+    loading: () => <div className="w-full h-[400px] bg-muted animate-pulse rounded-2xl" />,
+    ssr: false
+});
+
+const StatisticsDisplay = dynamic(() => import("@/components/ui/custom/StatisticsDisplay").then(mod => mod.StatisticsDisplay), {
+    loading: () => <div className="w-full h-[200px] bg-muted animate-pulse rounded-2xl" />,
+    ssr: false
+});
+
+const IDMDisplay = dynamic(() => import("@/components/ui/custom/IDMDisplay").then(mod => mod.IDMDisplay), {
+    loading: () => <div className="w-full h-[300px] bg-muted animate-pulse rounded-2xl" />,
+    ssr: false
+});
+
+const WeatherCard = dynamic(() => import("@/components/ui/custom/WeatherCard").then(mod => mod.WeatherCard), {
+    loading: () => <div className="w-full h-[150px] bg-muted animate-pulse rounded-2xl" />,
+    ssr: false
+});
+
+const HolidayCards = dynamic(() => import("@/components/ui/custom/HolidayCards").then(mod => mod.HolidayCards), {
+    loading: () => <div className="w-full h-[120px] bg-muted animate-pulse rounded-2xl" />,
+    ssr: false
+});
+
+const WeatherAnimation = dynamic(() => import("@/components/ui/custom/WeatherAnimation").then(mod => mod.WeatherAnimation), {
+    ssr: false
+});
+
 import { KeuanganSummary } from "@/components/ui/custom/KeuanganSummary";
 import { YearSelector } from "@/components/ui/custom/YearSelector";
 import { DecorativeSeparator } from "@/components/ui/custom/DecorativeSeparator";
@@ -43,9 +70,7 @@ import { useExternalNews } from "@/hooks/useExternalNews";
 import { useHolidays } from "@/hooks/useHolidays";
 import { useTranslation } from "@/lib/useTranslation";
 import { useWeatherAnimation } from "@/hooks/useWeatherAnimation";
-import { WeatherAnimation } from "@/components/ui/custom/WeatherAnimation";
 import { EventDate } from "@/components/EventDate";
-import { HolidayCards } from "@/components/ui/custom/HolidayCards";
 import { HeroStats } from "@/components/ui/custom/HeroStats";
 
 interface ServerData {

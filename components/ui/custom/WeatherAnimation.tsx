@@ -196,15 +196,15 @@ export const WeatherAnimation: React.FC<WeatherAnimationProps> = ({ weatherData,
         const getParticleCount = () => {
             if (weatherData.isRaining && weatherData.isCloudy) {
                 // Rain + Wind: both rain and leaves
-                return { rain: isMobile ? 48 : 128, leaves: isMobile ? 15 : 8 };
+                return { rain: isMobile ? 24 : 64, leaves: isMobile ? 8 : 4 };
             } else if (weatherData.isRaining) {
-                return isMobile ? 48 : 128; // Custom rain particle counts
+                return isMobile ? 24 : 64; // Reduced rain particle counts
             } else if (weatherData.isCloudy) {
-                return isMobile ? 6 : 20;
+                return isMobile ? 4 : 10;
             } else if (weatherData.isFoggy) {
-                return isMobile ? 8 : 25;
+                return isMobile ? 6 : 15;
             }
-            return isMobile ? 3 : 10; // Default for other weather types
+            return isMobile ? 2 : 5; // Default for other weather types
         };
 
         const particleConfig = getParticleCount();
@@ -276,7 +276,7 @@ export const WeatherAnimation: React.FC<WeatherAnimationProps> = ({ weatherData,
     const stars = useMemo(() => {
         if (weatherData && !weatherData.isRaining) {
             /* eslint-disable react-hooks/purity */
-            const starCount = isMobile ? 50 : 100;
+            const starCount = isMobile ? 25 : 50;
             const newStars = [];
 
             for (let i = 0; i < starCount; i++) {
@@ -298,7 +298,7 @@ export const WeatherAnimation: React.FC<WeatherAnimationProps> = ({ weatherData,
     if (!weatherData) return null;
 
     return (
-        <div ref={containerRef} className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
+        <div ref={containerRef} className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`} style={{ contain: "paint layout" }}>
             <style jsx>{`
                 @keyframes rainFall {
                     from {

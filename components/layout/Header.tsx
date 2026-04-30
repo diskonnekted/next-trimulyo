@@ -51,7 +51,7 @@ export function Header() {
         setMounted(true);
     }, []);
 
-    const mainNavItems = [
+    const mainNavItems = React.useMemo(() => [
         { href: "/", label: t("navigation.beranda"), icon: Home },
         { href: "/pemerintahan", label: t("navigation.pemerintahan"), icon: Building2 },
         { href: "/informasi", label: "Informasi", icon: Newspaper },
@@ -64,9 +64,9 @@ export function Header() {
         { href: "/layanan-mandiri", label: "Layanan Mandiri", icon: UserCheck },
         { href: "/lapak", label: "Padi Trimulyo", icon: ShoppingBag },
         { href: "/pengaduan", label: t("navigation.pengaduan"), icon: MessageSquare },
-    ];
+    ], [t]);
 
-    const pemerintahanSubItems = [
+    const pemerintahanSubItems = React.useMemo(() => [
         { href: "/profil", label: t("navigation.profilDesa") },
         { href: "/sejarah", label: "Sejarah" },
         { href: "/wilayah-administratif", label: "Wilayah Administratif" },
@@ -75,19 +75,19 @@ export function Header() {
         { href: "/keuangan", label: t("navigation.keuangan") },
         { href: "/pembangunan", label: t("navigation.pembangunan") },
         { href: "/bumdes", label: t("navigation.bumdes") },
-    ];
+    ], [t]);
 
-    const informasiSubItems = [
+    const informasiSubItems = React.useMemo(() => [
         { href: "/berita", label: t("navigation.berita") },
         { href: "/pengumuman", label: "Pengumuman" },
         { href: "/kegiatan", label: t("navigation.kegiatan") },
         { href: "/informasi/perpustakaan", label: "Perpustakaan" },
         { href: "/posyandu", label: "Posyandu" },
         { href: "/skm", label: "Kepuasan Masyarakat" },
-    ];
+    ], [t]);
 
     // Categorized statistik sub-items
-    const statistikCategories = [
+    const statistikCategories = React.useMemo(() => [
         {
             category: "Demografi",
             icon: Users,
@@ -163,7 +163,7 @@ export function Header() {
                 { href: "/statistik/pekerjaan", label: "Pekerjaan" },
             ],
         },
-    ];
+    ], []);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();

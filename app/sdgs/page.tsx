@@ -2,7 +2,12 @@
 
 import { Globe } from "lucide-react";
 import Image from "next/image";
-import { SDGsDashboard } from "@/components/ui/custom/SDGsDashboard";
+import dynamic from "next/dynamic";
+
+const SDGsDashboard = dynamic(() => import("@/components/ui/custom/SDGsDashboard").then(mod => mod.SDGsDashboard), {
+    loading: () => <div className="w-full h-[500px] bg-muted animate-pulse rounded-2xl" />,
+    ssr: false
+});
 
 export default function SDGSPage() {
     return (

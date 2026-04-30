@@ -6,10 +6,8 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MobileNavigationWrapper } from "@/components/layout/MobileNavigationWrapper";
+import { ClientLayoutOptimizations } from "@/components/layout/ClientLayoutOptimizations";
 import { CustomToast } from "@/components/ui/custom/CustomToast";
-import { BackToTop } from "@/components/ui/custom/BackToTop";
-import { PWAInstallPrompt } from "@/components/ui/custom/PWAInstallPrompt";
-import { SKMFloatingButton } from "@/components/ui/custom/SKMFloatingButton";
 import { env } from "process";
 
 const geistSans = Geist({
@@ -93,11 +91,7 @@ export default function RootLayout({
                 </div>
                 <MobileNavigationWrapper />
                 <CustomToast />
-                <BackToTop />
-                <Suspense fallback={null}>
-                    <SKMFloatingButton />
-                </Suspense>
-                <PWAInstallPrompt />
+                <ClientLayoutOptimizations />
             </body>
         </html>
     );
