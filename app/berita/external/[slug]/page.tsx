@@ -17,7 +17,7 @@ function ExternalNewsContent() {
 
     // Construct the target URL
     // We assume the slug matches the WordPress post slug
-    const targetUrl = `https://trimulyo.sleman-kalurahan.id/berita/${slug}`;
+    const targetUrl = `https://trimulyo.sleman-desa.id/berita/${slug}`;
 
     useEffect(() => {
         // Simulate loading time

@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL || "https://trimulyo.sleman-kalurahan.id"),
+    metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL || "https://trimulyo.sleman-desa.id"),
     title: "Portal Resmi Kalurahan Trimulyo - Sleman, DIY",
     description:
         "Portal resmi Pemerintah Kalurahan Trimulyo, Kabupaten Sleman, DIY. Informasi lengkap layanan publik, berita terkini, dan transparansi pemerintahan kalurahan.",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
         description: "Portal resmi Pemerintah Kalurahan Trimulyo, Kabupaten Sleman, DIY",
         type: "website",
         locale: "id_ID",
-        url: "https://trimulyo.sleman-kalurahan.id",
+        url: "https://trimulyo.sleman-desa.id",
         siteName: env.APP_NAME || "Portal Kalurahan Trimulyo",
         images: [
             {

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const OPENSID_PENDUDUK = "https://trimulyo.sleman-kalurahan.id/internal_api/statistik/penduduk";
+const OPENSID_PENDUDUK = "https://trimulyo.sleman-desa.id/internal_api/statistik/penduduk";
 const REVALIDATE = 60 * 30; // 30 minutes
 
 export async function GET() {
