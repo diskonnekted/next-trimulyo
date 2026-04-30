@@ -101,8 +101,11 @@ function NewsContent({
         
         if (selectedCategory !== "all") {
             filtered = filtered.filter(p => {
-                const catSlug = p.category.toLowerCase().replace(/\s+/g, '-');
-                return catSlug === selectedCategory;
+                // Check against categories array (Post type uses categories, not category)
+                return p.categories?.some(c => 
+                    c.slug === selectedCategory || 
+                    c.name.toLowerCase().replace(/\s+/g, '-') === selectedCategory
+                );
             });
         }
 
@@ -116,12 +119,18 @@ function NewsContent({
         console.log("[BeritaPage] Final filtered count:", filtered.length);
         setPosts(filtered);
 
-        // 4. Update Categories (Only if not already set or after transformation)
-        const cats = Array.from(new Set(allTransformed.map(p => p.category))).map((name, i) => ({
+        // 4. Update Categories from transformed posts
+        const catMap = new Map<string, number>();
+        allTransformed.forEach(p => {
+            const catName = p.categories?.[0]?.name || "Berita";
+            catMap.set(catName, (catMap.get(catName) || 0) + 1);
+        });
+        const cats: Category[] = Array.from(catMap.entries()).map(([name, count], i) => ({
             id: i,
             name: name,
             slug: name.toLowerCase().replace(/\s+/g, '-'),
-            count: allTransformed.filter(p => p.category === name).length
+            count: count,
+            description: "",
         }));
         setCategories(cats);
 
@@ -182,7 +191,7 @@ function NewsContent({
                 </div>
 
                 <div className="lg:col-span-1">
-                    <NewsSidebar categories={categories} archives={[]} popularPosts={posts.slice(0, 5)} />
+                <NewsSidebar />
                 </div>
             </div>
         </div>
