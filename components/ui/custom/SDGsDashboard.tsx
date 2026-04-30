@@ -44,7 +44,14 @@ import { cn } from "@/lib/utils";
 // Function to fetch real SDGs data
 const fetchSDGsData = async (locationCode: string = "3404140004"): Promise<SDGGoal[]> => {
     try {
-        const response = await fetch(`/api/sdgs?location_code=${locationCode}`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
+
+        const response = await fetch(`/api/sdgs?location_code=${locationCode}`, {
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch SDGs data: ${response.status}`);
@@ -137,7 +144,14 @@ const fetchSDGsData = async (locationCode: string = "3404140004"): Promise<SDGGo
 // Function to get overall SDGs score
 const fetchOverallScore = async (locationCode: string = "3404140004"): Promise<number> => {
     try {
-        const response = await fetch(`/api/sdgs?location_code=${locationCode}`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        const response = await fetch(`/api/sdgs?location_code=${locationCode}`, {
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch overall score: ${response.status}`);
