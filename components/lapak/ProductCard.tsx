@@ -70,7 +70,7 @@ export default function ProductCard({ product, categoryName, onClick }: ProductC
                 <Button 
                     className="w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
                     onClick={() => {
-                        const message = `Halo, saya tertarik dengan produk ${product.name} yang ada di Lapak Trimulyo.`;
+                        const message = `Halo, saya tertarik dengan produk ${product.name} yang ada di Padi Trimulyo.`;
                         window.open(`https://wa.me/6282134008185?text=${encodeURIComponent(message)}`, "_blank");
                     }}
                 >

@@ -91,14 +91,14 @@ function LapakContent() {
     return (
         <div className="container mx-auto px-4 py-8 max-w-7xl">
             {/* Hero Section */}
-            <section className="relative rounded-3xl overflow-hidden mb-12 bg-primary/10 border border-primary/20">
+            <section className="relative rounded-3xl overflow-hidden mb-12 bg-primary border border-primary/20 shadow-2xl">
                 <div className="absolute inset-0 z-0">
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10" />
                     <Image 
                         src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1200"
-                        alt="Lapak Trimulyo"
+                        alt="Padi Trimulyo"
                         fill
-                        className="object-cover opacity-30"
+                        className="object-cover opacity-60"
                     />
                 </div>
                 <div className="relative z-10 p-8 md:p-16 flex flex-col items-center text-center">
@@ -106,23 +106,23 @@ function LapakContent() {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.5 }}
-                        className="mb-6 bg-primary/20 p-4 rounded-2xl backdrop-blur-md"
+                        className="mb-6 bg-white/20 p-4 rounded-2xl backdrop-blur-md border border-white/20"
                     >
-                        <Store className="h-12 w-12 text-primary" />
+                        <Store className="h-12 w-12 text-white" />
                     </motion.div>
                     <motion.h1 
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.2 }}
-                        className="text-4xl md:text-5xl font-extrabold text-primary mb-4 tracking-tight"
+                        className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight"
                     >
-                        Lapak Trimulyo
+                        Padi Trimulyo
                     </motion.h1>
                     <motion.p 
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.3 }}
-                        className="text-lg md:text-xl text-muted-foreground max-w-2xl font-medium"
+                        className="text-lg md:text-xl text-white/90 max-w-2xl font-medium"
                     >
                         Dukung ekonomi lokal dengan berbelanja produk unggulan dari pelaku UMKM Kalurahan Trimulyo.
                     </motion.p>
@@ -164,7 +164,7 @@ function LapakContent() {
                             <h4 className="font-bold">Info Pelapak</h4>
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                            Punya produk unggulan? Segera daftarkan produk Anda di Lapak Trimulyo untuk menjangkau lebih banyak pembeli.
+                            Punya produk unggulan? Segera daftarkan produk Anda di Padi Trimulyo untuk menjangkau lebih banyak pembeli.
                         </p>
                         <Button className="w-full mt-4 rounded-xl font-bold" variant="secondary">
                             Daftar Pelapak
@@ -283,7 +283,7 @@ function LapakContent() {
                                     <Button 
                                         className="w-full h-14 text-lg font-bold gap-3 rounded-2xl shadow-lg shadow-primary/20"
                                         onClick={() => {
-                                            const message = `Halo, saya tertarik dengan produk ${selectedProduct.name} yang ada di Lapak Trimulyo.`;
+                                            const message = `Halo, saya tertarik dengan produk ${selectedProduct.name} yang ada di Padi Trimulyo.`;
                                             window.open(`https://wa.me/6282134008185?text=${encodeURIComponent(message)}`, "_blank");
                                         }}
                                     >
