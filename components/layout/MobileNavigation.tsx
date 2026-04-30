@@ -65,13 +65,13 @@ export function MobileNavigation() {
     const mainNavItems = [
         { href: "/", label: translations.navigation.beranda, icon: Home },
         { href: "/berita", label: translations.navigation.berita, icon: Newspaper },
+        { href: "/lapak", label: "Padi", icon: Store },
         {
             href: "https://trimulyo.sleman-desa.id/layanan-mandiri",
             label: translations.navigation.layanan,
             icon: FileText,
             external: true,
         },
-        { href: "/pengaduan", label: translations.navigation.pengaduan, icon: MessageSquare },
     ];
 
     // Main navigation items for mobile sidebar (in same order as desktop)
@@ -84,6 +84,7 @@ export function MobileNavigation() {
         { href: "/sdgs", label: "SDGs", icon: Globe },
         // { href: "/iot", label: "IoT", icon: Monitor },
         { href: "/komunitas", label: "Komunitas", icon: Users },
+        { href: "/lapak", label: "Padi Trimulyo", icon: Store },
         { href: "/pengaduan", label: translations.navigation.pengaduan, icon: MessageSquare },
     ];
 
@@ -190,7 +191,7 @@ export function MobileNavigation() {
     return (
         <>
             {/* Bottom Navigation - Fixed at bottom */}
-            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-primary-600 border-t border-white/20 z-50 shadow-lg">
+            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-primary border-t border-white/10 z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
                 <div className="grid grid-cols-5 h-16">
                     {mainNavItems.map((item) => {
                         const active = !item.external && isActive(item.href);
