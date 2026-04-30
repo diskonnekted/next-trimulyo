@@ -87,27 +87,50 @@ function NewsContent({
 
     // Transform external news to internal Post format and apply filters
     useEffect(() => {
-        if (newsLoading) return;
+        console.log("[BeritaPage] External News received:", externalNews.length, externalNews);
+        if (newsLoading && externalNews.length === 0) return;
 
-        // Transform data
-        let allPosts: Post[] = externalNews.map(item => ({
-            id: parseInt(item.id) || 0,
-            title: item.title,
-            slug: item.slug,
-            date: item.publishedAt,
-            modified: item.updatedAt,
-            excerpt: item.excerpt,
-            content: item.content,
-            link: `/berita/${item.slug}`,
-            status: "publish",
-            featuredImage: item.featuredImage || "/images/placeholder-news.jpg",
-            featuredImageAlt: item.title,
-            categories: item.categories.map(c => ({ id: c.id, name: c.name, slug: c.slug, description: "" })),
-            author: { id: 0, name: item.author.name, avatar: item.author.avatar || "/images/default-avatar.png" },
-            viewCount: item.viewCount,
-            readingTime: item.readTime,
-            tags: item.tags.map(t => ({ id: t.id, name: t.name, slug: t.slug }))
-        }));
+        // Transform data with safer defaults
+        let allPosts: Post[] = externalNews.map(item => {
+            try {
+                return {
+                    id: parseInt(item.id) || Math.floor(Math.random() * 1000000),
+                    title: item.title || "Tanpa Judul",
+                    slug: item.slug || `post-${item.id}`,
+                    date: item.publishedAt || new Date().toISOString(),
+                    modified: item.updatedAt || item.publishedAt || new Date().toISOString(),
+                    excerpt: item.excerpt || "",
+                    content: item.content || "",
+                    link: `/berita/${item.slug}`,
+                    status: "publish",
+                    featuredImage: item.featuredImage || "/images/placeholder-news.jpg",
+                    featuredImageAlt: item.title || "Berita Trimulyo",
+                    categories: Array.isArray(item.categories) ? item.categories.map((c: any) => ({ 
+                        id: c.id || 0, 
+                        name: c.name || "Berita", 
+                        slug: c.slug || "berita", 
+                        description: "" 
+                    })) : [{ id: 0, name: "Berita", slug: "berita", description: "" }],
+                    author: { 
+                        id: 0, 
+                        name: item.author?.name || "Admin", 
+                        avatar: item.author?.avatar || "/images/default-avatar.png" 
+                    },
+                    viewCount: item.viewCount || 0,
+                    readingTime: item.readTime || 1,
+                    tags: Array.isArray(item.tags) ? item.tags.map((t: any) => ({ 
+                        id: t.id || 0, 
+                        name: t.name || "", 
+                        slug: t.slug || "" 
+                    })) : []
+                };
+            } catch (e) {
+                console.error("[BeritaPage] Error transforming item:", item, e);
+                return null;
+            }
+        }).filter(Boolean) as Post[];
+
+        console.log("[BeritaPage] Transformed posts:", allPosts.length);
 
         // Apply Search
         if (searchTerm) {
