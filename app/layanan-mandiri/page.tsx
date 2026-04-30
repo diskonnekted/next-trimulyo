@@ -13,6 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 export default function LayananMandiriPage() {
     const targetUrl = "https://trimulyo.sleman-desa.id/layanan-mandiri/masuk";
