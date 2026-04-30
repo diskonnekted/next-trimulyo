@@ -81,7 +81,7 @@ function NewsContent({
             author: {
                 id: 0,
                 name: item.author?.name || "Admin",
-                avatar: item.author?.avatar || null,
+                avatar: item.author?.avatar || "",
             },
             viewCount: item.viewCount || 0,
             readingTime: item.readTime || 2,
