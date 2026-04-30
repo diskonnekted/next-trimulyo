@@ -453,18 +453,12 @@ export function HomePageClient({ serverData }: { serverData: ServerData }) {
 
                     {/* Kolom 2 - Berita */}
                     <div className="content-center space-y-4 lg:col-span-2 flex flex-col">
-                        {/* Berita Terbaru - Show loading or error state if needed */}
+                        {/* Berita Utama */}
                         {!newsData && !newsError && (
                              <Card className="h-full flex items-center justify-center min-h-[400px]">
-                                <p className="text-muted-foreground">Memuat berita...</p>
-                             </Card>
-                        )}
-                        
-                        {!newsData && newsError && (
-                             <Card className="h-full flex items-center justify-center min-h-[400px]">
-                                <div className="text-center p-6">
-                                    <p className="text-red-500 font-medium mb-2">Gagal memuat berita</p>
-                                    <p className="text-sm text-muted-foreground">Silakan coba lagi nanti.</p>
+                                <div className="flex flex-col items-center gap-4">
+                                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                                    <p className="text-muted-foreground italic">Menghubungkan ke server desa...</p>
                                 </div>
                              </Card>
                         )}
