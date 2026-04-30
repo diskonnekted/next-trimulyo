@@ -72,7 +72,20 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
         // SOURCE 1: WordPress API (Priority)
         try {
             const wpUrl = `https://trimulyosid.slemankab.go.id/wp-json/wp/v2/posts?_embed&per_page=${limit}&page=${page}${kategori ? `&categories=${kategori}` : ''}`;
-            const response = await fetch(wpUrl, { next: { revalidate: 3600 } });
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+            const response = await fetch(wpUrl, { 
+                next: { revalidate: 3600 },
+                signal: controller.signal,
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                    'Accept': 'application/json'
+                }
+            });
+
+            clearTimeout(timeoutId);
 
             if (response.ok) {
                 const wpPosts = await response.json();
@@ -104,10 +117,12 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
                     perHalaman: limit,
                     totalHalaman: parseInt(response.headers.get('X-WP-TotalPages') || "1"),
                 };
-                return NextResponse.json(createSuccessResponse(berita, "Daftar berita dimuat dari WordPress", meta));
+                return NextResponse.json(createSuccessResponse(berita, "Berhasil memuat berita dari WordPress Resmi", meta));
+            } else {
+                console.error(`WP API returned status: ${response.status}`);
             }
         } catch (e) {
-            console.error("WP API failed, trying OpenSID...");
+            console.error("WP API connection failed:", e);
         }
 
         // SOURCE 2: OpenSID API (Fallback 1)
