@@ -87,68 +87,39 @@ function NewsContent({
 
     // Transform external news to internal Post format and apply filters
     useEffect(() => {
-        // Don't block if we have data, even if still "loading"
-        if (newsLoading && externalNews.length === 0) return;
-
-        // Transform data with safer defaults
-        let allPosts: Post[] = externalNews.map(item => {
-            try {
-                return {
-                    id: parseInt(item.id) || Math.floor(Math.random() * 1000000),
-                    title: item.title || "Tanpa Judul",
-                    slug: item.slug || `post-${item.id}`,
-                    date: item.publishedAt || new Date().toISOString(),
-                    modified: item.updatedAt || item.publishedAt || new Date().toISOString(),
-                    excerpt: item.excerpt || "",
-                    content: item.content || "",
-                    link: `/berita/${item.slug}`,
-                    status: "publish",
-                    featuredImage: item.featuredImage || "/images/placeholder-news.jpg",
-                    featuredImageAlt: item.title || "Berita Trimulyo",
-                    categories: Array.isArray(item.categories) ? item.categories.map((c: any) => ({ 
-                        id: c.id || 0, 
-                        name: c.name || "Berita", 
-                        slug: c.slug || "berita", 
-                        description: "" 
-                    })) : [{ id: 0, name: "Berita", slug: "berita", description: "" }],
-                    author: { 
-                        id: 0, 
-                        name: item.author?.name || "Admin", 
-                        avatar: item.author?.avatar || "/images/default-avatar.png" 
-                    },
-                    viewCount: item.viewCount || 0,
-                    readingTime: item.readTime || 1,
-                    tags: Array.isArray(item.tags) ? item.tags.map((t: any) => ({ 
-                        id: t.id || 0, 
-                        name: t.name || "", 
-                        slug: t.slug || "" 
-                    })) : []
-                };
-            } catch (e) {
-                console.error("[BeritaPage] Error transforming item:", item, e);
-                return null;
+        if (!externalNews || externalNews.length === 0) {
+            if (!newsLoading) {
+                setPosts([]);
+                setTotalPosts(0);
+                setTotalPages(0);
             }
-        }).filter(Boolean) as Post[];
-
-        console.log("[BeritaPage] Transformed posts:", allPosts.length);
-
-        // Apply Search
-        if (searchTerm) {
-            const lowerTerm = searchTerm.toLowerCase();
-            allPosts = allPosts.filter(post => 
-                post.title.toLowerCase().includes(lowerTerm) || 
-                post.excerpt.toLowerCase().includes(lowerTerm)
-            );
+            return;
         }
 
-        // Apply Category Filter
-        if (selectedCategory && selectedCategory !== "all") {
-            allPosts = allPosts.filter(post => 
-                post.categories.some(c => c.slug === selectedCategory)
-            );
-        }
-
-        // Apply Archive Filter
+        let allPosts: Post[] = externalNews.map(item => ({
+            id: typeof item.id === 'number' ? item.id : parseInt(item.id) || Math.floor(Math.random() * 1000000),
+            title: item.judul || item.title || "Tanpa Judul",
+            slug: item.slug || `post-${item.id}`,
+            date: item.publishedAt || new Date().toISOString(),
+            modified: item.updatedAt || item.publishedAt || new Date().toISOString(),
+            excerpt: item.ringkasan || item.excerpt || "",
+            content: item.konten || item.content || "",
+            link: `/berita/${item.slug}`,
+            status: "publish",
+            image: item.gambar || item.featuredImage || "/images/placeholder-news.jpg",
+            featuredImage: item.gambar || item.featuredImage || "/images/placeholder-news.jpg",
+            featuredImageAlt: item.judul || item.title || "Berita Trimulyo",
+            category: item.kategori || item.category || "Berita",
+            categories: [{ id: 0, name: item.kategori || "Berita", slug: "berita", description: "" }],
+            author: { 
+                id: 0, 
+                name: item.penulis || item.author?.name || "Admin", 
+                avatar: item.author?.avatar || "/images/default-avatar.png" 
+            },
+            viewCount: item.views || item.viewCount || 0,
+            readingTime: item.readTime || 1,
+            tags: []
+        }));
         if (selectedArchive && selectedArchive !== "all") {
             const [year, month] = selectedArchive.split("-");
             allPosts = allPosts.filter(post => {
