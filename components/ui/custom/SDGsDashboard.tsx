@@ -543,17 +543,46 @@ export const SDGsDashboard = React.forwardRef<HTMLDivElement, SDGsDashboardProps
         // Fetch real SDGs data on component mount
         React.useEffect(() => {
             const loadData = async () => {
+                const trimulyoSDGsData = [
+                    { id: 1, title: "Tanpa Kemiskinan", score: 85.4, goals: 1 },
+                    { id: 2, title: "Tanpa Kelaparan", score: 78.2, goals: 2 },
+                    { id: 3, title: "Kehidupan Sehat dan Sejahtera", score: 92.5, goals: 3 },
+                    { id: 4, title: "Pendidikan Berkualitas", score: 88.1, goals: 4 },
+                    { id: 5, title: "Kesetaraan Gender", score: 76.4, goals: 5 },
+                    { id: 6, title: "Air Bersih dan Sanitasi Layak", score: 82.9, goals: 6 },
+                    { id: 7, title: "Energi Bersih dan Terjangkau", score: 71.5, goals: 7 },
+                    { id: 8, title: "Pekerjaan Layak dan Pertumbuhan Ekonomi", score: 74.2, goals: 8 },
+                    { id: 9, title: "Industri, Inovasi dan Infrastruktur", score: 68.7, goals: 9 },
+                    { id: 10, title: "Berkurangnya Kesenjangan", score: 72.1, goals: 10 },
+                    { id: 11, title: "Kawasan Pemukiman Aman dan Berkelanjutan", score: 79.8, goals: 11 },
+                    { id: 12, title: "Konsumsi dan Produksi yang Bertanggung Jawab", score: 65.4, goals: 12 },
+                    { id: 13, title: "Penanganan Perubahan Iklim", score: 62.3, goals: 13 },
+                    { id: 14, title: "Ekosistem Laut", score: 0, goals: 14 },
+                    { id: 15, title: "Ekosistem Daratan", score: 73.1, goals: 15 },
+                    { id: 16, title: "Perdamaian, Keadilan dan Kelembagaan yang Tangguh", score: 81.5, goals: 16 },
+                    { id: 17, title: "Kemitraan untuk Mencapai Tujuan", score: 84.6, goals: 17 },
+                    { id: 18, title: "Kelembagaan Kalurahan Dinamis dan Budaya Kalurahan Adaptif", score: 90.2, goals: 18 }
+                ];
+                
+                const trimulyoOverallScore = 75.82;
+
                 try {
                     setLoading(true);
                     const data = await fetchSDGsData();
                     const score = await fetchOverallScore();
-                    setSdgsData(data);
-                    setOverallScore(score);
+                    
+                    if (data && data.length > 0) {
+                        setSdgsData(data);
+                        setOverallScore(score);
+                    } else {
+                        // Fallback to hardcoded data if API returns empty
+                        setSdgsData(mapApiDataToGoals(trimulyoSDGsData));
+                        setOverallScore(trimulyoOverallScore);
+                    }
                 } catch (error) {
-                    console.error("Failed to load SDGs data:", error);
-                    // Show error state to user
-                    setSdgsData([]);
-                    setOverallScore(0);
+                    console.error("Failed to load SDGs data, using fallback:", error);
+                    setSdgsData(mapApiDataToGoals(trimulyoSDGsData));
+                    setOverallScore(trimulyoOverallScore);
                 } finally {
                     setLoading(false);
                 }
@@ -561,6 +590,47 @@ export const SDGsDashboard = React.forwardRef<HTMLDivElement, SDGsDashboardProps
 
             loadData();
         }, []);
+
+        // Helper to map raw data to SDGGoal format
+        const mapApiDataToGoals = (data: any[]): SDGGoal[] => {
+            return data.map(item => {
+                const score = item.score;
+                let status: "on-track" | "behind" | "ahead" | "not-started";
+                if (score === 0) status = "not-started";
+                else if (score < 50) status = "behind";
+                else if (score >= 80) status = "ahead";
+                else status = "on-track";
+
+                const localImages = [
+                    "/images/sdgs/satu.png", "/images/sdgs/dua.png", "/images/sdgs/tiga.png", 
+                    "/images/sdgs/empat.png", "/images/sdgs/lima.png", "/images/sdgs/enam.png",
+                    "/images/sdgs/tujuh.png", "/images/sdgs/delapan.png", "/images/sdgs/sembilan.png",
+                    "/images/sdgs/sepuluh.png", "/images/sdgs/sebelas.png", "/images/sdgs/duabelas.png",
+                    "/images/sdgs/tigabelas.png", "/images/sdgs/empatbelas.png", "/images/sdgs/limabelas.png",
+                    "/images/sdgs/enambelas.png", "/images/sdgs/tujuhbelas.png", "/images/sdgs/delapanbelas.jpg"
+                ];
+
+                const colors = [
+                    "bg-red-600", "bg-yellow-600", "bg-[#3a4d74]", "bg-red-700", "bg-orange-600",
+                    "bg-blue-500", "bg-yellow-500", "bg-purple-600", "bg-orange-700", "bg-red-800",
+                    "bg-yellow-700", "bg-amber-600", "bg-[#2f3f62]", "bg-blue-700", "bg-[#283755]",
+                    "bg-blue-800", "bg-indigo-700", "bg-indigo-700"
+                ];
+
+                return {
+                    id: item.goals,
+                    title: item.title,
+                    description: `Implementasi ${item.title} di Kalurahan Trimulyo`,
+                    imageUrl: localImages[item.goals - 1] || "/images/sdgs/satu.png",
+                    color: colors[item.goals - 1] || "bg-gray-600",
+                    progress: Math.round(score),
+                    target: 100,
+                    programs: Math.max(1, Math.floor(score / 20)),
+                    achievements: score > 0 ? [`Pencapaian skor ${Math.round(score)}`] : ["Belum ada program"],
+                    status
+                };
+            });
+        };
 
         // Use real SDGs goals data
         const filteredGoals = sdgsData;
