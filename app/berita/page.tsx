@@ -62,15 +62,29 @@ function NewsContent({
         // 1. Transform - use CORRECT NewsItem fields from useExternalNews hook
         const allTransformed: Post[] = externalNews.map(item => ({
             id: typeof item.id === 'number' ? item.id : parseInt(item.id) || 0,
-            title: item.title || "Tanpa Judul",           // ✅ NewsItem.title
+            title: item.title || "Tanpa Judul",
             slug: item.slug || `post-${item.id}`,
             date: item.publishedAt || new Date().toISOString(),
-            excerpt: item.excerpt || "",                   // ✅ NewsItem.excerpt
-            image: item.featuredImage || "/images/placeholder-news.jpg", // ✅ NewsItem.featuredImage
-            category: item.category || "Berita",           // ✅ NewsItem.category
-            author: { name: item.author?.name || "Admin" }, // ✅ NewsItem.author.name
-            viewCount: item.viewCount || 0,               // ✅ NewsItem.viewCount
-            readingTime: item.readTime || 2               // ✅ NewsItem.readTime
+            modified: item.updatedAt || item.publishedAt || new Date().toISOString(),
+            excerpt: item.excerpt || "",
+            content: item.content || "",
+            link: `/berita/${item.slug}`,
+            status: "publish",
+            // NewsCard requires these exact fields:
+            featuredImage: item.featuredImage || "/images/placeholder-news.jpg",
+            featuredImageAlt: item.title || "Berita Trimulyo",
+            category: item.category || "Berita",
+            categories: item.categories?.length > 0 
+                ? item.categories 
+                : [{ id: 0, name: item.category || "Berita", slug: (item.category || "berita").toLowerCase().replace(/\s+/g, '-') }],
+            tags: item.tags || [],
+            author: {
+                id: 0,
+                name: item.author?.name || "Admin",
+                avatar: item.author?.avatar || null,
+            },
+            viewCount: item.viewCount || 0,
+            readingTime: item.readTime || 2,
         }));
 
         console.log("[BeritaPage] Successfully transformed:", allTransformed.length);
