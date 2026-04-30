@@ -106,9 +106,17 @@ function LapakContent() {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.5 }}
-                        className="mb-6 bg-white/20 p-4 rounded-2xl backdrop-blur-md border border-white/20"
+                        className="mb-6 bg-white p-2 rounded-full shadow-2xl border-4 border-white/50 overflow-hidden w-32 h-32 md:w-40 md:h-40 flex items-center justify-center backdrop-blur-sm"
                     >
-                        <Store className="h-12 w-12 text-white" />
+                        <div className="relative w-full h-full rounded-full overflow-hidden bg-white flex items-center justify-center">
+                            <Image 
+                                src="/images/lapak/padi-logo.jpg"
+                                alt="Padi Trimulyo Logo"
+                                width={120}
+                                height={120}
+                                className="object-contain"
+                            />
+                        </div>
                     </motion.div>
                     <motion.h1 
                         initial={{ y: 20, opacity: 0 }}
@@ -160,7 +168,15 @@ function LapakContent() {
 
                     <Card className="bg-primary/5 border-primary/10 rounded-2xl p-6">
                         <div className="flex items-center gap-3 mb-4">
-                            <ShoppingBag className="h-6 w-6 text-primary" />
+                            <div className="relative h-10 w-10 rounded-full border border-primary/20 overflow-hidden bg-white flex items-center justify-center p-1">
+                                <Image 
+                                    src="/images/lapak/padi-logo.jpg"
+                                    alt="Padi Trimulyo"
+                                    width={32}
+                                    height={32}
+                                    className="object-contain"
+                                />
+                            </div>
                             <h4 className="font-bold">Info Pelapak</h4>
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed">
