@@ -72,39 +72,42 @@ export function useExternalNews(limit: number = 10) {
                 const response = await fetch(url);
                 if (response.ok) {
                     const json = await response.json();
-                    if (json.success && Array.isArray(json.data)) {
-                        // The internal API already returns data in our preferred format
-                        // but we transform it slightly to match the NewsItem interface if needed
-                        const transformed: NewsItem[] = json.data.map((item: any) => ({
+                    // API uses 'sukses' (Indonesian), not 'success'
+                    const isSuccess = json.sukses === true || json.success === true;
+                    const dataArray = Array.isArray(json.data) ? json.data : null;
+                    if (isSuccess && dataArray && dataArray.length > 0) {
+                        const transformed: NewsItem[] = dataArray.map((item: any) => ({
                             id: String(item.id),
-                            title: item.judul,
-                            slug: item.slug,
-                            excerpt: item.ringkasan,
-                            content: item.konten,
-                            featuredImage: item.gambar,
+                            title: item.judul || item.title || "Tanpa Judul",
+                            slug: item.slug || `post-${item.id}`,
+                            excerpt: item.ringkasan || item.excerpt || "",
+                            content: item.konten || item.content || "",
+                            featuredImage: item.gambar || item.featuredImage || null,
                             author: {
-                                name: item.penulis || "Admin Kalurahan",
+                                name: item.penulis || item.author?.name || "Admin Kalurahan",
                                 avatar: null
                             },
-                            category: item.kategori || "Berita",
-                            categories: [{ id: 0, name: item.kategori || "Berita", slug: "berita" }],
+                            category: item.kategori || item.category || "Berita",
+                            categories: [{ id: 0, name: item.kategori || item.category || "Berita", slug: "berita" }],
                             tags: [],
-                            publishedAt: item.publishedAt,
-                            updatedAt: item.updatedAt,
+                            publishedAt: item.publishedAt || new Date().toISOString(),
+                            updatedAt: item.updatedAt || item.publishedAt || new Date().toISOString(),
                             link: `/berita/${item.slug}`,
-                            readTime: Math.max(1, Math.ceil((item.konten || "").split(/\s+/).length / 200)),
+                            readTime: Math.max(1, Math.ceil(((item.konten || item.content || "")).split(/\s+/).length / 200)),
                             isBreaking: false,
                             isFeatured: false,
                             isPinned: false,
-                            viewCount: item.views || 0,
+                            viewCount: item.views || item.viewCount || 0,
                             likeCount: 0,
                             commentCount: 0,
                             shareCount: 0,
                             isBookmarked: false,
                         }));
+                        console.log("[useExternalNews] Successfully loaded:", transformed.length, "articles");
                         setNews(transformed);
                         return;
                     }
+                    console.warn("[useExternalNews] API response issue:", { sukses: json.sukses, dataLength: dataArray?.length });
                 }
             } catch (e) {
                 console.error("[useExternalNews] Internal API failed:", e);
