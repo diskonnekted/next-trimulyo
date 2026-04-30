@@ -80,6 +80,7 @@ export function Header() {
         { href: "/pengumuman", label: "Pengumuman" },
         { href: "/kegiatan", label: t("navigation.kegiatan") },
         { href: "/informasi/perpustakaan", label: "Perpustakaan" },
+        { href: "/posyandu", label: "Posyandu" },
         { href: "/informasi", label: "Kepuasan Masyarakat" },
     ];
 
