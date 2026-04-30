@@ -38,15 +38,21 @@ export function HeroStats() {
     ];
 
     return (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-12 max-w-6xl mx-auto">
             {stats.map((stat, index) => (
                 <div
                     key={index}
-                    className="bg-white/10 backdrop-blur-sm rounded-lg p-3 border border-white/20 hover:bg-white/20 transition-colors"
+                    className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 flex flex-col items-center text-center group"
                 >
-                    <stat.icon className="h-5 w-5 text-secondary mb-2" />
-                    <div className="text-xl font-bold text-white">{stat.value}</div>
-                    <div className="text-xs text-blue-100">{stat.label}</div>
+                    <div className="p-3 bg-secondary/20 rounded-xl mb-4 group-hover:scale-110 transition-transform">
+                        <stat.icon className="h-6 w-6 text-secondary" />
+                    </div>
+                    <div className="text-3xl md:text-4xl font-black text-white mb-2 tracking-tight">
+                        {stat.value}
+                    </div>
+                    <div className="text-sm font-bold text-blue-100/80 uppercase tracking-widest">
+                        {stat.label}
+                    </div>
                 </div>
             ))}
         </div>
