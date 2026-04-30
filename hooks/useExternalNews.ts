@@ -68,7 +68,7 @@ export function useExternalNews(limit: number = 10) {
 
             // Use our unified internal API that handles all fallbacks
             try {
-                const url = `/api/berita?limit=${limit}`;
+                const url = `/api/external-news?limit=${limit}`;
                 const response = await fetch(url);
                 if (response.ok) {
                     const json = await response.json();
