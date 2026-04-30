@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 
 const BASE_URL = "https://posyandu-trimulyo.sleman-desa.id";
 
@@ -86,6 +87,10 @@ async function fetchPosyanduData() {
 }
 
 export async function GET() {
+    // Calling headers() forces the route to be dynamic, which is needed to avoid prerendering issues
+    // while remaining compatible with nextConfig.cacheComponents
+    await headers();
+    
     const externalData = await fetchPosyanduData();
     const data = externalData || STATIC_POSYANDU_DATA;
 

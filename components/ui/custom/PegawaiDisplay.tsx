@@ -29,9 +29,9 @@ interface PegawaiDisplayProps {
 }
 
 // Function to fetch Pegawai data from API
-const fetchPegawaiData = async (): Promise<ApiResponse | null> => {
+const fetchPegawaiData = async (signal?: AbortSignal): Promise<ApiResponse | null> => {
     try {
-        const response = await fetch(`/api/pemerintah`);
+        const response = await fetch(`/api/pemerintah`, { signal });
 
         if (!response.ok) {
             throw new Error(`Failed to fetch pegawai data: ${response.status}`);
@@ -40,6 +40,10 @@ const fetchPegawaiData = async (): Promise<ApiResponse | null> => {
         const data = await response.json();
         return data;
     } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") {
+            // Silence abort errors as they are expected during unmount/navigation
+            return null;
+        }
         console.error("Failed to fetch pegawai data:", error);
         return null;
     }
@@ -50,22 +54,33 @@ export function PegawaiDisplay({ className }: PegawaiDisplayProps) {
     const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
+        const controller = new AbortController();
+
         const loadData = async () => {
             setLoading(true);
             setData(null);
 
             try {
-                const result = await fetchPegawaiData();
-                setData(result);
+                const result = await fetchPegawaiData(controller.signal);
+                if (result) {
+                    setData(result);
+                }
             } catch (error) {
+                if (error instanceof Error && error.name === "AbortError") return;
                 console.error("Failed to load pegawai data:", error);
                 setData(null);
             } finally {
-                setLoading(false);
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
             }
         };
 
         loadData();
+
+        return () => {
+            controller.abort();
+        };
     }, []);
 
     if (loading) {

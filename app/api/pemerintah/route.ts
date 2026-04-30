@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { opensidApi } from "@/lib/api-service";
 
 // Define the structure for government officials
 interface GovernmentOfficial {
@@ -278,17 +279,15 @@ const APARATUR_DATA: GovernmentOfficial[] = [
 
 export async function GET() {
     try {
-        const response = await fetch("https://trimulyo.sleman-desa.id/internal_api/pemerintah", {
-            next: { revalidate: 3600 },
-            signal: AbortSignal.timeout(5000), // 5 second timeout
+        const response = await opensidApi.get("/internal_api/pemerintah", {
+            cache: { revalidate: 3600 }
         });
 
-        if (!response.ok) {
-            throw new Error(`Failed to fetch from OpenSID: ${response.status}`);
+        if (!response.success || !response.data) {
+            throw new Error(response.error || "Failed to fetch from OpenSID");
         }
 
-        const json = await response.json();
-        const rawData = json.data || [];
+        const rawData = (response.data as any).data || [];
 
         if (rawData.length === 0) {
             throw new Error("Empty data from OpenSID");

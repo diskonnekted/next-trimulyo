@@ -76,21 +76,30 @@ export default function PemerintahanPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const controller = new AbortController();
+
         const fetchOfficials = async () => {
             try {
-                const response = await fetch("/api/pemerintah");
+                const response = await fetch("/api/pemerintah", { signal: controller.signal });
                 if (response.ok) {
                     const data = await response.json();
                     setOfficials(data.data || []);
                 }
             } catch (error) {
+                if (error instanceof Error && error.name === "AbortError") return;
                 console.error("Failed to fetch officials:", error);
             } finally {
-                setLoading(false);
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
             }
         };
 
         fetchOfficials();
+
+        return () => {
+            controller.abort();
+        };
     }, []);
 
     // Group officials by role for better display

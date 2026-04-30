@@ -13,6 +13,7 @@ export function Footer() {
     const quickLinks = [
         { href: "/berita", label: t("navigation.berita") },
         { href: "https://trimulyo.sleman-desa.id/layanan-mandiri", label: t("navigation.layanan"), external: true },
+        { href: "/lapak", label: "Lapak" },
         { href: "/profil/sejarah", label: "Sejarah Kalurahan" },
         { href: "/pemerintahan", label: t("navigation.pemerintahan") },
         { href: "/keuangan", label: t("navigation.keuangan") },
@@ -21,6 +22,7 @@ export function Footer() {
 
     const layananLinks = [
         { href: "https://trimulyo.sleman-desa.id/layanan-mandiri", label: "Layanan Mandiri", external: true },
+        { href: "/lapak", label: "Lapak Trimulyo" },
         { href: "/pengaduan", label: "Pengaduan Masyarakat" },
         { href: "/iot", label: "IoT Monitoring" },
         { href: "/statistik/penduduk", label: "Data Statistik" },

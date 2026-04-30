@@ -21,6 +21,7 @@ import {
     CreditCard,
     GraduationCap,
     UserCheck,
+    ShoppingBag,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -61,6 +62,7 @@ export function Header() {
         // { href: "/iot", label: "IoT", icon: Cpu },
         { href: "/komunitas", label: "Komunitas", icon: Users },
         { href: "/layanan-mandiri", label: "Layanan Mandiri", icon: UserCheck },
+        { href: "/lapak", label: "Lapak", icon: ShoppingBag },
         { href: "/pengaduan", label: t("navigation.pengaduan"), icon: MessageSquare },
     ];
 
