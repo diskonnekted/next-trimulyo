@@ -69,19 +69,61 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
         const limit = parseInt(searchParams.get("limit") ?? "10");
         const kategori = searchParams.get("kategori");
 
-        // SOURCE 1: WordPress API (Priority)
+        // SOURCE 1: OpenSID API (Priority - Known Working)
+        try {
+            const sidUrl = `https://trimulyo.sleman-desa.id/internal_api/berita?per_page=${limit}&page=${page}`;
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+            const response = await fetch(sidUrl, { 
+                next: { revalidate: 3600 },
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+
+            if (response.ok) {
+                const sidData = await response.json();
+                const berita = sidData.data.map((post: any) => ({
+                    id: post.id,
+                    judul: post.judul,
+                    slug: post.slug || post.id.toString(),
+                    ringkasan: post.ringkasan || post.isi.substring(0, 160) + '...',
+                    konten: post.isi,
+                    gambar: post.gambar ? `https://trimulyo.sleman-desa.id/desa/upload/artikel/sedang_${post.gambar}` : "/images/berita/infrastruktur.jpg",
+                    kategori: post.kategori || "Berita",
+                    status: "PUBLISHED",
+                    publishedAt: post.tgl_upload,
+                    createdAt: post.tgl_upload,
+                    updatedAt: post.tgl_upload,
+                    penulis: "Admin Desa",
+                    views: parseInt(post.hit || "0"),
+                }));
+
+                const meta = {
+                    total: sidData.total || 10,
+                    halaman: page,
+                    perHalaman: limit,
+                    totalHalaman: Math.ceil((sidData.total || 10) / limit),
+                };
+                return NextResponse.json(createSuccessResponse(berita, "Berita berhasil dimuat dari OpenSID", meta));
+            }
+        } catch (e) {
+            console.warn("OpenSID API failed, trying WordPress...");
+        }
+
+        // SOURCE 2: WordPress API (Fallback 1)
         try {
             const wpUrl = `https://trimulyosid.slemankab.go.id/wp-json/wp/v2/posts?_embed&per_page=${limit}&page=${page}${kategori ? `&categories=${kategori}` : ''}`;
             
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            const timeoutId = setTimeout(() => controller.abort(), 3000); // Shorter timeout for fallback
 
             const response = await fetch(wpUrl, { 
                 next: { revalidate: 3600 },
                 signal: controller.signal,
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                    'Accept': 'application/json'
                 }
             });
 
@@ -117,55 +159,37 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
                     perHalaman: limit,
                     totalHalaman: parseInt(response.headers.get('X-WP-TotalPages') || "1"),
                 };
-                return NextResponse.json(createSuccessResponse(berita, "Berhasil memuat berita dari WordPress Resmi", meta));
-            } else {
-                console.error(`WP API returned status: ${response.status}`);
+                return NextResponse.json(createSuccessResponse(berita, "Berita berhasil dimuat dari WordPress", meta));
             }
         } catch (e) {
-            console.error("WP API connection failed:", e);
+            console.warn("WP API failed, trying Mock...");
         }
 
-        // SOURCE 2: OpenSID API (Fallback 1)
-        try {
-            const sidUrl = `https://trimulyo.sleman-desa.id/internal_api/berita?per_page=${limit}&page=${page}`;
-            const response = await fetch(sidUrl, { next: { revalidate: 3600 } });
+        // SOURCE 3: Mock Data (Final Fallback with latest news)
+        const currentMockBerita = [
+            {
+                id: 1795,
+                judul: "TP PKK Trimulyo Gelar Sekolah Jumat: Pelatihan Olahan Berbahan Tepung Talas",
+                slug: "tp-pkk-trimulyo-gelar-sekolah-jumat",
+                ringkasan: "Tim Penggerak PKK Kalurahan Trimulyo menggelar kegiatan Sekolah Jumat dengan fokus pelatihan pembuatan olahan berbahan tepung talas pada Jumat (24/4/2026).",
+                konten: "Tim Penggerak PKK Kalurahan Trimulyo menggelar kegiatan Sekolah Jumat dengan fokus pelatihan pembuatan olahan berbahan tepung talas, yakni nastar talas, pada Jumat (24/4/2026). Kegiatan berlangsung pukul 13.00 WIB di Balai Kalurahan Trimulyo dan diikuti oleh kader PKK dari seluruh wilayah kalurahan.",
+                gambar: "https://trimulyosid.slemankab.go.id/wp-content/uploads/sites/71/2026/04/PKK-Pelatihan.jpeg",
+                kategori: "Berita",
+                status: "PUBLISHED",
+                publishedAt: "2026-04-24T13:00:00Z",
+                createdAt: "2026-04-24T13:00:00Z",
+                updatedAt: "2026-04-24T13:00:00Z",
+                penulis: "Admin Kalurahan",
+                views: 245,
+            },
+            ...mockBerita
+        ];
 
-            if (response.ok) {
-                const sidData = await response.json();
-                const berita = sidData.data.map((post: any) => ({
-                    id: post.id,
-                    judul: post.judul,
-                    slug: post.slug || post.id.toString(),
-                    ringkasan: post.ringkasan || post.isi.substring(0, 160) + '...',
-                    konten: post.isi,
-                    gambar: post.gambar ? `https://trimulyo.sleman-desa.id/desa/upload/artikel/sedang_${post.gambar}` : "/images/berita/infrastruktur.jpg",
-                    kategori: post.kategori || "Umum",
-                    status: "PUBLISHED",
-                    publishedAt: post.tgl_upload,
-                    createdAt: post.tgl_upload,
-                    updatedAt: post.tgl_upload,
-                    penulis: "Admin Desa",
-                    views: parseInt(post.hit || "0"),
-                }));
-
-                const meta = {
-                    total: sidData.total || 10,
-                    halaman: page,
-                    perHalaman: limit,
-                    totalHalaman: Math.ceil((sidData.total || 10) / limit),
-                };
-                return NextResponse.json(createSuccessResponse(berita, "Daftar berita dimuat dari OpenSID", meta));
-            }
-        } catch (e) {
-            console.error("OpenSID API failed, trying Mock...");
-        }
-
-        // SOURCE 3: Mock Data (Final Fallback)
-        const filteredBerita = mockBerita.filter((berita) => berita.status === "PUBLISHED");
-        return NextResponse.json(createSuccessResponse(filteredBerita.slice(0, 10), "Memuat berita cadangan (Koneksi server utama sibuk)"));
+        return NextResponse.json(createSuccessResponse(currentMockBerita.slice(0, 10), "Berhasil memuat data berita (Cadangan)"));
     } catch (error) {
-        return NextResponse.json(createErrorResponse("INTERNAL_SERVER_ERROR", "Terjadi kesalahan fatal saat memuat berita"), { status: 500 });
+        return NextResponse.json(createErrorResponse("INTERNAL_SERVER_ERROR", "Terjadi kesalahan saat memuat berita"), { status: 500 });
     }
+}
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse>> {
