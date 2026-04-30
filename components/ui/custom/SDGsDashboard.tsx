@@ -580,7 +580,7 @@ export const SDGsDashboard = React.forwardRef<HTMLDivElement, SDGsDashboardProps
                         setOverallScore(trimulyoOverallScore);
                     }
                 } catch (error) {
-                    console.error("Failed to load SDGs data, using fallback:", error);
+                    // Fail silently as we have a robust fallback
                     setSdgsData(mapApiDataToGoals(trimulyoSDGsData));
                     setOverallScore(trimulyoOverallScore);
                 } finally {

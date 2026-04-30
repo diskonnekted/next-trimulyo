@@ -19,24 +19,31 @@ export async function GET() {
 
         const calculateTotals = (data: any[]) => data.reduce(
             (acc: any, curr: any) => ({
-                jumlahKk: acc.jumlahKk + curr.jumlahKk,
-                jiwa: acc.jiwa + curr.jiwa,
-                lakiLaki: acc.lakiLaki + curr.lakiLaki,
-                perempuan: acc.perempuan + curr.perempuan,
+                jumlahKk: acc.jumlahKk + (curr.jumlahKk || 0),
+                jiwa: acc.jiwa + (curr.jiwa || 0),
+                lakiLaki: acc.lakiLaki + (curr.lakiLaki || 0),
+                perempuan: acc.perempuan + (curr.perempuan || 0),
             }),
             { jumlahKk: 0, jiwa: 0, lakiLaki: 0, perempuan: 0 }
         );
 
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+
             const response = await fetch("https://trimulyo.sleman-kalurahan.id/internal_api/wilayah/administratif", {
                 next: { revalidate: 3600 },
-                signal: AbortSignal.timeout(5000) // 5s timeout
+                signal: controller.signal
             });
 
-            if (!response.ok) throw new Error("API Down");
+            clearTimeout(timeoutId);
+
+            if (!response.ok) throw new Error("API Response Error");
 
             const opensidData = await response.json();
             const rawData = opensidData.data || [];
+
+            if (rawData.length === 0) throw new Error("Empty Data");
 
             const transformedData = rawData.map((item: any) => {
                 const attr = item.attributes || {};
@@ -59,7 +66,6 @@ export async function GET() {
                 source: "OpenSID"
             });
         } catch (error) {
-            console.warn("Falling back to dummy population data due to:", error);
             return NextResponse.json({
                 success: true,
                 data: fallbackData,
