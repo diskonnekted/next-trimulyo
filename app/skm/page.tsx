@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
     Star, ChevronRight, Send, CheckCircle2, BarChart3,
     Users, Award, TrendingUp, MessageSquare, RefreshCw,
@@ -89,10 +90,13 @@ function AvgBar({ label, value }: { label: string; value: number }) {
 }
 
 // ─── Main Component ────────────────────────────────────────────
-export default function SKMPage() {
+function SKMContent() {
     const [stats, setStats] = useState<StatsData | null>(null);
     const [loadingStats, setLoadingStats] = useState(true);
-    const [activeTab, setActiveTab] = useState<"form" | "hasil">("form");
+    const searchParams = useSearchParams();
+    const [activeTab, setActiveTab] = useState<"form" | "hasil">(
+        (searchParams.get("tab") as "form" | "hasil") === "hasil" ? "hasil" : "form"
+    );
 
     // Form state
     const [ratings, setRatings] = useState<Record<string, number>>({ layanan: 0, informasi: 0, petugas: 0, waktu: 0, fasilitas: 0 });
@@ -475,5 +479,17 @@ export default function SKMPage() {
                 )}
             </div>
         </main>
+    );
+}
+
+export default function SKMPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="text-muted-foreground">Memuat...</div>
+            </div>
+        }>
+            <SKMContent />
+        </Suspense>
     );
 }
