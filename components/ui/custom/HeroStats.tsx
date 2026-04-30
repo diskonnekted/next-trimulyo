@@ -27,10 +27,10 @@ export function HeroStats() {
     };
 
     const stats = [
-        { label: "Luas Wilayah", value: "650 Ha", icon: Map },
+        { label: "Luas Wilayah", value: "579 Ha", icon: Map },
         {
             label: "Penduduk",
-            value: loading ? "..." : formatPopulation(data?.population.total ?? 0),
+            value: loading ? "..." : formatPopulation(data?.population.total || 10305),
             icon: Users,
         },
         { label: "Padukuhan", value: "14", icon: Building2 },
