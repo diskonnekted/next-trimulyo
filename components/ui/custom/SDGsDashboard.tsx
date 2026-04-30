@@ -544,27 +544,27 @@ export const SDGsDashboard = React.forwardRef<HTMLDivElement, SDGsDashboardProps
         React.useEffect(() => {
             const loadData = async () => {
                 const trimulyoSDGsData = [
-                    { id: 1, title: "Tanpa Kemiskinan", score: 85.4, goals: 1 },
-                    { id: 2, title: "Tanpa Kelaparan", score: 78.2, goals: 2 },
-                    { id: 3, title: "Kehidupan Sehat dan Sejahtera", score: 92.5, goals: 3 },
-                    { id: 4, title: "Pendidikan Berkualitas", score: 88.1, goals: 4 },
-                    { id: 5, title: "Kesetaraan Gender", score: 76.4, goals: 5 },
-                    { id: 6, title: "Air Bersih dan Sanitasi Layak", score: 82.9, goals: 6 },
-                    { id: 7, title: "Energi Bersih dan Terjangkau", score: 71.5, goals: 7 },
-                    { id: 8, title: "Pekerjaan Layak dan Pertumbuhan Ekonomi", score: 74.2, goals: 8 },
-                    { id: 9, title: "Industri, Inovasi dan Infrastruktur", score: 68.7, goals: 9 },
-                    { id: 10, title: "Berkurangnya Kesenjangan", score: 72.1, goals: 10 },
-                    { id: 11, title: "Kawasan Pemukiman Aman dan Berkelanjutan", score: 79.8, goals: 11 },
-                    { id: 12, title: "Konsumsi dan Produksi yang Bertanggung Jawab", score: 65.4, goals: 12 },
-                    { id: 13, title: "Penanganan Perubahan Iklim", score: 62.3, goals: 13 },
+                    { id: 1, title: "Tanpa Kemiskinan", score: 35.4, goals: 1 },
+                    { id: 2, title: "Tanpa Kelaparan", score: 28.2, goals: 2 },
+                    { id: 3, title: "Kehidupan Sehat dan Sejahtera", score: 42.5, goals: 3 },
+                    { id: 4, title: "Pendidikan Berkualitas", score: 38.1, goals: 4 },
+                    { id: 5, title: "Kesetaraan Gender", score: 26.4, goals: 5 },
+                    { id: 6, title: "Air Bersih dan Sanitasi Layak", score: 32.9, goals: 6 },
+                    { id: 7, title: "Energi Bersih dan Terjangkau", score: 21.5, goals: 7 },
+                    { id: 8, title: "Pekerjaan Layak dan Pertumbuhan Ekonomi", score: 24.2, goals: 8 },
+                    { id: 9, title: "Industri, Inovasi dan Infrastruktur", score: 18.7, goals: 9 },
+                    { id: 10, title: "Berkurangnya Kesenjangan", score: 22.1, goals: 10 },
+                    { id: 11, title: "Kawasan Pemukiman Aman dan Berkelanjutan", score: 29.8, goals: 11 },
+                    { id: 12, title: "Konsumsi dan Produksi yang Bertanggung Jawab", score: 15.4, goals: 12 },
+                    { id: 13, title: "Penanganan Perubahan Iklim", score: 12.3, goals: 13 },
                     { id: 14, title: "Ekosistem Laut", score: 0, goals: 14 },
-                    { id: 15, title: "Ekosistem Daratan", score: 73.1, goals: 15 },
-                    { id: 16, title: "Perdamaian, Keadilan dan Kelembagaan yang Tangguh", score: 81.5, goals: 16 },
-                    { id: 17, title: "Kemitraan untuk Mencapai Tujuan", score: 84.6, goals: 17 },
-                    { id: 18, title: "Kelembagaan Kalurahan Dinamis dan Budaya Kalurahan Adaptif", score: 90.2, goals: 18 }
+                    { id: 15, title: "Ekosistem Daratan", score: 23.1, goals: 15 },
+                    { id: 16, title: "Perdamaian, Keadilan dan Kelembagaan yang Tangguh", score: 31.5, goals: 16 },
+                    { id: 17, title: "Kemitraan untuk Mencapai Tujuan", score: 14.6, goals: 17 },
+                    { id: 18, title: "Kelembagaan Kalurahan Dinamis dan Budaya Kalurahan Adaptif", score: 2.7, goals: 18 }
                 ];
                 
-                const trimulyoOverallScore = 75.82;
+                const trimulyoOverallScore = 23.27;
 
                 try {
                     setLoading(true);
