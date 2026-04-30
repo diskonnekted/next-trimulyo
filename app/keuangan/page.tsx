@@ -204,10 +204,10 @@ export default function KeuanganPage() {
                                     <div key={idx} className="space-y-2">
                                         <div className="flex justify-between text-sm">
                                             <span className="font-medium text-slate-500 truncate mr-2">{item.judul}</span>
-                                            <span className="text-primary font-bold">{(item.persen || 0).toFixed(0)}%</span>
+                                            <span className="text-primary font-bold">0%</span>
                                         </div>
                                         <div className="text-base font-bold text-slate-900">{formatIDR(item.anggaran)}</div>
-                                        <Progress value={item.persen} className="h-1.5" />
+                                        <Progress value={0} className="h-1.5" />
                                     </div>
                                 ))}
                             </CardContent>
