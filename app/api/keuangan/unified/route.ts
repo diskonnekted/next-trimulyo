@@ -67,7 +67,7 @@ export async function GET() {
                 { judul: "Pelaksanaan Pembangunan Kalurahan", anggaran: 2990369384, realisasi: 0 },
                 { judul: "Pembinaan Kemasyarakatan Kalurahan", anggaran: 857571280, realisasi: 0 },
                 { judul: "Pemberdayaan Masyarakat Kalurahan", anggaran: 2657420000, realisasi: 0 },
-                { judul: "Penanggulangan Bencana & Mendesak", anggaran: 50400000, realisasi: 0 }
+                { judul: "Penanggulangan Bencana & Menkalurahank", anggaran: 50400000, realisasi: 0 }
             ],
             pembiayaan_detail: [
                 { judul: "Penerimaan Pembiayaan (SILPA)", anggaran: 874219455, realisasi: 0 },
