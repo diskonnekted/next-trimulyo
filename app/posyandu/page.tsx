@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import {
     Heart, Users, Baby, Activity, MapPin, Search,
-    RefreshCw, TrendingUp, Shield, Calendar, ChevronRight,
-    UserCheck, AlertCircle, CheckCircle2, Loader2
+    RefreshCw, Shield, UserCheck, AlertCircle, CheckCircle2,
+    ChevronRight
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface PosyanduItem {
     id: number;
@@ -29,20 +30,12 @@ interface PosyanduStats {
     posyandu_aktif: number;
 }
 
-const ICON_COLORS = [
-    "from-pink-500 to-rose-600",
-    "from-purple-500 to-violet-600",
-    "from-blue-500 to-cyan-600",
-    "from-emerald-500 to-teal-600",
-    "from-orange-500 to-amber-600",
-    "from-indigo-500 to-blue-600",
-    "from-red-500 to-pink-600",
-    "from-green-500 to-emerald-600",
-    "from-cyan-500 to-sky-600",
-    "from-violet-500 to-purple-600",
-    "from-teal-500 to-green-600",
-    "from-amber-500 to-orange-600",
-    "from-sky-500 to-indigo-600",
+const statCards = (stats: PosyanduStats) => [
+    { label: "Total Posyandu",  value: stats.total_posyandu,  icon: Shield,       color: "text-primary" },
+    { label: "Posyandu Aktif",  value: stats.posyandu_aktif,  icon: CheckCircle2, color: "text-green-600" },
+    { label: "Total Balita",    value: stats.total_balita,    icon: Baby,         color: "text-blue-600" },
+    { label: "Ibu Hamil",       value: stats.total_ibu_hamil, icon: Heart,        color: "text-rose-600" },
+    { label: "Total Kader",     value: stats.total_kader,     icon: UserCheck,    color: "text-purple-600" },
 ];
 
 export default function PosyanduPage() {
@@ -64,11 +57,9 @@ export default function PosyanduPage() {
                 setData(json.data || []);
                 setStats(json.stats);
                 setSource(json.source);
-            } else {
-                throw new Error("API returned failure");
-            }
-        } catch (e) {
-            setError("Tidak dapat memuat data posyandu. Menampilkan data statis.");
+            } else throw new Error("API returned failure");
+        } catch {
+            setError("Tidak dapat memuat data posyandu.");
         } finally {
             setLoading(false);
         }
@@ -82,63 +73,66 @@ export default function PosyanduPage() {
     );
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-purple-950">
-            {/* Hero Section */}
-            <div className="relative overflow-hidden bg-gradient-to-r from-pink-600 via-rose-500 to-purple-600 text-white">
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-4 left-10 w-32 h-32 rounded-full bg-white blur-2xl" />
-                    <div className="absolute bottom-4 right-20 w-48 h-48 rounded-full bg-white blur-3xl" />
-                    <div className="absolute top-8 right-1/3 w-24 h-24 rounded-full bg-yellow-300 blur-2xl" />
-                </div>
-                <div className="relative container mx-auto px-4 py-14">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm">
-                            <Heart className="h-6 w-6 text-white fill-white" />
-                        </div>
-                        <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm text-sm px-3 py-1">
-                            Kalurahan Trimulyo
-                        </Badge>
+        <main className="min-h-screen bg-background">
+            {/* Page Header — konsisten dengan halaman lain */}
+            <div className="bg-primary text-white py-10">
+                <div className="container mx-auto px-4">
+                    <div className="flex items-center gap-2 text-white/70 text-sm mb-3">
+                        <span>Informasi</span>
+                        <ChevronRight className="h-3 w-3" />
+                        <span className="text-white font-medium">Posyandu</span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold mb-3 tracking-tight">
-                        Pos Pelayanan Terpadu
-                    </h1>
-                    <p className="text-pink-100 text-lg max-w-xl">
-                        Data Posyandu aktif di seluruh wilayah Kalurahan Trimulyo, Sleman, DIY
+                    <h1 className="text-3xl md:text-4xl font-bold mb-2">Pos Pelayanan Terpadu</h1>
+                    <p className="text-white/80">
+                        Data Posyandu aktif di seluruh wilayah Kalurahan Trimulyo
                     </p>
-                    <div className="flex items-center gap-2 mt-4">
+                    <div className="flex items-center gap-2 mt-3">
                         <div className={`w-2 h-2 rounded-full ${source === "live" ? "bg-green-400" : "bg-yellow-400"} animate-pulse`} />
-                        <span className="text-sm text-pink-100">
+                        <span className="text-sm text-white/70">
                             {source === "live" ? "Data langsung dari sistem Posyandu" : "Data referensi Kalurahan Trimulyo"}
                         </span>
                     </div>
                 </div>
             </div>
 
-            <div className="container mx-auto px-4 py-10 space-y-10">
-                {/* Stats Cards */}
-                {stats && (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                        {[
-                            { label: "Total Posyandu", value: stats.total_posyandu, icon: Shield, color: "text-pink-600", bg: "bg-pink-50 dark:bg-pink-950/30", border: "border-pink-200 dark:border-pink-800" },
-                            { label: "Posyandu Aktif", value: stats.posyandu_aktif, icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-950/30", border: "border-emerald-200 dark:border-emerald-800" },
-                            { label: "Total Balita", value: stats.total_balita, icon: Baby, color: "text-blue-600", bg: "bg-blue-50 dark:bg-blue-950/30", border: "border-blue-200 dark:border-blue-800" },
-                            { label: "Ibu Hamil", value: stats.total_ibu_hamil, icon: Heart, color: "text-rose-600", bg: "bg-rose-50 dark:bg-rose-950/30", border: "border-rose-200 dark:border-rose-800" },
-                            { label: "Total Kader", value: stats.total_kader, icon: UserCheck, color: "text-purple-600", bg: "bg-purple-50 dark:bg-purple-950/30", border: "border-purple-200 dark:border-purple-800" },
-                        ].map((s) => (
-                            <Card key={s.label} className={`border ${s.border} ${s.bg} hover:shadow-md transition-shadow`}>
+            <div className="container mx-auto px-4 py-8 space-y-8">
+
+                {/* Statistik — style sama dengan kartu HeroStats */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    {loading ? (
+                        Array.from({ length: 5 }).map((_, i) => (
+                            <Card key={i} className="bg-card border-border">
                                 <CardContent className="p-5">
-                                    <div className={`w-10 h-10 rounded-xl ${s.bg} border ${s.border} flex items-center justify-center mb-3`}>
+                                    <Skeleton className="h-8 w-8 rounded-full mb-3" />
+                                    <Skeleton className="h-8 w-16 mb-2" />
+                                    <Skeleton className="h-4 w-24" />
+                                </CardContent>
+                            </Card>
+                        ))
+                    ) : stats ? (
+                        statCards(stats).map((s) => (
+                            <Card key={s.label} className="bg-card border-border hover:shadow-md transition-shadow">
+                                <CardContent className="p-5">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 mb-3">
                                         <s.icon className={`h-5 w-5 ${s.color}`} />
                                     </div>
                                     <div className={`text-3xl font-bold ${s.color}`}>
-                                        {loading ? "—" : s.value.toLocaleString("id-ID")}
+                                        {s.value.toLocaleString("id-ID")}
                                     </div>
                                     <div className="text-sm text-muted-foreground mt-1">{s.label}</div>
                                 </CardContent>
                             </Card>
-                        ))}
-                    </div>
-                )}
+                        ))
+                    ) : null}
+                </div>
+
+                {/* Section Header — konsisten dengan landing */}
+                <div className="text-center">
+                    <h2 className="text-3xl font-bold text-primary mb-2">Daftar Posyandu</h2>
+                    <p className="text-muted-foreground max-w-2xl mx-auto">
+                        {data.length} posyandu aktif melayani masyarakat Kalurahan Trimulyo
+                    </p>
+                </div>
 
                 {/* Toolbar */}
                 <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
@@ -165,90 +159,88 @@ export default function PosyanduPage() {
 
                 {/* Error Banner */}
                 {error && (
-                    <div className="flex items-center gap-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
-                        <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0" />
-                        <p className="text-sm text-amber-700 dark:text-amber-400">{error}</p>
+                    <div className="flex items-center gap-3 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                        <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0" />
+                        <p className="text-sm text-yellow-700 dark:text-yellow-400">{error}</p>
                     </div>
                 )}
 
-                {/* Posyandu Cards Grid */}
+                {/* Cards Grid — card style konsisten dengan site */}
                 {loading ? (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {Array.from({ length: 8 }).map((_, i) => (
-                            <Card key={i} className="animate-pulse">
-                                <CardContent className="p-5 space-y-3">
-                                    <div className="w-12 h-12 rounded-xl bg-muted" />
-                                    <div className="h-5 bg-muted rounded w-3/4" />
-                                    <div className="h-4 bg-muted rounded w-1/2" />
-                                    <div className="grid grid-cols-3 gap-2 pt-2">
-                                        {[1,2,3].map(j => <div key={j} className="h-14 bg-muted rounded-lg" />)}
+                            <Card key={i} className="bg-card border-border">
+                                <CardHeader className="pb-2">
+                                    <Skeleton className="h-5 w-3/4" />
+                                    <Skeleton className="h-4 w-1/2" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {[1,2,3].map(j => <Skeleton key={j} className="h-16 rounded-lg" />)}
                                     </div>
                                 </CardContent>
                             </Card>
                         ))}
                     </div>
                 ) : filtered.length === 0 ? (
-                    <Card className="p-16 text-center">
+                    <Card className="bg-card border-border p-16 text-center">
                         <Heart className="h-14 w-14 mx-auto text-muted-foreground opacity-20 mb-4" />
                         <h3 className="text-xl font-semibold mb-2">Tidak Ada Data</h3>
                         <p className="text-muted-foreground">
                             {search ? `Tidak ditemukan posyandu dengan kata kunci "${search}"` : "Data posyandu belum tersedia"}
                         </p>
                         {search && (
-                            <Button variant="outline" className="mt-4" onClick={() => setSearch("")}>Reset Pencarian</Button>
+                            <Button variant="outline" className="mt-4" onClick={() => setSearch("")}>
+                                Reset Pencarian
+                            </Button>
                         )}
                     </Card>
                 ) : (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                        {filtered.map((posyandu, idx) => (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {filtered.map((posyandu) => (
                             <Card
                                 key={posyandu.id}
-                                className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-border/50 overflow-hidden"
+                                className="bg-card border-border hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
                             >
-                                <div className={`h-2 bg-gradient-to-r ${ICON_COLORS[idx % ICON_COLORS.length]}`} />
-                                <CardContent className="p-5">
-                                    {/* Icon + Status */}
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${ICON_COLORS[idx % ICON_COLORS.length]} flex items-center justify-center shadow-sm`}>
-                                            <Heart className="h-6 w-6 text-white fill-white/80" />
+                                <CardHeader className="pb-3">
+                                    <div className="flex items-start justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex items-center justify-center w-9 h-9 rounded-full bg-primary/10">
+                                                <Heart className="h-4 w-4 text-primary fill-primary/30" />
+                                            </div>
+                                            <div>
+                                                <CardTitle className="text-base leading-tight">{posyandu.nama}</CardTitle>
+                                                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                                                    <MapPin className="h-3 w-3" />
+                                                    <span>Dusun {posyandu.dusun}</span>
+                                                </div>
+                                            </div>
                                         </div>
                                         <Badge
-                                            className={posyandu.status === "Aktif"
-                                                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 border-emerald-200"
-                                                : "bg-gray-100 text-gray-600 border-gray-200"
-                                            }
+                                            variant={posyandu.status === "Aktif" ? "default" : "secondary"}
+                                            className={posyandu.status === "Aktif" ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400 border-0 text-xs" : "text-xs"}
                                         >
                                             {posyandu.status}
                                         </Badge>
                                     </div>
+                                </CardHeader>
 
-                                    {/* Name */}
-                                    <h3 className="font-bold text-lg leading-tight mb-1 group-hover:text-pink-600 transition-colors">
-                                        {posyandu.nama}
-                                    </h3>
-
-                                    {/* Location */}
-                                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
-                                        <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-                                        <span>Dusun {posyandu.dusun}</span>
-                                    </div>
-
-                                    {/* Stats Row */}
+                                <CardContent className="pt-0">
                                     <div className="grid grid-cols-3 gap-2">
-                                        <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl p-3 text-center">
-                                            <Baby className="h-4 w-4 text-blue-500 mx-auto mb-1" />
-                                            <div className="font-bold text-blue-700 dark:text-blue-400 text-lg leading-none">{posyandu.balita}</div>
-                                            <div className="text-[10px] text-blue-600/70 dark:text-blue-400/70 mt-0.5">Balita</div>
+                                        <div className="bg-muted/50 rounded-lg p-2.5 text-center">
+                                            <Baby className="h-3.5 w-3.5 text-blue-500 mx-auto mb-1" />
+                                            <div className="font-bold text-foreground text-base">{posyandu.balita}</div>
+                                            <div className="text-[10px] text-muted-foreground">Balita</div>
                                         </div>
-                                        <div className="bg-rose-50 dark:bg-rose-950/30 rounded-xl p-3 text-center">
-                                            <Heart className="h-4 w-4 text-rose-500 mx-auto mb-1" />
-                                            <div className="font-bold text-rose-700 dark:text-rose-400 text-lg leading-none">{posyandu.ibu_hamil}</div>
-                                            <div className="text-[10px] text-rose-600/70 dark:text-rose-400/70 mt-0.5">Bumil</div>
+                                        <div className="bg-muted/50 rounded-lg p-2.5 text-center">
+                                            <Heart className="h-3.5 w-3.5 text-rose-500 mx-auto mb-1" />
+                                            <div className="font-bold text-foreground text-base">{posyandu.ibu_hamil}</div>
+                                            <div className="text-[10px] text-muted-foreground">Bumil</div>
                                         </div>
-                                        <div className="bg-purple-50 dark:bg-purple-950/30 rounded-xl p-3 text-center">
-                                            <UserCheck className="h-4 w-4 text-purple-500 mx-auto mb-1" />
-                                            <div className="font-bold text-purple-700 dark:text-purple-400 text-lg leading-none">{posyandu.kader}</div>
-                                            <div className="text-[10px] text-purple-600/70 dark:text-purple-400/70 mt-0.5">Kader</div>
+                                        <div className="bg-muted/50 rounded-lg p-2.5 text-center">
+                                            <UserCheck className="h-3.5 w-3.5 text-primary mx-auto mb-1" />
+                                            <div className="font-bold text-foreground text-base">{posyandu.kader}</div>
+                                            <div className="text-[10px] text-muted-foreground">Kader</div>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -257,30 +249,31 @@ export default function PosyanduPage() {
                     </div>
                 )}
 
-                {/* Summary Footer */}
+                {/* Footer count */}
                 {!loading && filtered.length > 0 && (
-                    <div className="text-center text-sm text-muted-foreground pt-2">
-                        Menampilkan <span className="font-semibold text-foreground">{filtered.length}</span> dari <span className="font-semibold text-foreground">{data.length}</span> posyandu
-                        {search && ` untuk pencarian "${search}"`}
-                    </div>
+                    <p className="text-center text-sm text-muted-foreground">
+                        Menampilkan <span className="font-semibold text-foreground">{filtered.length}</span> dari{" "}
+                        <span className="font-semibold text-foreground">{data.length}</span> posyandu
+                        {search && ` · pencarian "${search}"`}
+                    </p>
                 )}
 
-                {/* Info Banner */}
-                <Card className="border-pink-200 dark:border-pink-800 bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-950/20 dark:to-rose-950/20">
+                {/* Info Card — konsisten dengan card info di halaman lain */}
+                <Card className="bg-card border-border">
                     <CardContent className="p-6 flex flex-col md:flex-row items-start md:items-center gap-4">
-                        <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center">
-                            <Activity className="h-6 w-6 text-white" />
+                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 flex-shrink-0">
+                            <Activity className="h-6 w-6 text-primary" />
                         </div>
                         <div>
-                            <h4 className="font-bold text-pink-900 dark:text-pink-200 mb-1">Sistem Informasi Posyandu Trimulyo</h4>
-                            <p className="text-sm text-pink-700 dark:text-pink-300/80">
-                                Data posyandu dikelola melalui Sistem Informasi Posyandu Kalurahan Trimulyo.
+                            <h4 className="font-bold text-foreground mb-1">Sistem Informasi Posyandu Trimulyo</h4>
+                            <p className="text-sm text-muted-foreground">
+                                Data dikelola melalui Sistem Informasi Posyandu Kalurahan Trimulyo.
                                 Untuk informasi lebih lanjut, kunjungi{" "}
                                 <a
                                     href="https://posyandu-trimulyo.sleman-desa.id"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="underline font-medium hover:text-pink-900 transition-colors"
+                                    className="text-primary underline hover:no-underline font-medium"
                                 >
                                     posyandu-trimulyo.sleman-desa.id
                                 </a>
