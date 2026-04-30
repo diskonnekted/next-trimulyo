@@ -278,10 +278,9 @@ const APARATUR_DATA: GovernmentOfficial[] = [
 
 export async function GET() {
     try {
-        const response = await fetch("https://trimulyo.sleman-kalurahan.id/internal_api/pemerintah", {
-            next: {
-                revalidate: 3600, // 1 hour
-            },
+        const response = await fetch("https://trimulyo.sleman-desa.id/internal_api/pemerintah", {
+            next: { revalidate: 3600 },
+            signal: AbortSignal.timeout(5000), // 5 second timeout
         });
 
         if (!response.ok) {
@@ -290,6 +289,10 @@ export async function GET() {
 
         const json = await response.json();
         const rawData = json.data || [];
+
+        if (rawData.length === 0) {
+            throw new Error("Empty data from OpenSID");
+        }
 
         // Transform real data to match our UI interface
         const transformedData: GovernmentOfficial[] = rawData.map((item: any) => {
@@ -313,14 +316,11 @@ export async function GET() {
             data: transformedData,
         });
     } catch (error) {
-        console.error("Error in pemerintah API route:", error);
-        return NextResponse.json(
-            {
-                success: false,
-                message: "Gagal memuat data pemerintah",
-                error: error instanceof Error ? error.message : "Unknown error",
-            },
-            { status: 500 }
-        );
+        // Fallback ke data statis jika API eksternal gagal
+        console.warn("[pemerintah API] External API failed, using static fallback data:", error instanceof Error ? error.message : error);
+        return NextResponse.json({
+            success: true,
+            data: APARATUR_DATA,
+        });
     }
 }
