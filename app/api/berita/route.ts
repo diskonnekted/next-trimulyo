@@ -190,7 +190,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
         return NextResponse.json(createErrorResponse("INTERNAL_SERVER_ERROR", "Terjadi kesalahan saat memuat berita"), { status: 500 });
     }
 }
-}
 
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse>> {
     try {
