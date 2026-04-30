@@ -48,7 +48,16 @@ function NewsContent({
     const postsPerPage = 9;
 
     useEffect(() => {
-        if (!externalNews || externalNews.length === 0) return;
+        console.log("[BeritaPage] Checking news data...", { 
+            newsLength: externalNews?.length, 
+            newsLoading, 
+            newsError 
+        });
+
+        if (!externalNews || externalNews.length === 0) {
+            setPosts([]);
+            return;
+        }
 
         // 1. Transform
         const allTransformed: Post[] = externalNews.map(item => ({
@@ -64,13 +73,23 @@ function NewsContent({
             readingTime: 2
         }));
 
+        console.log("[BeritaPage] Successfully transformed:", allTransformed.length);
+
         // 2. Filter
         let filtered = [...allTransformed];
         if (searchTerm) {
-            filtered = filtered.filter(p => p.title.toLowerCase().includes(searchTerm.toLowerCase()));
+            const term = searchTerm.toLowerCase();
+            filtered = filtered.filter(p => 
+                p.title.toLowerCase().includes(term) || 
+                p.excerpt.toLowerCase().includes(term)
+            );
         }
+        
         if (selectedCategory !== "all") {
-            filtered = filtered.filter(p => p.category.toLowerCase().replace(/\s+/g, '-') === selectedCategory);
+            filtered = filtered.filter(p => {
+                const catSlug = p.category.toLowerCase().replace(/\s+/g, '-');
+                return catSlug === selectedCategory;
+            });
         }
 
         // 3. Sort
@@ -80,9 +99,10 @@ function NewsContent({
             filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         }
 
+        console.log("[BeritaPage] Final filtered count:", filtered.length);
         setPosts(filtered);
 
-        // 4. Update Categories
+        // 4. Update Categories (Only if not already set or after transformation)
         const cats = Array.from(new Set(allTransformed.map(p => p.category))).map((name, i) => ({
             id: i,
             name: name,
@@ -91,7 +111,7 @@ function NewsContent({
         }));
         setCategories(cats);
 
-    }, [externalNews, searchTerm, selectedCategory, selectedSort]);
+    }, [externalNews, searchTerm, selectedCategory, selectedSort, newsLoading]);
 
     const paginatedPosts = posts.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage);
 
