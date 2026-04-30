@@ -107,16 +107,16 @@ export function useExternalNews(limit: number = 10) {
                     }
                 }
             } catch (e) {
-                console.error("[useExternalNews] Internal API failed:", e);
-            }
-
             setNews([]);
         } catch (err) {
             console.error("[useExternalNews] Fatal error:", err);
-            setError("Failed to connect to news server");
+            setError(null); // Don't show error to user, just use fallback/empty
             setNews([]);
         } finally {
+            // Force loading to false after a maximum of 4 seconds total
+            const timer = setTimeout(() => setLoading(false), 4000);
             setLoading(false);
+            return () => clearTimeout(timer);
         }
     }, [limit]);
 

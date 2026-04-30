@@ -87,7 +87,10 @@ function NewsContent({
 
     // Transform external news to internal Post format and apply filters
     useEffect(() => {
-        console.log("[BeritaPage] External News received:", externalNews.length, externalNews);
+        // Log for debugging - this will show in browser console
+        console.log("[BeritaPage] Data check:", { loading: newsLoading, count: externalNews.length });
+
+        // Don't block if we have data, even if still "loading"
         if (newsLoading && externalNews.length === 0) return;
 
         // Transform data with safer defaults
