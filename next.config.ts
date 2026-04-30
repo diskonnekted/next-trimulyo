@@ -76,36 +76,6 @@ const nextConfig: NextConfig = {
                 pathname: '/**',
             },
             {
-                protocol: 'http',
-                hostname: 'pondokrejo.sleman-desa.id',
-                port: '',
-                pathname: '/desa/upload/media/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'pondokrejo.sleman-desa.id',
-                port: '',
-                pathname: '/desa/upload/media/**',
-            },
-            {
-                protocol: 'http',
-                hostname: 'pondokrejo.sleman-desa.id',
-                port: '',
-                pathname: '/desa/upload/artikel/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'pondokrejo.sleman-desa.id',
-                port: '',
-                pathname: '/desa/upload/artikel/**',
-            },
-            {
-                protocol: 'http',
-                hostname: 'pondokrejo.sleman-desa.id',
-                port: '',
-                pathname: '/storage-desa',
-            },
-            {
                 protocol: 'https',
                 hostname: 'trimulyo.sleman-desa.id',
                 port: '',
