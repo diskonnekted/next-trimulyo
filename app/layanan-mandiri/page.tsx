@@ -6,146 +6,118 @@ import {
     ShieldCheck, 
     UserCheck, 
     Info, 
-    Key, 
     Smartphone, 
     ChevronRight,
-    Lock
+    AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function LayananMandiriPage() {
-    const targetUrl = "https://trimulyo.sleman-desa.id/layanan-mandiri";
+    const [iframeError, setIframeError] = useState(false);
+    const targetUrl = "https://trimulyo.sleman-desa.id/layanan-mandiri/masuk";
 
     return (
-        <div className="min-h-screen bg-slate-50/50 pb-20">
-            {/* Hero Header */}
-            <div className="bg-[#10264f] text-white py-16 mb-12 relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10 bg-[url('/images/pattern.png')] bg-repeat"></div>
-                <div className="container mx-auto px-4 relative z-10 text-center">
-                    <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 rounded-2xl backdrop-blur-sm mb-6 border border-white/20">
-                        <UserCheck className="h-10 w-10 text-blue-300" />
+        <div className="min-h-screen bg-slate-50 pb-20">
+            {/* Header Section */}
+            <div className="bg-[#10264f] text-white py-12 relative overflow-hidden">
+                <div className="container mx-auto px-4 relative z-10">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div className="text-left">
+                            <h1 className="text-3xl md:text-4xl font-bold mb-2 flex items-center gap-3">
+                                <UserCheck className="h-8 w-8 text-blue-300" />
+                                Layanan Mandiri
+                            </h1>
+                            <p className="text-blue-100/80 max-w-xl">
+                                Akses administrasi kependudukan Anda secara digital dan aman.
+                            </p>
+                        </div>
+                        <Button 
+                            variant="secondary"
+                            className="bg-white text-[#10264f] hover:bg-blue-50"
+                            onClick={() => window.open(targetUrl, "_blank")}
+                        >
+                            Buka di Tab Baru
+                            <ExternalLink className="ml-2 w-4 h-4" />
+                        </Button>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">Layanan Mandiri</h1>
-                    <p className="text-blue-100/80 max-w-2xl mx-auto text-lg">
-                        Akses administrasi kependudukan Anda secara digital, cepat, dan transparan dari mana saja.
-                    </p>
                 </div>
             </div>
 
-            <div className="container mx-auto px-4">
-                <div className="max-w-6xl mx-auto grid lg:grid-cols-12 gap-8 items-start">
-                    
-                    {/* Left: Info & Instructions */}
-                    <div className="lg:col-span-7 space-y-6">
-                        <section className="space-y-4">
-                            <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-                                <Info className="w-6 h-6 text-primary" />
-                                Tentang Layanan
-                            </h2>
-                            <p className="text-slate-600 leading-relaxed">
-                                Layanan Mandiri adalah portal digital khusus warga Kalurahan Trimulyo yang memungkinkan Anda untuk melakukan permohonan surat, memantau data keluarga, dan mendapatkan informasi bantuan sosial secara mandiri tanpa harus mengantri di kantor kalurahan.
-                            </p>
-                        </section>
-
-                        <div className="grid sm:grid-cols-2 gap-4">
-                            {[
-                                { 
-                                    icon: Key, 
-                                    title: "Akses PIN", 
-                                    desc: "Gunakan NIK dan PIN rahasia Anda untuk masuk ke sistem.",
-                                    color: "bg-amber-50 text-amber-600 border-amber-100"
-                                },
-                                { 
-                                    icon: Smartphone, 
-                                    title: "Mobile Friendly", 
-                                    desc: "Dapat diakses dengan lancar melalui smartphone Anda.",
-                                    color: "bg-blue-50 text-blue-600 border-blue-100"
-                                }
-                            ].map((item, i) => (
-                                <Card key={i} className={`border ${item.color}`}>
-                                    <CardContent className="p-5 space-y-3">
-                                        <item.icon className="w-8 h-8" />
-                                        <h3 className="font-bold">{item.title}</h3>
-                                        <p className="text-sm opacity-90">{item.desc}</p>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-
-                        <Card className="border-slate-200 shadow-sm overflow-hidden">
-                            <CardHeader className="bg-slate-50 border-b">
-                                <CardTitle className="text-lg">Panduan Pendaftaran PIN</CardTitle>
-                                <CardDescription>Bagi warga yang belum memiliki akses PIN</CardDescription>
-                            </CardHeader>
-                            <CardContent className="p-6 space-y-4">
-                                <div className="flex gap-4">
-                                    <div className="flex-none w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">1</div>
-                                    <p className="text-slate-600 pt-1">Kunjungi Kantor Kalurahan Trimulyo pada jam kerja (08:00 - 15:00 WIB).</p>
-                                </div>
-                                <div className="flex gap-4">
-                                    <div className="flex-none w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">2</div>
-                                    <p className="text-slate-600 pt-1">Bawa fotokopi KTP dan Kartu Keluarga (KK) sebagai syarat verifikasi.</p>
-                                </div>
-                                <div className="flex gap-4">
-                                    <div className="flex-none w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">3</div>
-                                    <p className="text-slate-600 pt-1">Petugas akan memberikan PIN akses yang dapat Anda gunakan selamanya.</p>
-                                </div>
-                            </CardContent>
-                        </Card>
+            <div className="container mx-auto px-4 -mt-8 relative z-20">
+                <div className="max-w-6xl mx-auto">
+                    {/* Security Info Banner */}
+                    <div className="bg-emerald-50 border border-emerald-100 rounded-t-xl p-3 flex items-center justify-center gap-2 text-sm text-emerald-700 mb-0">
+                        <ShieldCheck className="w-4 h-4" />
+                        Terhubung aman dengan Server Kependudukan Kalurahan Trimulyo
                     </div>
 
-                    {/* Right: Login Card */}
-                    <div className="lg:col-span-5">
-                        <Card className="shadow-2xl border-0 ring-1 ring-slate-200 sticky top-24">
-                            <CardHeader className="space-y-1 text-center pb-2">
-                                <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-2">
-                                    <Lock className="w-6 h-6 text-primary" />
-                                </div>
-                                <CardTitle className="text-2xl">Masuk Layanan</CardTitle>
-                                <CardDescription>Akses data kependudukan secara aman</CardDescription>
-                            </CardHeader>
-                            <CardContent className="p-6 pt-2 space-y-6">
-                                <div className="space-y-4 opacity-70 grayscale pointer-events-none">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="nik">NIK (Nomor Induk Kependudukan)</Label>
-                                        <Input id="nik" placeholder="16 digit NIK Anda" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="pin">PIN / Kata Sandi</Label>
-                                        <Input id="pin" type="password" placeholder="Masukkan PIN rahasia" />
-                                    </div>
-                                </div>
-
-                                <div className="bg-slate-50 rounded-lg p-4 text-sm text-slate-500 border border-dashed border-slate-300">
-                                    <p className="flex gap-2">
-                                        <ShieldCheck className="w-5 h-5 text-green-600 flex-shrink-0" />
-                                        Untuk alasan keamanan, Anda akan diarahkan ke sistem server kependudukan Trimulyo yang terenkripsi.
-                                    </p>
-                                </div>
-
-                                <Button 
-                                    className="w-full h-12 text-lg font-bold shadow-lg shadow-primary/20 group"
-                                    onClick={() => window.open(targetUrl, "_blank")}
-                                >
-                                    Buka Portal Login
-                                    <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                </Button>
-
-                                <div className="text-center">
-                                    <button 
-                                        className="text-sm text-slate-400 hover:text-primary underline-offset-4 hover:underline"
-                                        onClick={() => window.open("https://wa.me/6281234567890", "_blank")}
+                    <Card className="shadow-2xl border-0 overflow-hidden rounded-t-none min-h-[700px] flex flex-col bg-white">
+                        <div className="flex-1 relative">
+                            {/* Iframe */}
+                            {!iframeError ? (
+                                <iframe 
+                                    src={targetUrl}
+                                    className="w-full h-[700px] border-0"
+                                    title="Layanan Mandiri Trimulyo"
+                                    onError={() => setIframeError(true)}
+                                    // Use standard sandbox to allow forms/scripts
+                                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+                                />
+                            ) : (
+                                <div className="p-12 flex flex-col items-center justify-center text-center space-y-6">
+                                    <Alert variant="destructive" className="max-w-xl">
+                                        <AlertCircle className="h-4 w-4" />
+                                        <AlertTitle>Koneksi Terbatas</AlertTitle>
+                                        <AlertDescription>
+                                            Halaman login tidak dapat ditampilkan langsung di website ini karena kebijakan keamanan browser Anda atau server pusat. 
+                                            Silakan klik tombol di bawah untuk membuka portal secara langsung.
+                                        </AlertDescription>
+                                    </Alert>
+                                    <Button 
+                                        size="lg"
+                                        className="bg-[#dd2d4a] hover:bg-[#c22841] text-white px-8 h-14 text-lg font-bold rounded-xl"
+                                        onClick={() => window.open(targetUrl, "_blank")}
                                     >
-                                        Lupa PIN atau butuh bantuan?
-                                    </button>
+                                        Masuk ke Layanan Mandiri
+                                        <ExternalLink className="ml-2 w-5 h-5" />
+                                    </Button>
                                 </div>
-                            </CardContent>
-                        </Card>
-                    </div>
+                            )}
+                        </div>
+                    </Card>
 
+                    {/* Footer Info */}
+                    <div className="mt-8 grid md:grid-cols-3 gap-6">
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <h3 className="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                                <Info className="w-5 h-5 text-blue-500" />
+                                Cara Pendaftaran
+                            </h3>
+                            <p className="text-sm text-slate-600">
+                                Datang ke Kantor Kalurahan dengan membawa KTP/KK untuk mendapatkan PIN akses pertama kali.
+                            </p>
+                        </div>
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <h3 className="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                                <Smartphone className="w-5 h-5 text-blue-500" />
+                                Akses Mobile
+                            </h3>
+                            <p className="text-sm text-slate-600">
+                                Layanan ini dapat diakses melalui smartphone Anda untuk kemudahan permohonan surat darimana saja.
+                            </p>
+                        </div>
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                            <h3 className="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                                <ShieldCheck className="w-5 h-5 text-blue-500" />
+                                Privasi Data
+                            </h3>
+                            <p className="text-sm text-slate-600">
+                                Pastikan PIN Anda terjaga kerahasiaannya. Jangan berikan PIN kepada orang lain.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
