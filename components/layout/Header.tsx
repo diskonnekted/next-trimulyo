@@ -81,7 +81,7 @@ export function Header() {
         { href: "/kegiatan", label: t("navigation.kegiatan") },
         { href: "/informasi/perpustakaan", label: "Perpustakaan" },
         { href: "/posyandu", label: "Posyandu" },
-        { href: "/informasi", label: "Kepuasan Masyarakat" },
+        { href: "/skm", label: "Kepuasan Masyarakat" },
     ];
 
     // Categorized statistik sub-items
