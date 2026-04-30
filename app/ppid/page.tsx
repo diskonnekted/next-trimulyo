@@ -449,7 +449,7 @@ export default function InformasiPublikPage() {
                                                 className="w-full h-6 text-[10px] bg-blue-600 hover:bg-blue-700 text-white shadow-sm px-1"
                                                 asChild
                                             >
-                                                <a href={attrs.url || "#"} target="_blank" rel="noopener noreferrer">
+                                                <a href={attrs.satuan || attrs.url || "#"} target="_blank" rel="noopener noreferrer">
                                                     <Download className="w-2.5 h-2.5 mr-0.5" />
                                                     Unduh
                                                 </a>
@@ -460,7 +460,7 @@ export default function InformasiPublikPage() {
                                                 className="w-full h-6 text-[10px] border-blue-200 text-blue-700 hover:bg-blue-50 px-1"
                                                 asChild
                                             >
-                                                <a href={attrs.url || "#"} target="_blank" rel="noopener noreferrer">
+                                                <a href={attrs.satuan || attrs.url || "#"} target="_blank" rel="noopener noreferrer">
                                                     <Eye className="w-2.5 h-2.5 mr-0.5" />
                                                     Lihat
                                                 </a>
@@ -555,7 +555,7 @@ export default function InformasiPublikPage() {
                                         <p>Pratinjau dokumen tidak tersedia</p>
                                         <Button 
                                             variant="outline"
-                                            onClick={() => window.open(selectedItem.attributes.url || "#", "_blank")}
+                                            onClick={() => window.open(selectedItem.attributes.satuan || selectedItem.attributes.url || "#", "_blank")}
                                         >
                                             Buka Tautan Eksternal
                                         </Button>
