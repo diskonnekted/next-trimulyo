@@ -66,55 +66,48 @@ export function useExternalNews(limit: number = 10) {
             setLoading(true);
             setError(null);
 
-            // 1. Vercel Edge proxy (bypasses CORS issue)
+            // Use our unified internal API that handles all fallbacks
             try {
-                const url = `/api/wp-posts-proxy?per_page=${limit}&_embed=1`;
+                const url = `/api/berita?limit=${limit}`;
                 const response = await fetch(url);
                 if (response.ok) {
                     const json = await response.json();
-                    const wpPosts = json?.data ?? [];
-                    if (Array.isArray(wpPosts) && wpPosts.length > 0) {
-                        const transformed = transformWordPressPosts(wpPosts);
-                        setNews(transformed.slice(0, limit));
+                    if (json.success && Array.isArray(json.data)) {
+                        // The internal API already returns data in our preferred format
+                        // but we transform it slightly to match the NewsItem interface if needed
+                        const transformed: NewsItem[] = json.data.map((item: any) => ({
+                            id: String(item.id),
+                            title: item.judul,
+                            slug: item.slug,
+                            excerpt: item.ringkasan,
+                            content: item.konten,
+                            featuredImage: item.gambar,
+                            author: {
+                                name: item.penulis || "Admin Kalurahan",
+                                avatar: null
+                            },
+                            category: item.kategori || "Berita",
+                            categories: [{ id: 0, name: item.kategori || "Berita", slug: "berita" }],
+                            tags: [],
+                            publishedAt: item.publishedAt,
+                            updatedAt: item.updatedAt,
+                            link: `/berita/${item.slug}`,
+                            readTime: Math.max(1, Math.ceil((item.konten || "").split(/\s+/).length / 200)),
+                            isBreaking: false,
+                            isFeatured: false,
+                            isPinned: false,
+                            viewCount: item.views || 0,
+                            likeCount: 0,
+                            commentCount: 0,
+                            shareCount: 0,
+                            isBookmarked: false,
+                        }));
+                        setNews(transformed);
                         return;
                     }
                 }
             } catch (e) {
-                console.error("[useExternalNews] Edge proxy failed:", e);
-            }
-
-            // 2. Fallback: OpenSID Proxy
-            try {
-                const openSidResponse = await fetch("/api/opensid-proxy");
-                if (openSidResponse.ok) {
-                    const openSidData = await openSidResponse.json();
-                    if (openSidData && Array.isArray(openSidData.data) && openSidData.data.length > 0) {
-                        const sortedNews = transformOpenSidPosts(openSidData.data).sort(
-                            (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-                        );
-                        setNews(sortedNews.slice(0, limit));
-                        return;
-                    }
-                }
-            } catch (e) {
-                console.error("[useExternalNews] OpenSID Proxy failed:", e);
-            }
-
-            // 3. Fallback: External News Proxy
-            try {
-                const proxyResponse = await fetch("/api/external-news");
-                if (proxyResponse.ok) {
-                    const data: NewsResponse = await proxyResponse.json();
-                    if (data.success && data.data && data.data.length > 0) {
-                        const sortedNews = data.data.sort(
-                            (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-                        );
-                        setNews(sortedNews.slice(0, limit));
-                        return;
-                    }
-                }
-            } catch (e) {
-                console.warn("[useExternalNews] News Proxy failed:", e);
+                console.error("[useExternalNews] Internal API failed:", e);
             }
 
             setNews([]);
