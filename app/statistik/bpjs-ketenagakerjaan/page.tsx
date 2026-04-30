@@ -71,7 +71,7 @@ export default function BPJSKetenagakerjaanPage() {
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
-                                    <span>Perangkat Desa</span>
+                                    <span>Perangkat Kalurahan</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 flex-shrink-0" />

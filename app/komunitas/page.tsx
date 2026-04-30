@@ -55,7 +55,7 @@ export default function KomunitasPage() {
 
     const recentActivities = [
         {
-            title: "Jalan Sehat \"Desa Terdepan Untuk Indonesia\"",
+            title: "Jalan Sehat \"Kalurahan Terdepan Untuk Indonesia\"",
             date: "15 Januari 2026",
             category: "Olahraga",
             description: "Kegiatan jalan sehat yang diikuti oleh ribuan warga Trimulyo untuk mempererat silaturahmi dan menjaga kebugaran."
@@ -136,7 +136,7 @@ export default function KomunitasPage() {
                         </p>
                         <p className="text-slate-600 leading-relaxed">
                             Sinergi antara Pemerintah Kalurahan dengan lembaga-lembaga seperti Karang Taruna, LPMK, dan PKK menjadi 
-                            kunci keberhasilan pembangunan desa yang partisipatif dan inklusif.
+                            kunci keberhasilan pembangunan kalurahan yang partisipatif dan inklusif.
                         </p>
                     </div>
                     <Card className="bg-white border-blue-100 shadow-sm">
@@ -159,7 +159,7 @@ export default function KomunitasPage() {
                                 <span>(0274) 869248</span>
                             </div>
                             <Button className="w-full bg-[#39a2cf] hover:bg-[#2a77a7]" asChild>
-                                <a href="https://maps.google.com/?q=Kantor+Desa+Trimulyo+Sleman" target="_blank" rel="noreferrer">
+                                <a href="https://maps.google.com/?q=Kantor+Kalurahan+Trimulyo+Sleman" target="_blank" rel="noreferrer">
                                     Lihat di Peta
                                 </a>
                             </Button>

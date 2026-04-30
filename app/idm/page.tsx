@@ -37,18 +37,18 @@ interface IDMData {
         id_prov: string;
         id_kabupaten: string;
         nama_kab_kota: string;
-        id_kecamatan: string;
-        nama_kecamatan: string;
-        id_desa: string;
-        nama_desa: string;
+        id_kapanewon: string;
+        nama_kapanewon: string;
+        id_kalurahan: string;
+        nama_kalurahan: string;
     }>;
 }
 
 // Function to fetch IDM data from API
 const fetchIDMData = async (year: string = "2024"): Promise<IDMData | null> => {
     try {
-        // Try fetching directly from Kemendesa API (client-side to avoid Vercel server blocking)
-        const directUrl = `https://idm.kemendesa.go.id/open/api/desa/rumusan/3404132005/${year}`;
+        // Try fetching directly from Kemenkalurahan API (client-side to avoid Vercel server blocking)
+        const directUrl = `https://idm.kemenkalurahan.go.id/open/api/kalurahan/rumusan/3404132005/${year}`;
         const response = await fetch(directUrl, {
             headers: { Accept: "application/json" },
         });
@@ -144,9 +144,9 @@ export default function IDMPage() {
                                 className="object-contain"
                             />
                         </div>
-                        <h1 className="text-4xl font-bold text-primary">Indeks Desa Mandiri (IDM)</h1>
+                        <h1 className="text-4xl font-bold text-primary">Indeks Kalurahan Mandiri (IDM)</h1>
                         <p className="text-gray-600 max-w-2xl mx-auto">
-                            Evaluasi menyeluruh terhadap capaian Indeks Desa Mandiri
+                            Evaluasi menyeluruh terhadap capaian Indeks Kalurahan Mandiri
                         </p>
 
                         {/* Year Selector */}
@@ -182,9 +182,9 @@ export default function IDMPage() {
                                 className="object-contain"
                             />
                         </div>
-                        <h1 className="text-4xl font-bold text-primary">Indeks Desa Mandiri (IDM)</h1>
+                        <h1 className="text-4xl font-bold text-primary">Indeks Kalurahan Mandiri (IDM)</h1>
                         <p className="text-gray-600 max-w-2xl mx-auto">
-                            Evaluasi menyeluruh terhadap capaian Indeks Desa Mandiri
+                            Evaluasi menyeluruh terhadap capaian Indeks Kalurahan Mandiri
                         </p>
 
                         {/* Year Selector */}
@@ -236,9 +236,9 @@ export default function IDMPage() {
                             className="object-contain"
                         />
                     </div>
-                    <h1 className="text-4xl font-bold text-primary">Indeks Desa Mandiri (IDM)</h1>
+                    <h1 className="text-4xl font-bold text-primary">Indeks Kalurahan Mandiri (IDM)</h1>
                     <p className="text-gray-600 max-w-2xl mx-auto">
-                        Evaluasi menyeluruh terhadap capaian Indeks Desa Mandiri
+                        Evaluasi menyeluruh terhadap capaian Indeks Kalurahan Mandiri
                     </p>
 
                     {/* Year Selector */}

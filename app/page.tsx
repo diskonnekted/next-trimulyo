@@ -72,8 +72,8 @@ function getServerSideData() {
             },
             {
                 icon: "DollarSign",
-                label: getServerTranslation("quickLinks.keuanganDesa"),
-                description: getServerTranslation("quickLinks.keuanganDesaDesk"),
+                label: getServerTranslation("quickLinks.keuanganKalurahan"),
+                description: getServerTranslation("quickLinks.keuanganKalurahanDesk"),
                 href: "/keuangan",
                 color: "bg-[#10264f]",
             },
@@ -100,8 +100,8 @@ function getServerSideData() {
             },
             {
                 icon: "ChartNoAxesColumnDecreasing",
-                label: getServerTranslation("quickLinks.indexDesaMandiri"),
-                description: getServerTranslation("quickLinks.indexDesaMandiriDesk"),
+                label: getServerTranslation("quickLinks.indexKalurahanMandiri"),
+                description: getServerTranslation("quickLinks.indexKalurahanMandiriDesk"),
                 href: "/idm",
                 color: "bg-[#2f3f62]",
             },

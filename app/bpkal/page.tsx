@@ -51,7 +51,7 @@ export default function BPKalPage() {
                 </div>
                 <h1 className="text-4xl font-bold text-gray-900 mb-4">Badan Permusyawaratan Kalurahan (BPKal)</h1>
                 <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Mitra kerja Pemerintah Kalurahan dalam penyelenggaraan pemerintahan desa
+                    Mitra kerja Pemerintah Kalurahan dalam penyelenggaraan pemerintahan kalurahan
                 </p>
             </div>
 

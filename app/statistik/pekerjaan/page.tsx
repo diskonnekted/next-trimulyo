@@ -162,7 +162,7 @@ export default function PekerjaanPage() {
                             <ul className="space-y-1 text-sm">
                                 <li>• Bantuan modal usaha</li>
                                 <li>• Program UMKM</li>
-                                <li>• Pasar desa</li>
+                                <li>• Pasar kalurahan</li>
                                 <li>• Kemitraan usaha</li>
                             </ul>
                         </CardContent>

@@ -278,7 +278,7 @@ const APARATUR_DATA: GovernmentOfficial[] = [
 
 export async function GET() {
     try {
-        const response = await fetch("https://trimulyo.sleman-desa.id/internal_api/pemerintah", {
+        const response = await fetch("https://trimulyo.sleman-kalurahan.id/internal_api/pemerintah", {
             next: {
                 revalidate: 3600, // 1 hour
             },
@@ -299,7 +299,7 @@ export async function GET() {
             return {
                 id: item.id || Math.random().toString(36).substr(2, 9),
                 nama: attr.nama || "Tanpa Nama",
-                jabatan: jabatan.nama || "Perangkat Desa",
+                jabatan: jabatan.nama || "Perangkat Kalurahan",
                 jenis_kelamin: attr.jenis_kelamin || "-",
                 pendidikan: attr.pendidikan_kk || "-",
                 usia: attr.usia ? parseInt(attr.usia.replace(" Tahun", "")) : "-",

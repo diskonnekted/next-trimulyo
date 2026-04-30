@@ -8,7 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function LayananMandiriPage() {
     const [iframeError, setIframeError] = useState(false);
-    const targetUrl = "https://trimulyo.sleman-desa.id/layanan-mandiri/masuk";
+    const targetUrl = "https://trimulyo.sleman-kalurahan.id/layanan-mandiri/masuk";
 
     return (
         <div className="min-h-screen bg-gray-50 py-8">
@@ -32,7 +32,7 @@ export default function LayananMandiriPage() {
                         <div className="bg-gray-50 border-b p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                                 <Shield className="w-4 h-4 text-green-600" />
-                                <span>Koneksi aman ke sistem kependudukan desa</span>
+                                <span>Koneksi aman ke sistem kependudukan kalurahan</span>
                             </div>
                             <Button 
                                 variant="outline" 
@@ -84,7 +84,7 @@ export default function LayananMandiriPage() {
                             <CardContent className="p-6">
                                 <h3 className="font-semibold text-blue-900 mb-2">Apa itu Layanan Mandiri?</h3>
                                 <p className="text-sm text-blue-800/80">
-                                    Fasilitas bagi warga untuk mengurus administrasi surat-menyurat dan mengecek data kependudukan secara online tanpa harus datang ke kantor desa.
+                                    Fasilitas bagi warga untuk mengurus administrasi surat-menyurat dan mengecek data kependudukan secara online tanpa harus datang ke kantor kalurahan.
                                 </p>
                             </CardContent>
                         </Card>
@@ -92,7 +92,7 @@ export default function LayananMandiriPage() {
                             <CardContent className="p-6">
                                 <h3 className="font-semibold text-emerald-900 mb-2">Bagaimana cara mendapatkan PIN?</h3>
                                 <p className="text-sm text-emerald-800/80">
-                                    Silakan hubungi operator desa atau datang langsung ke Kantor Kalurahan Trimulyo dengan membawa KTP dan KK untuk mendapatkan PIN akses.
+                                    Silakan hubungi operator kalurahan atau datang langsung ke Kantor Kalurahan Trimulyo dengan membawa KTP dan KK untuk mendapatkan PIN akses.
                                 </p>
                             </CardContent>
                         </Card>

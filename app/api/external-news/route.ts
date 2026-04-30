@@ -42,17 +42,17 @@ export async function GET() {
             const normalizeImageUrl = (raw: string | null): string | null => {
                 if (!raw) return null;
                 let urlStr = raw.trim();
-                const base = "https://trimulyo.sleman-desa.id";
+                const base = "https://trimulyo.sleman-kalurahan.id";
                 
                 try {
                     if (urlStr.startsWith("/")) return `${base}${urlStr}`;
-                    if (!urlStr.includes("/")) return `${base}/desa/upload/artikel/sedang_${urlStr}`;
+                    if (!urlStr.includes("/")) return `${base}/kalurahan/upload/artikel/sedang_${urlStr}`;
                     if (urlStr.startsWith("http://") || urlStr.startsWith("https://")) {
                         return new URL(urlStr).toString().replace(/^http:\/\//i, "https://");
                     }
                     return urlStr;
                 } catch {
-                    return `${base}/desa/upload/artikel/sedang_${urlStr}`;
+                    return `${base}/kalurahan/upload/artikel/sedang_${urlStr}`;
                 }
             };
             
@@ -74,12 +74,12 @@ export async function GET() {
                     name: attrs.author?.nama || "Admin Kalurahan",
                     avatar: "/images/default-avatar.png",
                 },
-                category: attrs.category?.kategori || "Berita Desa",
+                category: attrs.category?.kategori || "Berita Kalurahan",
                 categories: [
                     {
                         id: parseInt(attrs.category?.id || "1"),
-                        name: attrs.category?.kategori || "Berita Desa",
-                        slug: attrs.category?.slug || "berita-desa",
+                        name: attrs.category?.kategori || "Berita Kalurahan",
+                        slug: attrs.category?.slug || "berita-kalurahan",
                     }
                 ],
                 tags: [],

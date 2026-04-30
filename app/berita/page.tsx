@@ -151,7 +151,7 @@ function NewsContent({
         const uniqueCategories = new Map<string, Category>();
         
         // Always add default categories if they exist in data or we want to enforce them
-        const allowedCategories = ["Berita Desa", "Berita"];
+        const allowedCategories = ["Berita Kalurahan", "Berita"];
         
         externalNews.forEach(item => {
             item.categories.forEach(c => {
@@ -165,7 +165,7 @@ function NewsContent({
             });
         });
         
-        // Convert to array and sort to prioritize "Berita Desa" and "Berita"
+        // Convert to array and sort to prioritize "Berita Kalurahan" and "Berita"
         const sortedCategories = Array.from(uniqueCategories.values()).sort((a, b) => {
             const aPriority = allowedCategories.includes(a.name) ? 1 : 0;
             const bPriority = allowedCategories.includes(b.name) ? 1 : 0;

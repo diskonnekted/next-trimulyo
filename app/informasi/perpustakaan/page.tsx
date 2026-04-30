@@ -2,7 +2,7 @@ import { LibraryDisplay } from "@/components/ui/custom/LibraryDisplay";
 import { BookCheck } from "lucide-react";
 
 export const metadata = {
-    title: "Perpustakaan Desa - Portal Resmi Kalurahan Trimulyo",
+    title: "Perpustakaan Kalurahan - Portal Resmi Kalurahan Trimulyo",
     description: "Katalog buku dan informasi Perpustakaan Kalurahan Trimulyo.",
 };
 

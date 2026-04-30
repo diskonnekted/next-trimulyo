@@ -63,7 +63,7 @@ export default function SejarahPage() {
                         </div>
 
                         <p>
-                            Untuk selanjutnya ketiga kalurahan lama meleburkan diri dan bergabung menjadi satu wilayah pemerintahan baru dengan nama <strong>Trimulyo</strong>. Sedangkan pengisian Lurah Desa serta Pamong Desa diatur sesuai dengan maklumat Nomor 15 tahun 1946 tanggal 11/04/1946.
+                            Untuk selanjutnya ketiga kalurahan lama meleburkan diri dan bergabung menjadi satu wilayah pemerintahan baru dengan nama <strong>Trimulyo</strong>. Sedangkan pengisian Lurah Kalurahan serta Pamong Kalurahan diatur sesuai dengan maklumat Nomor 15 tahun 1946 tanggal 11/04/1946.
                         </p>
                     </CardContent>
                 </Card>

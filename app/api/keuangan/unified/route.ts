@@ -59,7 +59,7 @@ export async function GET() {
             },
             pendapatan_detail: [
                 { judul: "Hasil Aset Kalurahan", anggaran: 93000000, realisasi: 0, persen: 0 },
-                { judul: "Dana Desa", anggaran: 1415311100, realisasi: 0, persen: 0 },
+                { judul: "Dana Kalurahan", anggaran: 1415311100, realisasi: 0, persen: 0 },
                 { judul: "Bagi Hasil Pajak Dan Retribusi", anggaran: 1105070656, realisasi: 0, persen: 0 }
             ],
             pembelanjaan_detail: [

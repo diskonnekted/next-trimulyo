@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 
-const OPENSID_API_URL = "https://trimulyo.sleman-desa.id/internal_api/statistik/penduduk";
+const OPENSID_API_URL = "https://trimulyo.sleman-kalurahan.id/internal_api/statistik/penduduk";
 const REVALIDATE = 60 * 30; // 30 minutes
 
 export async function GET() {
     try {
         // We use wilayah/administratif because it contains population counts per dusun/hamlet
-        const response = await fetch("https://trimulyo.sleman-desa.id/internal_api/wilayah/administratif", {
+        const response = await fetch("https://trimulyo.sleman-kalurahan.id/internal_api/wilayah/administratif", {
             next: { revalidate: 3600 },
         });
 

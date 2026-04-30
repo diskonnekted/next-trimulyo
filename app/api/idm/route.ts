@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
 
     // 2. Fallback: fetch from external API
     try {
-        console.log(`IDM ${year} not in cache, fetching from Kemendesa API...`);
-        const url = `https://idm.kemendesa.go.id/open/api/desa/rumusan/3404132005/${year}`;
+        console.log(`IDM ${year} not in cache, fetching from Kemenkalurahan API...`);
+        const url = `https://idm.kemenkalurahan.go.id/open/api/kalurahan/rumusan/3404132005/${year}`;
         const response = await fetch(url, {
             headers: { Accept: "application/json" },
         });

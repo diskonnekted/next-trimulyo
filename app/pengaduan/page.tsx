@@ -140,7 +140,7 @@ export default function PengaduanPage() {
                                                 value={formData.nik}
                                                 onChange={handleInputChange}
                                             />
-                                            <p className="text-xs text-muted-foreground">Untuk verifikasi warga desa</p>
+                                            <p className="text-xs text-muted-foreground">Untuk verifikasi warga kalurahan</p>
                                         </div>
                                     </div>
 

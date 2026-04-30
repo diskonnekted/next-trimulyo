@@ -14,7 +14,7 @@ export async function GET(request: Request) {
                 pendapatan: [],
                 belanja: [],
                 pelaksanaan: [],
-                laporan: `APBDes ${tahun} (Mock Data)`,
+                laporan: `APBKAL ${tahun} (Mock Data)`,
             },
         },
     ];

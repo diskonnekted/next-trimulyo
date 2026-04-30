@@ -17,7 +17,7 @@ function ExternalNewsContent() {
 
     // Construct the target URL
     // We assume the slug matches the WordPress post slug
-    const targetUrl = `https://trimulyo.sleman-desa.id/berita/${slug}`;
+    const targetUrl = `https://trimulyo.sleman-kalurahan.id/berita/${slug}`;
 
     useEffect(() => {
         // Simulate loading time
@@ -121,9 +121,9 @@ function ExternalNewsContent() {
                                     <CardContent className="p-4">
                                         <div className="h-32 bg-gray-100 rounded-md mb-3"></div>
                                         <div className="space-y-2">
-                                            <Badge variant="outline" className="text-xs font-normal">Kabar Desa</Badge>
+                                            <Badge variant="outline" className="text-xs font-normal">Kabar Kalurahan</Badge>
                                             <h4 className="font-semibold text-gray-800 line-clamp-2">
-                                                Kegiatan Pemberdayaan Masyarakat Desa Tahun Anggaran 2025
+                                                Kegiatan Pemberdayaan Masyarakat Kalurahan Tahun Anggaran 2025
                                             </h4>
                                             <div className="flex items-center gap-2 text-xs text-gray-500">
                                                 <Calendar className="w-3 h-3" />
