@@ -11,8 +11,7 @@ import {
     ArrowRight,
     Loader2,
     BarChart3,
-    Building2,
-    PieChart
+    CheckCircle2
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -76,230 +75,253 @@ export default function KeuanganPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-slate-950">
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="text-center">
-                    <Loader2 className="w-10 h-10 animate-spin text-blue-500 mx-auto mb-4" />
-                    <p className="text-blue-200/60 font-medium">Memuat data real-time APBKAL...</p>
+                    <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-4" />
+                    <p className="text-gray-500 font-medium">Memuat laporan keuangan...</p>
                 </div>
             </div>
         );
     }
 
     const years = data ? Object.keys(data.stats).sort((a, b) => b.localeCompare(a)) : [];
-    
+    const latestYear = years[0];
+    const latestStats = latestYear ? data?.stats[latestYear] : null;
+    const perCapita = (latestStats && data?.population) ? Math.round(latestStats.total_anggaran / data.population) : 0;
+
     return (
-        <div className="min-h-screen bg-[#0f172a] text-slate-200 pb-20">
-            {/* Dark Header */}
-            <div className="pt-20 pb-16 text-center container mx-auto px-4">
-                <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">
-                    Anggaran Pendapatan dan Belanja Desa
-                </h1>
-                <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-                    Transparansi anggaran dan realisasi APBDES desa secara real time
-                </p>
+        <div className="min-h-screen bg-linear-to-b from-slate-50 to-white pb-20">
+            {/* Hero Header - RED Scheme */}
+            <div className="bg-primary pt-16 pb-32 text-white relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
+                    <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2 blur-3xl" />
+                </div>
+                
+                <div className="container mx-auto px-4 relative z-10 text-center">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-sm font-medium mb-6">
+                        <DollarSign className="w-4 h-4" />
+                        Transparansi Anggaran Kalurahan
+                    </div>
+                    <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">
+                        Keuangan <span className="text-amber-400">Trimulyo</span>
+                    </h1>
+                    <p className="text-lg text-rose-50 max-w-2xl mx-auto leading-relaxed">
+                        Informasi terbuka mengenai tata kelola APBKAL (Anggaran Pendapatan dan Belanja Kalurahan) untuk masyarakat Trimulyo.
+                    </p>
+                </div>
             </div>
 
-            <div className="container mx-auto px-4 space-y-12">
-                {/* 3 Column Layout - APBK 2026 */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Column 1: Pelaksanaan */}
-                    <Card className="bg-[#1e293b] border-slate-800 shadow-2xl">
-                        <CardHeader className="pb-2">
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Transparansi Anggaran</span>
-                                <div className="p-2 bg-blue-500/20 rounded-lg text-cyan-400">
-                                    <Building2 className="w-4 h-4" />
+            <div className="container mx-auto px-4 -mt-16 relative z-20">
+                {/* Main Stats Row - RED Theme */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <Card className="border-none shadow-2xl bg-white group hover:translate-y-[-4px] transition-all duration-300 overflow-hidden">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
+                        <CardContent className="p-8">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="p-3 bg-rose-50 rounded-2xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <BarChart3 className="w-6 h-6" />
                                 </div>
+                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Tahun {latestYear}</span>
                             </div>
-                            <CardTitle className="text-xl font-bold text-white mt-2">APBK 2026 Pelaksanaan</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-8 pt-4">
-                            {[
-                                { label: "Pendapatan", data: data?.apbk2026.pelaksanaan.pendapatan },
-                                { label: "Belanja", data: data?.apbk2026.pelaksanaan.belanja },
-                                { label: "Pembiayaan", data: data?.apbk2026.pelaksanaan.pembiayaan }
-                            ].map((item, idx) => (
-                                <div key={idx} className="space-y-4">
-                                    <div className="flex justify-between items-end">
-                                        <div className="text-lg font-bold text-white">{item.label}</div>
-                                        <div className="text-xs font-bold text-slate-400">{(item.data?.persen || 0).toFixed(2)}%</div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <div className="text-[10px] font-bold text-slate-500 uppercase mb-1 text-center">Anggaran</div>
-                                            <div className="text-sm font-black text-white text-center break-words">{formatIDR(item.data?.anggaran || 0)}</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-[10px] font-bold text-slate-500 uppercase mb-1 text-center">Realisasi</div>
-                                            <div className="text-sm font-black text-white text-center">{formatIDR(item.data?.realisasi || 0)}</div>
-                                        </div>
-                                    </div>
-                                    <Progress value={item.data?.persen || 0} className="h-1.5 bg-slate-700/50" />
-                                </div>
-                            ))}
+                            <div className="text-sm font-bold text-gray-500 mb-1 uppercase tracking-tight">Total Anggaran Proyek</div>
+                            <div className="text-3xl font-black text-slate-900">{latestStats ? formatIDR(latestStats.total_anggaran) : "Rp 0"}</div>
                         </CardContent>
                     </Card>
 
-                    {/* Column 2: Pendapatan Detail */}
-                    <Card className="bg-[#1e293b] border-slate-800 shadow-2xl">
-                        <CardHeader className="pb-2">
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Transparansi Anggaran</span>
-                                <div className="p-2 bg-blue-500/20 rounded-lg text-cyan-400">
-                                    <Building2 className="w-4 h-4" />
+                    <Card className="border-none shadow-2xl bg-white group hover:translate-y-[-4px] transition-all duration-300 overflow-hidden">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
+                        <CardContent className="p-8">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="p-3 bg-emerald-50 rounded-2xl text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                                    <TrendingUp className="w-6 h-6" />
                                 </div>
+                                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Realisasi Penuh</span>
                             </div>
-                            <CardTitle className="text-xl font-bold text-white mt-2">APBK 2026 Pendapatan</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-8 pt-4">
-                            {data?.apbk2026.pendapatan_detail.map((item, idx) => (
-                                <div key={idx} className="space-y-4">
-                                    <div className="flex justify-between items-end">
-                                        <div className="text-sm font-bold text-white max-w-[80%]">{item.judul}</div>
-                                        <div className="text-xs font-bold text-slate-400">{(item.persen || 0).toFixed(2)}%</div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <div className="text-[10px] font-bold text-slate-500 uppercase mb-1 text-center">Anggaran</div>
-                                            <div className="text-sm font-black text-white text-center">{formatIDR(item.anggaran)}</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-[10px] font-bold text-slate-500 uppercase mb-1 text-center">Realisasi</div>
-                                            <div className="text-sm font-black text-white text-center">{formatIDR(item.realisasi)}</div>
-                                        </div>
-                                    </div>
-                                    <div className="h-1.5 w-full bg-slate-700/50 rounded-full overflow-hidden">
-                                        <div 
-                                            className="h-full bg-blue-500 transition-all duration-1000 shadow-[0_0_10px_rgba(59,130,246,0.5)]" 
-                                            style={{ width: `${item.persen}%` }}
-                                        />
-                                    </div>
-                                </div>
-                            ))}
+                            <div className="text-sm font-bold text-gray-500 mb-1 uppercase tracking-tight">Total Realisasi</div>
+                            <div className="text-3xl font-black text-slate-900">{latestStats ? formatIDR(latestStats.total_realisasi) : "Rp 0"}</div>
                         </CardContent>
                     </Card>
 
-                    {/* Column 3: Pembelanjaan Detail */}
-                    <Card className="bg-[#1e293b] border-slate-800 shadow-2xl">
-                        <CardHeader className="pb-2">
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">Transparansi Anggaran</span>
-                                <div className="p-2 bg-blue-500/20 rounded-lg text-cyan-400">
-                                    <Building2 className="w-4 h-4" />
+                    <Card className="border-none shadow-2xl bg-linear-to-br from-primary to-rose-700 text-white group hover:translate-y-[-4px] transition-all duration-300">
+                        <CardContent className="p-8">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="p-3 bg-white/20 rounded-2xl">
+                                    <Users className="w-6 h-6" />
                                 </div>
+                                <span className="text-xs font-bold text-rose-100 uppercase tracking-widest">Populasi Warga</span>
                             </div>
-                            <CardTitle className="text-xl font-bold text-white mt-2">APBK 2026 Pembelanjaan</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-8 pt-4">
-                            {data?.apbk2026.pembelanjaan_detail.map((item, idx) => (
-                                <div key={idx} className="space-y-4">
-                                    <div className="flex justify-between items-end">
-                                        <div className="text-sm font-bold text-white max-w-[80%]">{item.judul}</div>
-                                        <div className="text-xs font-bold text-slate-400">{(item.persen || 0).toFixed(2)}%</div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <div className="text-[10px] font-bold text-slate-500 uppercase mb-1 text-center">Anggaran</div>
-                                            <div className="text-sm font-black text-white text-center">{formatIDR(item.anggaran)}</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-[10px] font-bold text-slate-500 uppercase mb-1 text-center">Realisasi</div>
-                                            <div className="text-sm font-black text-white text-center">{formatIDR(item.realisasi)}</div>
-                                        </div>
-                                    </div>
-                                    <div className="h-1.5 w-full bg-slate-700/50 rounded-full overflow-hidden">
-                                        <div 
-                                            className="h-full bg-blue-500 transition-all duration-1000 shadow-[0_0_10px_rgba(59,130,246,0.5)]" 
-                                            style={{ width: `${item.persen}%` }}
-                                        />
-                                    </div>
-                                </div>
-                            ))}
+                            <div className="text-sm font-bold text-rose-100 mb-1 uppercase tracking-tight">Anggaran per Warga</div>
+                            <div className="text-3xl font-black">{formatIDR(perCapita)}</div>
                         </CardContent>
                     </Card>
                 </div>
 
-                <DecorativeSeparator className="opacity-20" />
-
-                {/* Supporting Info Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Annual Stats Summary */}
-                    <Card className="bg-[#1e293b] border-slate-800 shadow-xl overflow-hidden">
-                        <CardHeader className="bg-slate-900/50 border-b border-slate-800 p-6">
-                            <CardTitle className="text-white flex items-center gap-2">
-                                <PieChart className="w-5 h-5 text-amber-400" />
-                                Ringkasan Historis Anggaran
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            <div className="divide-y divide-slate-800">
-                                {years.map(year => (
-                                    <div key={year} className="p-6 flex items-center justify-between hover:bg-slate-800/50 transition-colors">
-                                        <div>
-                                            <div className="text-xl font-black text-white">{year}</div>
-                                            <div className="text-xs text-slate-500 font-medium">{data?.stats[year].count} Proyek Terdaftar</div>
-                                        </div>
-                                        <div className="text-right">
-                                            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Total Pagu</div>
-                                            <div className="text-lg font-bold text-blue-400">{formatIDR(data?.stats[year].total_anggaran || 0)}</div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Official Documents */}
-                    <div className="space-y-6">
-                        <Card className="bg-[#1e293b] border-slate-800 shadow-xl">
-                            <CardHeader className="p-6">
-                                <CardTitle className="text-white flex items-center gap-2">
-                                    <Download className="w-5 h-5 text-emerald-400" />
-                                    Dokumen APBKAL Resmi
-                                </CardTitle>
+                {/* NEW SECTION: APBKAL 2026 Summary (Based on image data) */}
+                <div className="mb-12">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                            <CheckCircle2 className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-black text-slate-900">Rincian APBKAL 2026</h2>
+                            <p className="text-sm text-gray-500 font-medium">Data Transparansi Real-Time Kalurahan</p>
+                        </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* APBK Column 1 */}
+                        <Card className="border-none shadow-lg bg-white border-t-4 border-primary">
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-lg font-bold text-slate-800">Pelaksanaan</CardTitle>
                             </CardHeader>
-                            <CardContent className="p-4 space-y-3">
-                                {data?.documents.map((doc, idx) => (
-                                    <a 
-                                        key={idx} 
-                                        href={doc.url} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="flex items-center p-4 bg-slate-900/30 rounded-2xl border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800/80 transition-all group"
-                                    >
-                                        <div className="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-rose-500 shadow-sm mr-4 group-hover:scale-110 transition-transform">
-                                            <FileText className="w-6 h-6" />
+                            <CardContent className="space-y-6">
+                                {[
+                                    { label: "Pendapatan", data: data?.apbk2026.pelaksanaan.pendapatan },
+                                    { label: "Belanja", data: data?.apbk2026.pelaksanaan.belanja },
+                                    { label: "Pembiayaan", data: data?.apbk2026.pelaksanaan.pembiayaan }
+                                ].map((item, idx) => (
+                                    <div key={idx} className="space-y-2">
+                                        <div className="flex justify-between text-sm">
+                                            <span className="font-bold text-slate-600">{item.label}</span>
+                                            <span className="text-primary font-bold">{(item.data?.persen || 0).toFixed(0)}%</span>
                                         </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="text-sm font-bold text-slate-200 truncate uppercase tracking-tight">{doc.judul}</div>
-                                            <div className="text-xs text-slate-500 font-medium">Tahun {doc.tahun} • PDF Document</div>
-                                        </div>
-                                        <ArrowRight className="w-4 h-4 text-slate-700 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
-                                    </a>
+                                        <div className="text-lg font-black text-slate-900">{formatIDR(item.data?.anggaran || 0)}</div>
+                                        <Progress value={item.data?.persen || 0} className="h-1.5" />
+                                    </div>
                                 ))}
                             </CardContent>
                         </Card>
 
-                        <div className="bg-linear-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white">
-                            <div className="flex items-center gap-4 mb-4">
-                                <Users className="w-8 h-8 opacity-50" />
-                                <h3 className="text-xl font-bold">Basis Data Warga</h3>
-                            </div>
-                            <p className="text-blue-100 text-sm leading-relaxed mb-6">
-                                Estimasi anggaran dikelola untuk melayani <span className="font-black text-white">{data?.population.toLocaleString('id-ID')}</span> jiwa 
-                                penduduk Kalurahan Trimulyo dengan prinsip pemerataan dan keadilan.
+                        {/* APBK Column 2 */}
+                        <Card className="border-none shadow-lg bg-white border-t-4 border-primary">
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-lg font-bold text-slate-800">Sumber Pendapatan</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                {data?.apbk2026.pendapatan_detail.map((item, idx) => (
+                                    <div key={idx} className="space-y-2">
+                                        <div className="flex justify-between text-sm">
+                                            <span className="font-medium text-slate-500 truncate mr-2">{item.judul}</span>
+                                            <span className="text-primary font-bold">{(item.persen || 0).toFixed(0)}%</span>
+                                        </div>
+                                        <div className="text-base font-bold text-slate-900">{formatIDR(item.anggaran)}</div>
+                                        <Progress value={item.persen} className="h-1.5" />
+                                    </div>
+                                ))}
+                            </CardContent>
+                        </Card>
+
+                        {/* APBK Column 3 */}
+                        <Card className="border-none shadow-lg bg-white border-t-4 border-primary">
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-lg font-bold text-slate-800">Bidang Pembelanjaan</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                {data?.apbk2026.pembelanjaan_detail.map((item, idx) => (
+                                    <div key={idx} className="space-y-2">
+                                        <div className="flex justify-between text-sm">
+                                            <span className="font-medium text-slate-500 truncate mr-2">{item.judul}</span>
+                                            <span className="text-primary font-bold">{(item.persen || 0).toFixed(0)}%</span>
+                                        </div>
+                                        <div className="text-base font-bold text-slate-900">{formatIDR(item.anggaran)}</div>
+                                        <Progress value={item.persen} className="h-1.5" />
+                                    </div>
+                                ))}
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Historic Stats */}
+                    <div className="lg:col-span-2 space-y-8">
+                        <Card className="border-none shadow-xl overflow-hidden">
+                            <CardHeader className="bg-slate-900 text-white p-8">
+                                <CardTitle className="text-2xl font-bold flex items-center gap-3">
+                                    <Calendar className="w-6 h-6 text-amber-400" />
+                                    Histori Anggaran Kalurahan
+                                </CardTitle>
+                                <CardDescription className="text-slate-400">
+                                    Ringkasan pengelolaan anggaran tahun-tahun sebelumnya
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-0">
+                                <div className="divide-y divide-gray-100">
+                                    {years.map(year => (
+                                        <div key={year} className="p-8 flex flex-col md:flex-row md:items-center justify-between hover:bg-slate-50 transition-colors">
+                                            <div>
+                                                <div className="text-2xl font-black text-slate-900 mb-1">{year}</div>
+                                                <div className="text-sm text-gray-500 font-medium">
+                                                    Terdiri dari {data?.stats[year].count} Proyek Pembangunan
+                                                </div>
+                                            </div>
+                                            <div className="mt-4 md:mt-0 text-right">
+                                                <div className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-1">Total Anggaran</div>
+                                                <div className="text-2xl font-bold text-primary">{formatIDR(data?.stats[year].total_anggaran || 0)}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Documents Column */}
+                    <div className="space-y-8">
+                        <Card className="border-none shadow-xl">
+                            <CardHeader className="p-8 pb-4">
+                                <CardTitle className="text-xl font-bold flex items-center gap-2">
+                                    <Download className="w-5 h-5 text-primary" />
+                                    Dokumen APBKAL
+                                </CardTitle>
+                                <CardDescription>Unduh salinan resmi dokumen keuangan</CardDescription>
+                            </CardHeader>
+                            <CardContent className="p-4 space-y-3">
+                                {data?.documents && data.documents.length > 0 ? (
+                                    data.documents.map((doc, idx) => (
+                                        <a 
+                                            key={idx} 
+                                            href={doc.url} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="flex items-center p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-primary/20 hover:bg-white hover:shadow-md transition-all group"
+                                        >
+                                            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-rose-500 shadow-sm mr-4 group-hover:scale-110 transition-transform">
+                                                <FileText className="w-6 h-6" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="text-sm font-bold text-slate-900 truncate uppercase">{doc.judul}</div>
+                                                <div className="text-xs text-gray-500 font-medium">File PDF • {doc.tahun}</div>
+                                            </div>
+                                            <Download className="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors" />
+                                        </a>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-8 text-gray-400 italic text-sm">
+                                        Dokumen belum tersedia.
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+
+                        <div className="bg-primary rounded-3xl p-8 text-white relative overflow-hidden">
+                            <h3 className="text-2xl font-bold mb-4 relative z-10">Transparansi Penuh</h3>
+                            <p className="text-rose-100 text-sm leading-relaxed mb-6 opacity-90 relative z-10">
+                                Setiap anggaran dikelola secara akuntabel untuk pembangunan Trimulyo yang lebih baik.
                             </p>
-                            <Button className="w-full bg-white text-blue-600 hover:bg-blue-50 font-bold rounded-xl" asChild>
-                                <a href="/pembangunan">Detail Realisasi Proyek</a>
+                            <Button className="w-full bg-white text-primary hover:bg-rose-50 font-bold rounded-xl relative z-10" asChild>
+                                <a href="/pembangunan">Detail Proyek Pembangunan</a>
                             </Button>
                         </div>
                     </div>
                 </div>
 
-                {/* Footer Status */}
-                <div className="text-center pt-8 border-t border-slate-800/50">
-                    <p className="text-xs text-slate-500 font-medium">
-                        Sinkronisasi terakhir: {data ? new Date(data.updated_at).toLocaleString('id-ID') : '-'} • Sumber Data: OpenSID Kalurahan Trimulyo
+                <DecorativeSeparator className="my-16" />
+
+                <div className="text-center">
+                    <p className="text-xs text-gray-400 font-medium">
+                        Data disinkronisasi otomatis dari OpenSID Trimulyo • Pembaruan terakhir: {data ? new Date(data.updated_at).toLocaleString('id-ID') : '-'}
                     </p>
                 </div>
             </div>
