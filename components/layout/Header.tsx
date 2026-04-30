@@ -54,7 +54,7 @@ export function Header() {
         { href: "/", label: t("navigation.beranda"), icon: Home },
         { href: "/pemerintahan", label: t("navigation.pemerintahan"), icon: Building2 },
         { href: "/informasi", label: "Informasi", icon: Newspaper },
-        { href: "/statistik/penduduk", label: "Statistik", icon: BarChart3 },
+        { href: "/statistik", label: "Statistik", icon: BarChart3 },
         { href: "/ppid", label: "PPID", icon: BookCheck },
         { href: "/idm", label: "IDM", icon: FileText },
         { href: "/sdgs", label: "SDGs", icon: Globe },
@@ -324,7 +324,7 @@ export function Header() {
                             // Check if this item should have a dropdown
                             const isPemerintahanItem = item.href === "/pemerintahan";
                             const isInformasiItem = item.href === "/informasi";
-                            const isStatistikItem = item.href === "/statistik";
+                            const isStatistikItem = item.href === "/statistik" || item.href.startsWith("/statistik");
                             const IconComponent = item.icon;
 
                             if (isPemerintahanItem) {
