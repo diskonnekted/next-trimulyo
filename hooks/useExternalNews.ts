@@ -66,13 +66,80 @@ export function useExternalNews(limit: number = 10) {
             setLoading(true);
             setError(null);
 
-            // Use our unified internal API that handles all fallbacks
+            // Use the PROVEN working proxy that fetches 9 articles from OpenSID
+            try {
+                const url = `/api/opensid-berita?limit=${limit}`;
+                const response = await fetch(url);
+                if (response.ok) {
+                    const json = await response.json();
+                    // OpenSID format: { data: [{ id, attributes: { judul, gambar, isi, ... } }] }
+                    const articles = json.data;
+                    if (Array.isArray(articles) && articles.length > 0) {
+                        const base = "https://trimulyo.sleman-desa.id";
+                        const transformed: NewsItem[] = articles.map((item: any) => {
+                            const attrs = item.attributes || {};
+                            const rawImage = attrs.gambar || attrs.gambar1 || null;
+                            let featuredImage: string | null = null;
+                            if (rawImage) {
+                                if (rawImage.startsWith("http")) {
+                                    featuredImage = rawImage.replace("http://", "https://");
+                                } else if (rawImage.startsWith("/")) {
+                                    featuredImage = `${base}${rawImage}`;
+                                } else {
+                                    featuredImage = `${base}/desa/upload/artikel/sedang_${rawImage}`;
+                                }
+                            }
+                            const content = attrs.isi || "";
+                            const plainContent = content.replace(/<[^>]*>/g, "");
+                            const slug = attrs.url_slug || attrs.slug || item.id;
+
+                            return {
+                                id: String(item.id),
+                                title: attrs.judul || "Tanpa Judul",
+                                slug: slug,
+                                excerpt: plainContent.substring(0, 200) + (plainContent.length > 200 ? "..." : ""),
+                                content: content,
+                                featuredImage: featuredImage,
+                                author: {
+                                    name: attrs.author?.nama || "Admin Kalurahan",
+                                    avatar: null,
+                                },
+                                category: attrs.category?.kategori || "Berita",
+                                categories: [{
+                                    id: parseInt(attrs.category?.id || "0"),
+                                    name: attrs.category?.kategori || "Berita",
+                                    slug: attrs.category?.slug || "berita",
+                                }],
+                                tags: [],
+                                publishedAt: attrs.tgl_upload || new Date().toISOString(),
+                                updatedAt: attrs.tgl_upload || new Date().toISOString(),
+                                link: `/berita/${slug}`,
+                                readTime: Math.max(1, Math.ceil(plainContent.split(/\s+/).length / 200)),
+                                isBreaking: false,
+                                isFeatured: false,
+                                isPinned: false,
+                                viewCount: attrs.hit || 0,
+                                likeCount: 0,
+                                commentCount: 0,
+                                shareCount: 0,
+                                isBookmarked: false,
+                            };
+                        });
+                        console.log("[useExternalNews] Successfully loaded:", transformed.length, "articles from OpenSID");
+                        setNews(transformed);
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.error("[useExternalNews] OpenSID proxy failed:", e);
+            }
+
+            // Fallback: try /api/external-news
             try {
                 const url = `/api/external-news?limit=${limit}`;
                 const response = await fetch(url);
                 if (response.ok) {
                     const json = await response.json();
-                    // API uses 'sukses' (Indonesian), not 'success'
                     const isSuccess = json.sukses === true || json.success === true;
                     const dataArray = Array.isArray(json.data) ? json.data : null;
                     if (isSuccess && dataArray && dataArray.length > 0) {
@@ -83,17 +150,14 @@ export function useExternalNews(limit: number = 10) {
                             excerpt: item.ringkasan || item.excerpt || "",
                             content: item.konten || item.content || "",
                             featuredImage: item.gambar || item.featuredImage || null,
-                            author: {
-                                name: item.penulis || item.author?.name || "Admin Kalurahan",
-                                avatar: null
-                            },
+                            author: { name: item.penulis || "Admin", avatar: null },
                             category: item.kategori || item.category || "Berita",
-                            categories: [{ id: 0, name: item.kategori || item.category || "Berita", slug: "berita" }],
+                            categories: [{ id: 0, name: item.kategori || "Berita", slug: "berita" }],
                             tags: [],
                             publishedAt: item.publishedAt || new Date().toISOString(),
-                            updatedAt: item.updatedAt || item.publishedAt || new Date().toISOString(),
+                            updatedAt: item.updatedAt || new Date().toISOString(),
                             link: `/berita/${item.slug}`,
-                            readTime: Math.max(1, Math.ceil(((item.konten || item.content || "")).split(/\s+/).length / 200)),
+                            readTime: 2,
                             isBreaking: false,
                             isFeatured: false,
                             isPinned: false,
@@ -103,16 +167,15 @@ export function useExternalNews(limit: number = 10) {
                             shareCount: 0,
                             isBookmarked: false,
                         }));
-                        console.log("[useExternalNews] Successfully loaded:", transformed.length, "articles");
                         setNews(transformed);
                         return;
                     }
-                    console.warn("[useExternalNews] API response issue:", { sukses: json.sukses, dataLength: dataArray?.length });
                 }
             } catch (e) {
-                console.error("[useExternalNews] Internal API failed:", e);
-                setNews([]);
+                console.error("[useExternalNews] Fallback API failed:", e);
             }
+
+            setNews([]);
         } catch (err) {
             console.error("[useExternalNews] Fatal error:", err);
             setError(null);
