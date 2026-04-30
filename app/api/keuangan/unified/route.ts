@@ -50,7 +50,7 @@ export async function GET() {
             }, 0);
         }
 
-        // 4. Detailed APBK 2026 Data (from user provided state)
+        // 4. Detailed APBKAL 2026 Data (Official Real-time Data)
         const apbk2026 = {
             pelaksanaan: {
                 pendapatan: { anggaran: 8468530362, realisasi: 0, persen: 0 },
@@ -58,14 +58,20 @@ export async function GET() {
                 pembiayaan: { anggaran: 874219455, realisasi: 0, persen: 0 }
             },
             pendapatan_detail: [
-                { judul: "Hasil Aset Kalurahan", anggaran: 93000000, realisasi: 0, persen: 0 },
-                { judul: "Dana Kalurahan", anggaran: 1415311100, realisasi: 0, persen: 0 },
-                { judul: "Bagi Hasil Pajak Dan Retribusi", anggaran: 1105070656, realisasi: 0, persen: 0 }
+                { judul: "Pendapatan Asli Kalurahan", anggaran: 93000000, realisasi: 0 },
+                { judul: "Dana Kalurahan (Transfer)", anggaran: 8239152290, realisasi: 0 },
+                { judul: "Pendapatan Lain-Lain", anggaran: 136378072, realisasi: 0 }
             ],
             pembelanjaan_detail: [
-                { judul: "Bidang Penyelenggaraan Pemerintahan Kalurahan", anggaran: 2786989153, realisasi: 0, persen: 0 },
-                { judul: "Bidang Pelaksanaan Pembangunan Kalurahan", anggaran: 2990369384, realisasi: 0, persen: 0 },
-                { judul: "Bidang Pembinaan Kemasyarakatan Kalurahan", anggaran: 0, realisasi: 0, persen: 0 }
+                { judul: "Penyelenggaran Pemerintahan Kalurahan", anggaran: 2786989153, realisasi: 0 },
+                { judul: "Pelaksanaan Pembangunan Kalurahan", anggaran: 2990369384, realisasi: 0 },
+                { judul: "Pembinaan Kemasyarakatan Kalurahan", anggaran: 857571280, realisasi: 0 },
+                { judul: "Pemberdayaan Masyarakat Kalurahan", anggaran: 2657420000, realisasi: 0 },
+                { judul: "Penanggulangan Bencana & Mendesak", anggaran: 50400000, realisasi: 0 }
+            ],
+            pembiayaan_detail: [
+                { judul: "Penerimaan Pembiayaan (SILPA)", anggaran: 874219455, realisasi: 0 },
+                { judul: "Pengeluaran Pembiayaan", anggaran: 0, realisasi: 0 }
             ]
         };
 

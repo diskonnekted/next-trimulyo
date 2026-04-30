@@ -38,8 +38,9 @@ interface FinanceData {
             belanja: { anggaran: number; realisasi: number; persen: number };
             pembiayaan: { anggaran: number; realisasi: number; persen: number };
         };
-        pendapatan_detail: Array<{ judul: string; anggaran: number; realisasi: number; persen: number }>;
-        pembelanjaan_detail: Array<{ judul: string; anggaran: number; realisasi: number; persen: number }>;
+        pendapatan_detail: Array<{ judul: string; anggaran: number; realisasi: number }>;
+        pembelanjaan_detail: Array<{ judul: string; anggaran: number; realisasi: number }>;
+        pembiayaan_detail: Array<{ judul: string; anggaran: number; realisasi: number }>;
     };
     updated_at: string;
 }
@@ -212,22 +213,35 @@ export default function KeuanganPage() {
                             </CardContent>
                         </Card>
 
-                        {/* APBK Column 3 */}
+                        {/* APBK Column 3: Pembiayaan & Belanja Lainnya */}
                         <Card className="border-none shadow-lg bg-white border-t-4 border-primary">
                             <CardHeader className="pb-2">
-                                <CardTitle className="text-lg font-bold text-slate-800">Bidang Pembelanjaan</CardTitle>
+                                <CardTitle className="text-lg font-bold text-slate-800">Bidang Pembelanjaan & Pembiayaan</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                {data?.apbk2026.pembelanjaan_detail.map((item, idx) => (
-                                    <div key={idx} className="space-y-2">
-                                        <div className="flex justify-between text-sm">
-                                            <span className="font-medium text-slate-500 truncate mr-2">{item.judul}</span>
-                                            <span className="text-primary font-bold">{(item.persen || 0).toFixed(0)}%</span>
+                                <div className="space-y-4">
+                                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Detail Belanja</h3>
+                                    {data?.apbk2026.pembelanjaan_detail.slice(2).map((item, idx) => (
+                                        <div key={idx} className="space-y-1">
+                                            <div className="flex justify-between text-xs">
+                                                <span className="font-medium text-slate-500 truncate mr-2">{item.judul}</span>
+                                            </div>
+                                            <div className="text-sm font-bold text-slate-900">{formatIDR(item.anggaran)}</div>
                                         </div>
-                                        <div className="text-base font-bold text-slate-900">{formatIDR(item.anggaran)}</div>
-                                        <Progress value={item.persen} className="h-1.5" />
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
+                                
+                                <div className="pt-4 border-t border-gray-100 space-y-4">
+                                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Pembiayaan Netto</h3>
+                                    {data?.apbk2026.pembiayaan_detail.map((item, idx) => (
+                                        <div key={idx} className="space-y-1">
+                                            <div className="flex justify-between text-xs">
+                                                <span className="font-medium text-slate-500 truncate mr-2">{item.judul}</span>
+                                            </div>
+                                            <div className="text-sm font-bold text-slate-900">{formatIDR(item.anggaran)}</div>
+                                        </div>
+                                    ))}
+                                </div>
                             </CardContent>
                         </Card>
                     </div>
