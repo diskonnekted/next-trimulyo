@@ -69,59 +69,87 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
         const limit = parseInt(searchParams.get("limit") ?? "10");
         const kategori = searchParams.get("kategori");
 
-        // Fetch from WordPress API
-        // _embed is needed to get featured media and author info
-        const wpUrl = `https://trimulyosid.slemankab.go.id/wp-json/wp/v2/posts?_embed&per_page=${limit}&page=${page}${kategori ? `&categories=${kategori}` : ''}`;
-        
-        const response = await fetch(wpUrl, {
-            next: { revalidate: 3600 } // Cache for 1 hour
-        });
+        // SOURCE 1: WordPress API (Priority)
+        try {
+            const wpUrl = `https://trimulyosid.slemankab.go.id/wp-json/wp/v2/posts?_embed&per_page=${limit}&page=${page}${kategori ? `&categories=${kategori}` : ''}`;
+            const response = await fetch(wpUrl, { next: { revalidate: 3600 } });
 
-        if (!response.ok) {
-            throw new Error("WP API response not ok");
+            if (response.ok) {
+                const wpPosts = await response.json();
+                const berita = wpPosts.map((post: any) => {
+                    let gambar = "/images/berita/infrastruktur.jpg";
+                    if (post._embedded?.['wp:featuredmedia']?.[0]?.source_url) {
+                        gambar = post._embedded['wp:featuredmedia'][0].source_url;
+                    }
+                    return {
+                        id: post.id,
+                        judul: post.title.rendered,
+                        slug: post.slug,
+                        ringkasan: post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...',
+                        konten: post.content.rendered,
+                        gambar: gambar,
+                        kategori: post._embedded?.['wp:term']?.[0]?.[0]?.name || "Umum",
+                        status: "PUBLISHED",
+                        publishedAt: post.date,
+                        createdAt: post.date,
+                        updatedAt: post.modified,
+                        penulis: post._embedded?.author?.[0]?.name || "Admin Kalurahan",
+                        views: Math.floor(Math.random() * 500) + 100,
+                    };
+                });
+
+                const meta = {
+                    total: parseInt(response.headers.get('X-WP-Total') || "10"),
+                    halaman: page,
+                    perHalaman: limit,
+                    totalHalaman: parseInt(response.headers.get('X-WP-TotalPages') || "1"),
+                };
+                return NextResponse.json(createSuccessResponse(berita, "Daftar berita dimuat dari WordPress", meta));
+            }
+        } catch (e) {
+            console.error("WP API failed, trying OpenSID...");
         }
 
-        const wpPosts = await response.json();
+        // SOURCE 2: OpenSID API (Fallback 1)
+        try {
+            const sidUrl = `https://trimulyo.sleman-desa.id/internal_api/berita?per_page=${limit}&page=${page}`;
+            const response = await fetch(sidUrl, { next: { revalidate: 3600 } });
 
-        // Map WP posts to our format
-        const berita = wpPosts.map((post: any) => {
-            // Extract featured image
-            let gambar = "/images/berita/infrastruktur.jpg"; // fallback
-            if (post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0]) {
-                gambar = post._embedded['wp:featuredmedia'][0].source_url;
+            if (response.ok) {
+                const sidData = await response.json();
+                const berita = sidData.data.map((post: any) => ({
+                    id: post.id,
+                    judul: post.judul,
+                    slug: post.slug || post.id.toString(),
+                    ringkasan: post.ringkasan || post.isi.substring(0, 160) + '...',
+                    konten: post.isi,
+                    gambar: post.gambar ? `https://trimulyo.sleman-desa.id/desa/upload/artikel/sedang_${post.gambar}` : "/images/berita/infrastruktur.jpg",
+                    kategori: post.kategori || "Umum",
+                    status: "PUBLISHED",
+                    publishedAt: post.tgl_upload,
+                    createdAt: post.tgl_upload,
+                    updatedAt: post.tgl_upload,
+                    penulis: "Admin Desa",
+                    views: parseInt(post.hit || "0"),
+                }));
+
+                const meta = {
+                    total: sidData.total || 10,
+                    halaman: page,
+                    perHalaman: limit,
+                    totalHalaman: Math.ceil((sidData.total || 10) / limit),
+                };
+                return NextResponse.json(createSuccessResponse(berita, "Daftar berita dimuat dari OpenSID", meta));
             }
+        } catch (e) {
+            console.error("OpenSID API failed, trying Mock...");
+        }
 
-            return {
-                id: post.id,
-                judul: post.title.rendered,
-                slug: post.slug,
-                ringkasan: post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 160) + '...',
-                konten: post.content.rendered,
-                gambar: gambar,
-                kategori: post._embedded?.['wp:term']?.[0]?.[0]?.name || "Umum",
-                status: "PUBLISHED",
-                publishedAt: post.date,
-                createdAt: post.date,
-                updatedAt: post.modified,
-                penulis: post._embedded?.author?.[0]?.name || "Admin Kalurahan",
-                views: Math.floor(Math.random() * 500) + 100, // WP API doesn't provide views by default
-            };
-        });
-
-        const meta = {
-            total: parseInt(response.headers.get('X-WP-Total') || "10"),
-            halaman: page,
-            perHalaman: limit,
-            totalHalaman: parseInt(response.headers.get('X-WP-TotalPages') || "1"),
-        };
-
-        return NextResponse.json(createSuccessResponse(berita, "Daftar berita berhasil dimuat dari WordPress resmi", meta));
-    } catch (error) {
-        console.error("WP News API Error, falling back to mock:", error);
-        
-        // Fallback to mock data
+        // SOURCE 3: Mock Data (Final Fallback)
         const filteredBerita = mockBerita.filter((berita) => berita.status === "PUBLISHED");
         return NextResponse.json(createSuccessResponse(filteredBerita.slice(0, 10), "Memuat berita cadangan (Koneksi server utama sibuk)"));
+    } catch (error) {
+        return NextResponse.json(createErrorResponse("INTERNAL_SERVER_ERROR", "Terjadi kesalahan fatal saat memuat berita"), { status: 500 });
     }
 }
 
